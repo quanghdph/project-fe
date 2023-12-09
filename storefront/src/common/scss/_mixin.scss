@@ -1,0 +1,50 @@
+@mixin flex-position($justifyContent: center,
+    $alignItems: center,
+    $flexWrap: nowrap) {
+    display: flex;
+
+
+    @if $justifyContent=="none" {
+        justify-content: center;
+    }
+
+    @else {
+        justify-content: $justifyContent;
+    }
+
+    @if $alignItems=="none" {
+        align-items: center;
+    }
+
+    @else {
+        align-items: $alignItems;
+    }
+
+    @if $flexWrap=="none" {
+        flex-wrap: nowrap;
+    }
+
+    @else {
+        flex-wrap: $flexWrap;
+    }
+}
+
+@mixin height($height) {
+    @if $height=="full" {
+        height: 100%;
+    }
+
+    @else {
+        height: $height;
+    }
+}
+
+@mixin width($width) {
+    @if $width=="full" {
+        width: 100%;
+    }
+
+    @else {
+        width: $width;
+    }
+}

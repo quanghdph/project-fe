@@ -1,0 +1,39 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "admin",
+    "server",
+    "storefront"
+  ],
+  "scripts": {
+    "docker:up": "docker-compose -f docker-compose.yaml up -d && sleep 5",
+    "phuc": "concurrently yarn:dev:server yarn:dev:admin",
+    "dev": "yarn docker:up && concurrently yarn:dev:*",
+    "dev:server": "cd server && yarn start:dev",
+    "dev:admin": "cd admin && yarn start",
+    "dev:storefront": "cd storefront && yarn start",
+    "build:admin": "cd admin && yarn build",
+    "build:server": "cd server && yarn build",
+    "build:storefront": "cd storefront && yarn build",
+    "p:studio": "cd server && prisma studio",
+    "p:format": "cd server && prisma format",
+    "db:push": "cd server && prisma db push",
+    "db:pull": "cd server && prisma db pull",
+    "db:migrate": "cd server && prisma migrate dev"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.6.0",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@types/lodash": "4.14.194",
+    "framer-motion": "^10.12.7",
+    "lodash": "4.17.21",
+    "javascript-time-ago": "2.5.9"
+  },
+  "devDependencies": {
+    "concurrently": "8.0.1"
+  }
+}

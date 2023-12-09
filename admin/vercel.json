@@ -1,0 +1,15 @@
+{
+    "name": "Clothes",
+    "version": 2,
+    "public": false,
+    "scope": "clothes",
+    "trailingSlash": false,
+    "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+    "regions": [
+        "hkg1"
+    ],
+    "github": {
+        "enabled": true,
+        "silent": false
+    }
+}
