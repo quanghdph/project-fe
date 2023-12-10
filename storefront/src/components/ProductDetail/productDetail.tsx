@@ -20,7 +20,8 @@ const ProductDetail = () => {
 
     // ** State
     const [product, setProduct] = React.useState<Product>()
-    const [variantId, setVariantId] = React.useState<number>()
+    const [color, setColor] = React.useState()
+    const [colorId, setColorId] = React.useState<number>()
 
     // ** Third party
     const { id } = useParams()
@@ -34,29 +35,36 @@ const ProductDetail = () => {
 
     // ** Effect
     React.useEffect(() => {
-        axiosClient.get(`product/${id}`).then((res) => {
+        axiosClient.get(`/product-detail/${id}`).then((res) => {
             const result = { ...res } as unknown as IAxiosResponse<Product>
-            setProduct(result.response.data)
+            setProduct(result.data)
         })
     }, [])
 
     React.useEffect(() => {
-        if (product) {
-            setVariantId(product.product_variants[0]?.id)
-        }
+        axiosClient.get(`/color`).then((res) => {
+            const result = { ...res } as unknown as IAxiosResponse<Product>
+            setColor(result.data.listColors)
+        })
+    }, [])
+
+    React.useEffect(() => {
+        // if (product) {
+        //     setVariantId(product.product_variants[0]?.id)
+        // }
     }, [product])
 
     // ** Function handle
-    const renderVariantOption = (data: { product_option: ProductOption }[]) => {
-        const arrayVariantOption: any = []
-        data.forEach(element => {
-            arrayVariantOption.push(element.product_option.value)
-        });
-        return arrayVariantOption.toString().replace(',', ' ')
-    }
+    // const renderVariantOption = (data: { product_option: ProductOption }[]) => {
+    //     const arrayVariantOption: any = []
+    //     data.forEach(element => {
+    //         arrayVariantOption.push(element.product_option.value)
+    //     });
+    //     return arrayVariantOption.toString().replace(',', ' ')
+    // }
 
-    const onChangeVariant = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setVariantId(+event.target.value)
+    const onChangeColor = (event) => {
+        setColorId(+event.target.value)
     }
 
     const onSubmit = (data: { quantity: number }) => {
@@ -95,33 +103,45 @@ const ProductDetail = () => {
                     <Col span={24}>
                         <Row gutter={[16, 16]} style={{ padding: "25px 0" }} justify="space-evenly">
                             <Col span={6}>
-                                <img src={product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url ?
+                                {/* <img src={product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url ?
                                     product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url :
                                     "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/134557216-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
-                                } alt='' className='w-full object-cover rounded-md' />
+                                } alt='' className='w-full object-cover rounded-md' /> */}
+                                <img src="https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/134557216-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6" alt='' className='w-full object-cover rounded-md'/>
                             </Col>
                             <Col span={12}>
                                 <div className='flex flex-col gap-3'>
-                                    <p className='font-bold text-2xl'>{product?.name}</p>
-                                    <p className='font-bold text-sm' style={{ color: "gray" }}>{product?.product_variants.find((variant) => variant.id === variantId)?.sku}</p>
-                                    <p className='font-bold text-lg'>{formatMoney(product?.product_variants.find((variant) => variant.id === variantId)?.price || 0)}</p>
+                                    <p className='font-bold text-2xl'>{product?.product.productName}</p>
+                                    {/* <p className='font-bold text-sm' style={{ color: "gray" }}>{product?.product_variants.find((variant) => variant.id === variantId)?.sku}</p> */}
+                                    {/* <p className='font-bold text-lg'>{formatMoney(product?.product_variants.find((variant) => variant.id === variantId)?.price || 0)}</p> */}
                                     {/* <form > */}
                                     <div className='flex flex-col gap-2'>
                                         <p className='font-semibold'>Select option</p>
                                         <Fragment>
-                                            <Select value={variantId} onChange={onChangeVariant}>
-                                                {
+                                            <Select value={product?.color?.id} onChange={onChangeColor}>
+                                                {/* {
                                                     product?.product_variants.map((item, index) => {
                                                         const variantOption = renderVariantOption(item.product_options)
                                                         return (
                                                             <option value={item.id} key={item.id}>{`${product.name} ${variantOption}`}</option>
                                                         )
                                                     })
+                                                } */}
+                                                {
+                                                    color && color.map((item, index) => {
+                                                        return (
+                                                            <option value={item.id}>{item?.colorName}</option>
+                                                        )
+                                                    })
                                                 }
                                             </Select>
                                         </Fragment>
                                     </div>
-                                    <p className='font-bold text-sm'>Available: {(product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0)}</p>
+                                    {/* <p className='font-bold text-sm'>Available: {(product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0)}</p> */}
+                                    <div >
+                                        <p className='font-semibold'>Kho: {product?.quantity}</p>
+                                        <p className='font-semibold'>Mã sản phẩm: {product?.product?.productCode}</p>
+                                    </div>
                                     <div className='flex flex-col gap-2'>
                                         <p className='font-semibold'>Quantity</p>
                                         <FormControl>
@@ -149,7 +169,7 @@ const ProductDetail = () => {
                                         </FormControl>
                                     </div>
                                     <div className='flex flex-row items-center gap-5 mt-2'>
-                                        {
+                                        {/* {
                                             product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0 > 0 ? (
                                                 <Button
                                                     className='!bg-primary text-white hover:!bg-[#5866c9]'
@@ -160,7 +180,7 @@ const ProductDetail = () => {
                                                     Add to cart
                                                 </Button>
                                             ) : null
-                                        }
+                                        } */}
 
                                     </div>
                                     {/* </form> */}

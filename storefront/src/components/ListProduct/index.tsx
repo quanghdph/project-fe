@@ -23,42 +23,54 @@ interface ListProductProps {
 const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
     // ** State
     const [products, setProducts] = React.useState<ProductList>()
+    const [total, setTotal] = React.useState()
     const [take, setTake] = useState<number>(12)
     const [skip, setSkip] = useState<number>(0)
     const [search, setSearch] = useState<string>('')
     const [value] = useDebounce(search, 1000);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [filter, setFilter] = useState('')
 
     // ** Variables
     const axiosClient = createAxiosClient();
 
     // ** Effect
     React.useEffect(() => {
-        axiosClient.get(`product`, {
-            params: {
-                skip,
-                take,
-                search: value,
-                categories: filterCategories,
-                price,
-                options: opts,
-                status: "active"
-            }
-        }).then((res) => {
+        axiosClient.get(`/product?page=${page}&limit=${limit}&filter=${filter}`
+        // , {
+        //     params: {
+        //         skip,
+        //         take,
+        //         search: value,
+        //         categories: filterCategories,
+        //         price,
+        //         options: opts,
+        //         status: "active"
+        //     }
+        // }
+        ).then((res) => {
             const result = { ...res } as unknown as IAxiosResponse<Product[]>
-            setProducts(result.response.data as unknown as ProductList)
+            console.log(result);
+            // const filterProductActive = result.data.list.filter((e) => e.status === 1)
+            // console.log(filterProductActive);
+            setProducts(result.data.list as unknown as ProductList)
+            setTotal(result.data.total)
         })
-    }, [filterCategories, value, skip, take, price, opts])
+    }, [filterCategories, value, price, page])
 
     // ** Function handle
     const handleOnChangePagination = (e: number) => {
-        setSkip((e - 1) * take)
+        // setSkip((e - 1) * take)
+        setPage(e)
     }
 
     const dataToRender = () => {
-        if (products && products?.products && products.products.length) {
+        if (products && products.length) {
             return (
                 <Row gutter={[16, 16]}>
-                    {products?.products?.map((p, index) => {
+                    {products?.map((p, index) => {
+                        console.log(p)
                         return <CardProduct key={index} span={6} product={p} />
                     })}
                 </Row>
@@ -82,11 +94,11 @@ const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
                         products ? (
                             <Flex justifyContent="flex-end">
                                 <Pagination
-                                    total={products?.total || 0}
+                                    total={total || 0}
                                     showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-                                    defaultCurrent={skip + 1}
+                                    // defaultCurrent={skip + 1}
                                     onChange={handleOnChangePagination}
-                                    defaultPageSize={take}
+                                    // defaultPageSize={take}
                                     responsive={true}
                                 />
                             </Flex>

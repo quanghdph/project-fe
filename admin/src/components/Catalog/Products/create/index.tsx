@@ -11,7 +11,6 @@ import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import { createProduct } from "src/features/catalog/product/actions";
 import { Box, Flex } from "@chakra-ui/react";
-import ProductOptionsCreate from "./ProductOptionsCreate";
 import { getValueByName, removeEmpty } from "src/hooks/catalog";
 import SelectImage from "../SelectImage";
 import { Asset } from "src/types";
@@ -26,14 +25,21 @@ const ProductCreate: React.FC = () => {
    //** Third party
    const navigate = useNavigate();
    let { id } = useParams();
-   const { control, handleSubmit, setValue, setError, getValues, watch, clearErrors, formState: { errors } } = useForm({
+   const { control, handleSubmit, setValue, setError, formState: { errors } } = useForm({
       defaultValues: {
-         name: "",
-         slug: "",
+         // name: "",
+         // slug: "",
+         // description: "",
+         // active: true,
+         // options: [],
+         // variant: [],
+         productName: "",
+         mainImage: "",
          description: "",
-         active: true,
-         options: [],
-         variant: [],
+         createDate: "",
+         updateDate:"",
+         status: 1,
+         productCode: "",
       },
    });
 
@@ -43,33 +49,23 @@ const ProductCreate: React.FC = () => {
    const product = useAppSelector((state) => state.product);
 
    const onSubmit = async (data) => {
-      const colorOption = data.option && getValueByName(data.option, "Color");
-      const sizeOption = data.option && getValueByName(data.option, "Size");
-      const options = Object.values(removeEmpty({ colorOption, sizeOption }));
-      setProductOptions([...options]);
-      if (productOptions.length > 0) {
-         await createProduct({
-            axiosClientJwt,
-            dispatch,
-            setError,
-            navigate,
-            message,
-            product: {
-               name: data.name,
-               description: data.description,
-               slug: data.slug,
-               active: enabled,
-               featured_asset_id: featuredAsset?.id,
-               options,
-               getValues,
-            },
-         });
-      } else {
-         Inotification({
-            type: "warning",
-            message: "Vui lòng tạo option!",
-         });
-      }
+      await createProduct({
+         axiosClientJwt,
+         dispatch,
+         setError,
+         navigate,
+         message,
+         product: {
+            productName: data.productName,
+            description: data.description,
+            status: enabled ? 1 : 0,
+            mainImage: "", 
+            createDate: data.updateDate,
+            productCode: data.productCode
+
+            // getValues,
+         },
+      });
    };
 
    return (
@@ -104,14 +100,6 @@ const ProductCreate: React.FC = () => {
                            <Row gutter={[24, 0]}>
                               <Col span={19}>
                                  <ProductCreateBasic control={control} errors={errors} setValue={setValue} />
-                                 <ProductOptionsCreate
-                                    errors={errors}
-                                    control={control}
-                                    setProductOptions={setProductOptions}
-                                    setVariantItem={setVariantItem}
-                                    setValue={setValue}
-                                    watch={watch}
-                                 />
                               </Col>
                               {/* Image */}
                               <Col span={5}>
@@ -128,20 +116,6 @@ const ProductCreate: React.FC = () => {
                                  </Flex>
                               </Col>
                            </Row>
-                           <div style={{ marginTop: "1rem" }}>
-                              <Table
-                                 bordered
-                                 columns={columns()}
-                                 dataSource={data({
-                                    control,
-                                    errors,
-                                    variantItem,
-                                    setValue,
-                                    clearErrors
-                                 })}
-                                 pagination={{ hideOnSinglePage: true }}
-                              />
-                           </div>
                         </Fragment>
                      ) : (
                         <ProductDetail />

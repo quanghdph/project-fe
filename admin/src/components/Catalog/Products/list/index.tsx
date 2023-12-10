@@ -75,8 +75,11 @@ const columns = (
     ]
 const Products: React.FC = () => {
     // ** State
-    const [take, setTake] = useState<number>(10)
-    const [skip, setSkip] = useState<number>(0)
+    // const [take, setTake] = useState<number>(10)
+    // const [skip, setSkip] = useState<number>(0)
+    const [page, setPage] = useState<number>(1)
+    const [limit, setLimit] = useState<number>(10)
+    const [filter, setFilter] = useState<string>('')
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [productDelete, setProductDelete] = useState<{ id: number, name: string }>()
     const [refresh, setRefresh] = useState<boolean>(false)
@@ -94,29 +97,30 @@ const Products: React.FC = () => {
 
     // ** Effect
     useEffect(() => {
+       
         getListProduct({
-            pagination: {
-                skip,
-                take,
-                search: value,
-                status
+            params: {
+                page,
+                limit,
+                filter
             },
             navigate,
             axiosClientJwt,
             dispatch,
         })
-    }, [skip, take, refresh, value, status])
+    }, [ page, limit, refresh, value])
 
     // ** Function handle
-    const dataRender = (): DataType[] => {
-        if (!product.list.loading && product.list.result) {
-            return product.list.result.products.map((product, index: number) => {
+    const dataRender = (): any => {
+        console.log(product);
+        if (!product.list.loading && product.list.result?.list) {
+            return product.list.result?.list.map((product, index: number) => {
                 return {
                     key: index,
                     id: product.id,
-                    name: product.name,
-                    url: product?.featured_asset?.url,
-                    active: product.active
+                    name: product.productName,
+                    // url: product?.featured_asset?.url,
+                    active: product.status
                 }
             })
         }
@@ -141,7 +145,8 @@ const Products: React.FC = () => {
     };
 
     const handleOnChangePagination = (e: number) => {
-        setSkip((e - 1) * take)
+        // setSkip((e - 1) * take)
+        setPage(e)
     }
 
     const onChangeStatus = (value: string) => {
@@ -208,9 +213,7 @@ const Products: React.FC = () => {
                                     pagination={{
                                         total: product.list.result?.total,
                                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                                        defaultCurrent: skip + 1,
                                         onChange: handleOnChangePagination,
-                                        defaultPageSize: take,
                                         responsive: true
                                     }}
                                 />

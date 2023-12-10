@@ -34,109 +34,121 @@ import { CreateProductOptionParams, CreateProductParams, CreateProductVariantOpt
 import { Product, ProductOption } from "src/types";
 import { FormValuesProductVariant } from "src/components/Catalog/Products/detail-update/ModalUpdateProductVariant";
 
-export const createProduct = async ({ product, dispatch, axiosClientJwt, setError, navigate, message }: CreateProductParams) => {
+export const createProduct = async ({ product, dispatch, axiosClientJwt, setError, navigate, message }: any) => {
     try {
-        const { active, description, name, featured_asset_id, options, getValues } = product;
+        // const { active, description, name, featured_asset_id, opti } = product;
+        const {  productName,
+            mainImage,
+            description,
+            createDate,
+            updateDate,
+            status,
+            productCode} = product
         dispatch(createProductStart());
         const accessToken = localStorage.getItem("accessToken");
-        const resCreateProduct: IAxiosResponse<Product> = await axiosClientJwt.post(`/product/create`,
+        console.log(product);
+        const res: IAxiosResponse<Product> = await axiosClientJwt.post(`/product`,
             {
-                active,
+                productName,
+                mainImage,
                 description,
-                name,
-                featured_asset_id
+                createDate,
+                updateDate,
+                status,
+                productCode
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            },
+            // {
+            //     headers: {
+            //         Authorization: `Bearer ${accessToken}`,
+            //     },
+            // },
         );
-        if (resCreateProduct?.response?.code === 200 && resCreateProduct?.response?.success) {
-            const resCreateProductOption = await createProductOption({ options, axiosClientJwt, productId: resCreateProduct.response.data?.id })
-            if (resCreateProductOption?.response?.code === 200 && resCreateProductOption?.response?.success) {
-                const colorValue = resCreateProductOption.response.data?.filter((item) => item.name === "Color")
-                const sizeValue = resCreateProductOption.response.data?.filter((item) => item.name === "Size")
-                let result: { name: string, option_ids: number[], product_id: number }[] = [];
-                if (colorValue.length > 0 && sizeValue.length > 0) {
-                    colorValue.map((item) => {
-                        const all = sizeValue.map((size) => {
-                            return {
-                                name: `${item.value}-${size.value}`,
-                                option_ids: [item.id, size.id],
-                                product_id: resCreateProduct.response.data?.id,
-                            };
-                        });
-                        result.push(...all);
-                    });
-                } else if (colorValue.length > 0) {
-                    colorValue.length > 0 && colorValue.map((item) => {
-                        return result.push({
-                            name: `${item.value}`,
-                            option_ids: [item.id],
-                            product_id: resCreateProduct.response.data?.id
-                        });
-                    });
-                } else {
-                    sizeValue.length > 0 && sizeValue.map((item) => {
-                        return result.push({
-                            name: `${item.value}`,
-                            option_ids: [item.id],
-                            product_id: resCreateProduct.response.data?.id
-                        });
-                    });
-                }
-                const variants = result.map((item, index) => {
-                    return {
-                        sku: getValues("sku") && getValues("sku")[index] as string,
-                        name: `${getValues("name")}-${item.name}`,
-                        option_ids: item.option_ids,
-                        product_id: item.product_id,
-                        stock: getValues("stock") && getValues("stock")[index] as number,
-                        origin_price: getValues("originPrice") && getValues("originPrice")[index] as number,
-                        price: getValues("price") && getValues("price")[index] as number
-                    };
-                });
-                const resCreateProductVariant = await createProductVariant({ axiosClientJwt, variants })
-                if (resCreateProductVariant?.response?.code === 200 && resCreateProductVariant?.response?.success) {
-                    setTimeout(function () {
-                        dispatch(createProductSuccess(resCreateProduct.response.data));
-                        message.success('Tạo sản phẩm thành công!');
-                        navigate("/catalog/products")
-                    }, 1000);
-                } else if (resCreateProductVariant?.response?.code === 400 && !resCreateProductVariant?.response?.success) {
-                    dispatch(createProductFailed(null));
-                    const indexValuesError = resCreateProductVariant.response?.valuesError!.map((value) => {
-                        return getValues("sku").indexOf(value);
-                    })
-                    indexValuesError.map((i) => {
-                        setError(`${resCreateProductVariant?.response?.fieldError}[${i}]` as keyof FormValuesProductVariant, { message: resCreateProductVariant?.response?.message })
-                    })
-                } else {
-                    dispatch(createProductFailed(null));
-                }
-            } else {
-                dispatch(createProductFailed(null));
-            }
-        } else {
-            dispatch(createProductFailed(null));
-        }
+        return res
+        // if (resCreateProduct?.response?.code === 200 && resCreateProduct?.response?.success) {
+        //     const resCreateProductOption = await createProductOption({ options, axiosClientJwt, productId: resCreateProduct.response.data?.id })
+        //     if (resCreateProductOption?.response?.code === 200 && resCreateProductOption?.response?.success) {
+        //         const colorValue = resCreateProductOption.response.data?.filter((item) => item.name === "Color")
+        //         const sizeValue = resCreateProductOption.response.data?.filter((item) => item.name === "Size")
+        //         let result: { name: string, option_ids: number[], product_id: number }[] = [];
+        //         if (colorValue.length > 0 && sizeValue.length > 0) {
+        //             colorValue.map((item) => {
+        //                 const all = sizeValue.map((size) => {
+        //                     return {
+        //                         name: `${item.value}-${size.value}`,
+        //                         option_ids: [item.id, size.id],
+        //                         product_id: resCreateProduct.response.data?.id,
+        //                     };
+        //                 });
+        //                 result.push(...all);
+        //             });
+        //         } else if (colorValue.length > 0) {
+        //             colorValue.length > 0 && colorValue.map((item) => {
+        //                 return result.push({
+        //                     name: `${item.value}`,
+        //                     option_ids: [item.id],
+        //                     product_id: resCreateProduct.response.data?.id
+        //                 });
+        //             });
+        //         } else {
+        //             sizeValue.length > 0 && sizeValue.map((item) => {
+        //                 return result.push({
+        //                     name: `${item.value}`,
+        //                     option_ids: [item.id],
+        //                     product_id: resCreateProduct.response.data?.id
+        //                 });
+        //             });
+        //         }
+        //         const variants = result.map((item, index) => {
+        //             return {
+        //                 sku: getValues("sku") && getValues("sku")[index] as string,
+        //                 name: `${getValues("name")}-${item.name}`,
+        //                 option_ids: item.option_ids,
+        //                 product_id: item.product_id,
+        //                 stock: getValues("stock") && getValues("stock")[index] as number,
+        //                 origin_price: getValues("originPrice") && getValues("originPrice")[index] as number,
+        //                 price: getValues("price") && getValues("price")[index] as number
+        //             };
+        //         });
+        //         const resCreateProductVariant = await createProductVariant({ axiosClientJwt, variants })
+        //         if (resCreateProductVariant?.response?.code === 200 && resCreateProductVariant?.response?.success) {
+        //             setTimeout(function () {
+        //                 dispatch(createProductSuccess(resCreateProduct.response.data));
+        //                 message.success('Tạo sản phẩm thành công!');
+        //                 navigate("/catalog/products")
+        //             }, 1000);
+        //         } else if (resCreateProductVariant?.response?.code === 400 && !resCreateProductVariant?.response?.success) {
+        //             dispatch(createProductFailed(null));
+        //             const indexValuesError = resCreateProductVariant.response?.valuesError!.map((value) => {
+        //                 return getValues("sku").indexOf(value);
+        //             })
+        //             indexValuesError.map((i) => {
+        //                 setError(`${resCreateProductVariant?.response?.fieldError}[${i}]` as keyof FormValuesProductVariant, { message: resCreateProductVariant?.response?.message })
+        //             })
+        //         } else {
+        //             dispatch(createProductFailed(null));
+        //         }
+        //     } else {
+        //         dispatch(createProductFailed(null));
+        //     }
+        // } else {
+        //     dispatch(createProductFailed(null));
+        // }
     } catch (error: any) {
         dispatch(createProductFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Bạn không có quyền để thực hiện hành động này!'
+        //     })
+        //     setTimeout(function () {
+        //         navigate('/')
+        //     }, 1000);
+        // } else {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Something went wrong!'
+        //     })
+        // }
     }
 };
 
@@ -187,60 +199,61 @@ export const createProductVariant = async ({ variants, axiosClientJwt }: CreateP
     }
 };
 
-export const getListProduct = async ({ pagination, dispatch, axiosClientJwt, navigate }: GetListProductParams) => {
+export const getListProduct = async ({ params, dispatch, axiosClientJwt, navigate }: GetListProductParams) => {
     try {
-        const { skip, take, search, status } = pagination;
-        const accessToken = localStorage.getItem("accessToken")
+        const {page, limit, filter} = params
+        // const accessToken = localStorage.getItem("accessToken")
         dispatch(getListProductStart());
-        const res: IAxiosResponse<{}> = await axiosClientJwt.get('/product', {
-            params: {
-                ...pagination?.take && { take },
-                ...pagination?.skip && { skip },
-                ...pagination?.search && { search },
-                ...pagination?.status && { status },
-            },
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        const res: any = await axiosClientJwt.get(`/product?page=${page}&limit=${limit}&filter=${filter}`
+        // , {
+      
+        //     headers: {
+        //         Authorization: `Bearer ${accessToken}`
+        //     }
+        // }
+        );
+        // console.log(res)
+        if (res?.status === 200 && res?.data && res?.data.list) {
             setTimeout(function () {
-                dispatch(getListProductSuccess(res.response.data));
+                dispatch(getListProductSuccess(res.data));
             }, 1000)
         } else {
             dispatch(getListProductFailed(null));
         }
     } catch (error: any) {
         dispatch(getListProductFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Bạn không có quyền để thực hiện hành động này!'
+        //     })
+        //     setTimeout(function () {
+        //         navigate('/')
+        //     }, 1000);
+        // } else {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Something went wrong!'
+        //     })
+        // }
     }
 }
 
 export const deleteProduct = async ({ id, dispatch, axiosClientJwt, navigate, message, refresh, setIsModalOpen, setRefresh }: DeleteProductParams) => {
     try {
         dispatch(deleteProductStart());
-        const accessToken = localStorage.getItem("accessToken")
-        const res: IAxiosResponse<{}> = await axiosClientJwt.delete(`/product/delete/${id}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        // const accessToken = localStorage.getItem("accessToken")
+        const res: IAxiosResponse<{}> = await axiosClientJwt.delete(`/product/${id}`
+        // , {
+        //     headers: {
+        //         Authorization: `Bearer ${accessToken}`
+        //     }
+        // }
+        );
+        console.log(res)
+        if (res?.status === 200) {
             setTimeout(function () {
-                dispatch(deleteProductSuccess(res.response.data))
+                dispatch(deleteProductSuccess(res.data))
                 message.success('Xóa sản phẩm thành công!')
                 setIsModalOpen(false)
                 setRefresh(!refresh)
@@ -251,22 +264,22 @@ export const deleteProduct = async ({ id, dispatch, axiosClientJwt, navigate, me
             setIsModalOpen(false)
         }
     } catch (error: any) {
-        dispatch(deleteProductFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                setIsModalOpen(false)
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        // dispatch(deleteProductFailed(null));
+        // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Bạn không có quyền để thực hiện hành động này!'
+        //     })
+        //     setTimeout(function () {
+        //         setIsModalOpen(false)
+        //         navigate('/')
+        //     }, 1000);
+        // } else {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Something went wrong!'
+        //     })
+        // }
     }
 }
 

@@ -1,4 +1,4 @@
-import { Pagination } from "src/types";
+import { Pagination, Params } from "src/types";
 import { NavigateFunction } from "react-router-dom";
 import { MessageApi } from "antd/lib/message";
 import { UseFormSetError } from "react-hook-form";
@@ -55,7 +55,8 @@ export type Variant = {
 export interface GetListProductParams {
     dispatch: AppDispatch,
     axiosClientJwt: AxiosInstance,
-    pagination: Pagination,
+    pagination?: Pagination,
+    params: Params
     navigate: NavigateFunction
 }
 

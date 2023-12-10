@@ -4,3 +4,9 @@ export interface Pagination {
     search?: string
     status?: string
 }
+
+export interface Params {
+    page: number
+    limit: number
+    filter: string
+}
