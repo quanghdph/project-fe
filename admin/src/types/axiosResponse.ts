@@ -9,4 +9,5 @@ export interface IAxiosResponse<T> {
         fieldError?: string
         message?: string
     }
+    
 }

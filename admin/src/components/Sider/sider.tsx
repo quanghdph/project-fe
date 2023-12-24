@@ -44,6 +44,42 @@ const SiderBar = () => {
                         }
                     },
                     {
+                        key: "sizes",
+                        icon: <InboxOutlined />,
+                        label: "Kích thước",
+                        className: location.pathname === "catalog/sizes" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/sizes')
+                        }
+                    },
+                    {
+                        key: "colors",
+                        icon: <InboxOutlined />,
+                        label: "Màu sắc",
+                        className: location.pathname === "catalog/colors" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/colors')
+                        }
+                    },
+                    {
+                        key: "meterial",
+                        icon: <InboxOutlined />,
+                        label: "Chất liệu",
+                        className: location.pathname === "catalog/material" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/material')
+                        }
+                    },
+                    {
+                        key: "waistband",
+                        icon: <InboxOutlined />,
+                        label: "Cạp quần",
+                        className: location.pathname === "catalog/waistbands" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/waistbands')
+                        }
+                    },
+                    {
                         key: "categories",
                         icon: <FolderOpenOutlined />,
                         label: "Danh mục",

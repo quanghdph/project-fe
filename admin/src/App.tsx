@@ -26,6 +26,14 @@ import OrderDetailPage from './pages/Sales/Orders/detail';
 import Payment from './components/Payment';
 import ProductDetailUpdatePage from './pages/Catalog/Products/detail-update';
 import DashboardPage from './pages/Dashboard';
+import ColorListPage from './pages/Catalog/Color/list';
+import ColorCreateUpdatePage from './pages/Catalog/Color/create-update';
+import SizeListPage from './pages/Catalog/Size/list';
+import SizeCreateUpdatePage from './pages/Catalog/Size/create-update';
+import MaterialListPage from './pages/Catalog/Material/list';
+import MaterialCreateUpdatePage from './pages/Catalog/Material/create-update';
+import WaistbandListPage from './pages/Catalog/Waistband/list';
+import WaistbandCreateUpdatePage from './pages/Catalog/Waistband/create-update';
 
 interface ProtectRouteProps {
   children: React.ReactNode
@@ -63,6 +71,26 @@ const App = () => {
                 <Route index element={<ProductListPage />} />
                 <Route path='create' element={<ProductCreatePage />} />
                 <Route path='detail-update/:id' element={<ProductDetailUpdatePage />} />
+              </Route>
+              <Route path='colors'>
+                <Route index element={<ColorListPage />} />
+                <Route path='create' element={<ColorCreateUpdatePage />} />
+                 <Route path='update/:id' element={<ColorCreateUpdatePage />} />
+              </Route>
+              <Route path='sizes'>
+                <Route index element={<SizeListPage />} />
+                <Route path='create' element={<SizeCreateUpdatePage />} />
+                 <Route path='update/:id' element={<SizeCreateUpdatePage />} />
+              </Route>
+              <Route path='material'>
+                <Route index element={<MaterialListPage />} />
+                <Route path='create' element={<MaterialCreateUpdatePage />} />
+                 <Route path='update/:id' element={<MaterialCreateUpdatePage />} />
+              </Route>
+              <Route path='waistbands'>
+                <Route index element={<WaistbandListPage />} />
+                <Route path='create' element={<WaistbandCreateUpdatePage />} />
+                 <Route path='update/:id' element={<WaistbandCreateUpdatePage />} />
               </Route>
               <Route path='categories'>
                 <Route index element={<CategoryListPage />} />

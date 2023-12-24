@@ -21,6 +21,10 @@ import {
   REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import colorSlice from 'src/features/catalog/color/colorSlice';
+import sizeSlice from 'src/features/catalog/size/sizeSlice';
+import materialSlice from 'src/features/catalog/material/materialSlice';
+import waistbandSlice from 'src/features/catalog/waistband/waistbandSlice';
 
 const persistConfig = {
   key: 'root',
@@ -37,6 +41,10 @@ const rootReducer = combineReducers({
   customer: customerSlice,
   address: addressSlice,
   category: categorySlice,
+  color: colorSlice,
+  size:sizeSlice,
+  material:materialSlice,
+  waistband:waistbandSlice,
   promotion: promotionSlice,
   order: orderSlice
 })
