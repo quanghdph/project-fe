@@ -73,7 +73,7 @@ const columns = (
     width: "150px",
     render: (_, record) => {
       return (
-        <Space waistband="middle">
+        <Space size="middle">
           <Button
             shape="circle"
             icon={<EditOutlined />}

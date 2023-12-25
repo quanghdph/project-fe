@@ -23,13 +23,9 @@ import {
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
-import {
-  deleteCategory,
-  getListCategory,
-} from "src/features/catalog/category/action";
 import type { ColumnsType } from "antd/es/table";
 import { useDebounce } from "use-debounce";
-import { deleteMaterial, getListMaterial } from "src/features/catalog/material/action";
+import { deleteEmployee, getListEmployee } from "src/features/employee/action";
 
 interface DataType {
   key: number;
@@ -42,8 +38,8 @@ interface DataType {
 
 const columns = (
   setIsModalOpen: (open: boolean) => void,
-  materialDelete: { id: number; name: string } | undefined,
-  setMaterialDelete: ({ id, name }: { id: number; name: string }) => void,
+  employeeDelete: { id: number; name: string } | undefined,
+  setEmployeeDelete: ({ id, name }: { id: number; name: string }) => void,
   navigate: NavigateFunction,
 ): ColumnsType<DataType> => [
   {
@@ -51,21 +47,44 @@ const columns = (
     dataIndex: "id",
     ellipsis: true,
     key: "id",
-    width: "15%",
   },
   {
     title: "Tên",
-    dataIndex: "material_name",
+    dataIndex: "employee_name",
     ellipsis: true,
-    key: "material_name",
-    width: "15%",
+    key: "employee_name",
+    width: "20%"
   },
   {
-    title: "Mã chất liệu",
-    dataIndex: "material_code",
+    title: "Mã nhân viên",
+    dataIndex: "employee_code",
     ellipsis: true,
-    key: "material_code",
-    width: "15%",
+    key: "employee_code",
+  },
+  {
+    title: "Giới tính",
+    dataIndex: "employee_gender",
+    ellipsis: true,
+    key: "employee_gender",
+  },
+  {
+    title: "Ngày sinh",
+    dataIndex: "employee_birth",
+    ellipsis: true,
+    key: "employee_birth",
+  },
+  {
+    title: "Email",
+    dataIndex: "employee_email",
+    ellipsis: true,
+    key: "employee_email",
+    width: "20%"
+  },
+  {
+    title: "Số điện thoại",
+    dataIndex: "employee_phone",
+    ellipsis: true,
+    key: "employee_phone",
   },
   {
     title: "Hành động",
@@ -84,10 +103,10 @@ const columns = (
             icon={<DeleteOutlined />}
             onClick={() => {
                setIsModalOpen(true);
-               setMaterialDelete({
-                  ...materialDelete,
+               setEmployeeDelete({
+                  ...employeeDelete,
                   id: record.id,
-                  name: record.material_name,
+                  name: record.employee_name,
                 });
             }}
           />
@@ -97,7 +116,7 @@ const columns = (
   },
 ];
 
-const Material = () => {
+const Employee = () => {
   // ** State
   // const [take, setTake] = useState<number>(10)
   // const [skip, setSkip] = useState<number>(0)
@@ -105,7 +124,7 @@ const Material = () => {
   const [limit, setLimit] = useState<number>(10)
   const [filter, setFilter] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [materialDelete, setMaterialDelete] = useState<{
+  const [employeeDelete, setEmployeeDelete] = useState<{
     id: number;
     name: string;
   }>();
@@ -115,7 +134,7 @@ const Material = () => {
   const [status, setStatus] = useState<string>("all");
 
   // ** Variables
-  const material = useAppSelector((state) => state.material);
+  const employee = useAppSelector((state) => state.employee);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
@@ -148,7 +167,7 @@ const Material = () => {
     //     axiosClientJwt,
     //     dispatch,
     // })
-    getListMaterial({
+    getListEmployee({
         params: {
             page,
             limit,
@@ -174,13 +193,20 @@ const Material = () => {
     //         }
     //     })
     // }
-    if (!material.list.loading && material.list.result) {
-      return material.list.result.listMaterials.map((material, index: number) => {
+    if (!employee.list.loading && employee.list.result) {
+      return employee.list.result.listEmployees.map((employee, index: number) => {
+        const fullname = `${employee.firstName} ${employee.lastName}`;
+        const filgender = employee.gender == 1 ? "Nam" : "Nữ";
         return {
           key: index,
-          id: material.id,
-          material_code: material.materialCode,
-          material_name: material.materialName,
+          id: employee.id,
+          employee_code: employee.employeeCode,
+          employee_name: fullname,
+          employee_gender:  filgender,
+          employee_birth: employee.dateOfBirth,
+          employee_email: employee.email,
+          employee_phone: employee.phoneNumber,
+          // employee_status: ,
         };
       });
     }
@@ -188,11 +214,11 @@ const Material = () => {
   };
 
   const handleOk = async () => {
-    await deleteMaterial({
+    await deleteEmployee({
         axiosClientJwt,
         dispatch,
         navigate,
-        id: materialDelete?.id!,
+        id: employeeDelete?.id!,
         refresh,
         setIsModalOpen,
         setRefresh,
@@ -221,7 +247,7 @@ const Material = () => {
             <Breadcrumb.Item>
               <Link to="/">Trang chủ</Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Chất liệu</Breadcrumb.Item>
+            <Breadcrumb.Item>Nhân viên</Breadcrumb.Item>
           </Breadcrumb>
         </Col>
         <Col span={24}>
@@ -264,7 +290,7 @@ const Material = () => {
                   onClick={() => navigate("create")}
                   icon={<PlusCircleOutlined />}
                 >
-                  Thêm mới chất liệu
+                  Thêm mới nhân viên
                 </Button>
               </Flex>
             </Col>
@@ -275,15 +301,15 @@ const Material = () => {
                   bordered
                   columns={columns(
                     setIsModalOpen,
-                    materialDelete,
-                    setMaterialDelete,
+                    employeeDelete,
+                    setEmployeeDelete,
                     navigate,
                   )}
                   dataSource={dataRender()}
                   scroll={{ x: "100vw" }}
-                  loading={material.list.loading}
+                  loading={employee.list.loading}
                   pagination={{
-                    total: material.list.result?.total,
+                    total: employee.list.result?.total,
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`,
                     onChange: handleOnChangePagination,
@@ -303,15 +329,15 @@ const Material = () => {
         onOk={handleOk}
         onCancel={handleCancel}
         centered
-        confirmLoading={material.delete.loading}
+        confirmLoading={employee.delete.loading}
       >
         <p>
           Bạn có muốn xóa trường này (
-          <span style={{ fontWeight: "bold" }}>{materialDelete?.name}</span>)?
+          <span style={{ fontWeight: "bold" }}>{employeeDelete?.name}</span>)?
         </p>
       </Modal>
     </Fragment>
   );
 };
 
-export default Material;
+export default Employee;

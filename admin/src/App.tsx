@@ -34,6 +34,8 @@ import MaterialListPage from './pages/Catalog/Material/list';
 import MaterialCreateUpdatePage from './pages/Catalog/Material/create-update';
 import WaistbandListPage from './pages/Catalog/Waistband/list';
 import WaistbandCreateUpdatePage from './pages/Catalog/Waistband/create-update';
+import EmployeeListPage from './pages/Employee/list';
+import EmployeeCreateUpdatePage from './pages/Employee/create-update';
 
 interface ProtectRouteProps {
   children: React.ReactNode
@@ -111,6 +113,11 @@ const App = () => {
               <Route index element={<CustomerListPage />} />
               <Route path='create' element={<CustomerCreateUpdatePage />} />
               <Route path='update/:id' element={<CustomerCreateUpdatePage />} />
+            </Route>
+            <Route path='employee'>
+              <Route index element={<EmployeeListPage />} />
+              <Route path='create' element={<EmployeeCreateUpdatePage />} />
+              <Route path='update/:id' element={<EmployeeCreateUpdatePage />} />
             </Route>
             <Route path='marketing'>
               <Route path='promotions'>

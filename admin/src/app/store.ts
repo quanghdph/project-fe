@@ -25,6 +25,7 @@ import colorSlice from 'src/features/catalog/color/colorSlice';
 import sizeSlice from 'src/features/catalog/size/sizeSlice';
 import materialSlice from 'src/features/catalog/material/materialSlice';
 import waistbandSlice from 'src/features/catalog/waistband/waistbandSlice';
+import employeeSlice from 'src/features/employee/employeeSlice';
 
 const persistConfig = {
   key: 'root',
@@ -42,9 +43,10 @@ const rootReducer = combineReducers({
   address: addressSlice,
   category: categorySlice,
   color: colorSlice,
-  size:sizeSlice,
-  material:materialSlice,
-  waistband:waistbandSlice,
+  size: sizeSlice,
+  material: materialSlice,
+  waistband: waistbandSlice,
+  employee: employeeSlice,
   promotion: promotionSlice,
   order: orderSlice
 })

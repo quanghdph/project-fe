@@ -116,6 +116,22 @@ const SiderBar = () => {
                 ]
             },
             {
+                key: "employee",
+                icon: "",
+                label: "Quản lý nhân viên",
+                children: [
+                    {
+                        key: "employee-sub",
+                        icon: <UserOutlined />,
+                        label: "Nhân viên",
+                        className: location.pathname === "/employee" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('/employee')
+                        }
+                    },
+                ]
+            },
+            {
                 key: "customers",
                 icon: "",
                 label: "Khách hàng",
