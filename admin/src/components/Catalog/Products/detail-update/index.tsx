@@ -2,8 +2,7 @@ import { Breadcrumb, Button, Card, Col, Divider, Row, Tabs } from "antd";
 import React, { Fragment } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProductDetail from "./ProductDetail";
-import ProductVariant from "./ProductVariant";
-import AddVariant from "./AddVariant";
+// import ProductVariant from "./ProductVariant";
 
 const ProductDetailUpdate = () => {
   // ** Third party
@@ -32,12 +31,12 @@ const ProductDetailUpdate = () => {
               <Tabs.TabPane tab="Chi tiết sản phẩm" key="1">
                 <ProductDetail />
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Các biến thể" key="2">
+              {/* <Tabs.TabPane tab="Các biến thể" key="2">
                 <ProductVariant />
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Thêm mới biến thể +" key="3">
+              </Tabs.TabPane> */}
+              {/* <Tabs.TabPane tab="Thêm mới biến thể +" key="3">
                 <AddVariant />
-              </Tabs.TabPane>
+              </Tabs.TabPane> */}
             </Tabs>
           </Card>
         </Col>

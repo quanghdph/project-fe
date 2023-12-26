@@ -55,20 +55,10 @@ const MaterialCreateUpdate = () => {
                 navigate
             })
         }
-        // getListCategory({
-        //     pagination: {
-        //         skip: 0,
-        //         take: 999
-        //     },
-        //     navigate,
-        //     axiosClientJwt,
-        //     dispatch,
-        // })
     }, [id])
 
     useEffect(() => {
         if (id && !material.single.loading && material.single.result) {
-            console.log(material.single);
             setValue("material_code", material.single.result.materialCode)
             setValue("material_name", material.single.result.materialName)
         }
@@ -80,7 +70,6 @@ const MaterialCreateUpdate = () => {
             updateMaterial({
                 axiosClientJwt,
                 material: {
-                    materialCode: data.material_code,
                     materialName: data.material_name,
                 },
                 dispatch,
@@ -93,7 +82,6 @@ const MaterialCreateUpdate = () => {
             createMaterial({
                 axiosClientJwt,
                 material: {
-                    materialCode: data.material_code,
                     materialName: data.material_name,
                 },
                 dispatch,
@@ -144,13 +132,15 @@ const MaterialCreateUpdate = () => {
                                             return (
                                                 <div ref={materialNameErrorRef}>
                                                     <Input {...field} placeholder="Ví dụ: Bamboo" />
-                                                    {errors?.material_name ? <Box as="div" mt={1} textColor="red.600">{errors.material_name?.type === 'required' ? "Vui lòng điền tên màu!" : errors.material_name.message}</Box> : null}
+                                                    {errors?.material_name ? <Box as="div" mt={1} textColor="red.600">{errors.material_name?.type === 'required' ? "Vui lòng điền tên!" : errors.material_name.message}</Box> : null}
                                                 </div>
                                             )
                                         }}
                                     />
                                 </Form.Item>
-                                <Form.Item label="Mã chất liệu">
+                              {
+                                id && (
+                                    <Form.Item label="Mã chất liệu">
                                     <Controller
                                         name="material_code"
                                         control={control}
@@ -158,13 +148,14 @@ const MaterialCreateUpdate = () => {
                                         render={({ field }) => {
                                             return (
                                                 <div ref={materialCodeErrorRef}>
-                                                    <Input {...field} placeholder="Ví dụ: VNMA001" />
-                                                    {errors?.material_code ? <Box as="div" mt={1} textColor="red.600">{errors.material_code?.type === 'required' ? "Vui lòng điền mã màu!" : errors.material_code.message}</Box> : null}
+                                                    <Input {...field} placeholder="Ví dụ: VNMA001" disabled />
                                                 </div>
                                             )
                                         }}
                                     />
                                 </Form.Item>
+                                )
+                              }
                             </Col>
                         </Form>
 

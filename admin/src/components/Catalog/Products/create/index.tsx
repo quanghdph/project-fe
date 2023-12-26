@@ -124,12 +124,12 @@ const ProductCreate: React.FC = () => {
                </Card>
             </Col>
          </Row>
-         <SelectImage
+         {/* <SelectImage
             isModalAssetOpen={isModalAssetOpen}
             setIsModalAssetOpen={setIsModalAssetOpen}
             setFeaturedAsset={setFeaturedAsset}
             featuredAsset={featuredAsset as Asset}
-         />
+         /> */}
       </Fragment>
    );
 };

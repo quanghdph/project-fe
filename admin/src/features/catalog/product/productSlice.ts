@@ -85,26 +85,6 @@ const initialState: ProductState = {
         result: null,
         loading: false,
         error: false
-    },
-    productVariantUpdate: {
-        result: null,
-        loading: false,
-        error: false
-    },
-    productOptionUpdate: {
-        result: null,
-        loading: false,
-        error: false
-    },
-    deleteProductVariant: {
-        result: null,
-        loading: false,
-        error: false
-    },
-    createProductVariantOption: {
-        result: null,
-        loading: false,
-        error: false
     }
 } as ProductState;
 
@@ -181,63 +161,7 @@ export const productSlice = createSlice({
             state.update.loading = false;
             state.update.result = action.payload;
             state.update.error = true;
-        },
-        // ** Update product variant
-        updateProductVariantStart: (state) => {
-            state.productVariantUpdate.loading = true;
-        },
-        updateProductVariantSuccess: (state, action) => {
-            state.productVariantUpdate.loading = false;
-            state.productVariantUpdate.result = action.payload;
-            state.productVariantUpdate.error = false
-        },
-        updateProductVariantFailed: (state, action) => {
-            state.productVariantUpdate.loading = false;
-            state.productVariantUpdate.result = action.payload;
-            state.productVariantUpdate.error = true;
-        },
-        // ** Update product option
-        updateProductOptionStart: (state) => {
-            state.productOptionUpdate.loading = true;
-        },
-        updateProductOptionSuccess: (state, action) => {
-            state.productOptionUpdate.loading = false;
-            state.productOptionUpdate.result = action.payload;
-            state.productOptionUpdate.error = false
-        },
-        updateProductOptionFailed: (state, action) => {
-            state.productOptionUpdate.loading = false;
-            state.productOptionUpdate.result = action.payload;
-            state.productOptionUpdate.error = true;
-        },
-        // ** Delete product variant
-        deleteProductVariantStart: (state) => {
-            state.deleteProductVariant.loading = true;
-        },
-        deleteProductVariantSuccess: (state, action) => {
-            state.deleteProductVariant.loading = false;
-            state.deleteProductVariant.result = action.payload;
-            state.deleteProductVariant.error = false
-        },
-        deleteProductVariantFailed: (state, action) => {
-            state.deleteProductVariant.loading = false;
-            state.deleteProductVariant.result = action.payload;
-            state.deleteProductVariant.error = true;
-        },
-        // ** Create product variant option
-        createProductVariantOptionStart: (state) => {
-            state.createProductVariantOption.loading = true;
-        },
-        createProductVariantOptionSuccess: (state, action) => {
-            state.createProductVariantOption.loading = false;
-            state.createProductVariantOption.result = action.payload;
-            state.createProductVariantOption.error = false
-        },
-        createProductVariantOptionFailed: (state, action) => {
-            state.createProductVariantOption.loading = false;
-            state.createProductVariantOption.result = action.payload;
-            state.createProductVariantOption.error = true;
-        },
+        }
     }
 });
 
@@ -257,18 +181,6 @@ export const {
     updateProductStart,
     updateProductSuccess,
     updateProductFailed,
-    updateProductVariantStart,
-    updateProductVariantSuccess,
-    updateProductVariantFailed,
-    updateProductOptionStart,
-    updateProductOptionSuccess,
-    updateProductOptionFailed,
-    deleteProductVariantStart,
-    deleteProductVariantSuccess,
-    deleteProductVariantFailed,
-    createProductVariantOptionStart,
-    createProductVariantOptionSuccess,
-    createProductVariantOptionFailed
 } = productSlice.actions;
 
 export default productSlice.reducer;

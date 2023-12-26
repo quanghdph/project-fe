@@ -35,7 +35,7 @@ const HomePage = () => {
                     </Col>
                     <Col span={20}>
                         <Menu mode="horizontal" style={{ border: 0, justifyContent: "end" }}>
-                            <Menu.SubMenu key="info-user" title={`Xin chào, ${!currentUser.loading && currentUser.result && currentUser.result.first_name} ${!currentUser.loading && currentUser.result && currentUser.result.last_name}`}>
+                            <Menu.SubMenu key="info-user" title={`Xin chào, ${!currentUser.loading && currentUser.result ? currentUser.result.data.username : null }`}>
                                 <Menu.Item key="home" onClick={() => navigate('/dashboard')}>
                                     Trang chủ
                                 </Menu.Item>

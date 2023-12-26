@@ -112,7 +112,7 @@ const WaistbandCreateUpdate = () => {
                             <Link to='/'>Trang chủ</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            <Link to='/catalog/waistband'>Cạp quần</Link>
+                            <Link to='/catalog/waistbands'>Cạp quần</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>{id ? 'Cập nhật' : 'Tạo'}</Breadcrumb.Item>
                     </Breadcrumb>
@@ -142,14 +142,14 @@ const WaistbandCreateUpdate = () => {
                                         render={({ field }) => {
                                             return (
                                                 <div ref={waistbandNameErrorRef}>
-                                                    <Input {...field} placeholder="Ví dụ: Waistband L" />
-                                                    {errors?.waistband_name ? <Box as="div" mt={1} textColor="red.600">{errors.waistband_name?.type === 'required' ? "Vui lòng điền tên màu!" : errors.waistband_name.message}</Box> : null}
+                                                    <Input {...field} placeholder="Ví dụ: Waistband" />
+                                                    {errors?.waistband_name ? <Box as="div" mt={1} textColor="red.600">{errors.waistband_name?.type === 'required' ? "Vui lòng điền tên!" : errors.waistband_name.message}</Box> : null}
                                                 </div>
                                             )
                                         }}
                                     />
                                 </Form.Item>
-                                <Form.Item label="Mã màu">
+                                <Form.Item label="Mã cạp quần">
                                     <Controller
                                         name="waistband_code"
                                         control={control}
@@ -157,8 +157,8 @@ const WaistbandCreateUpdate = () => {
                                         render={({ field }) => {
                                             return (
                                                 <div ref={waistbandCodeErrorRef}>
-                                                    <Input {...field} placeholder="Ví dụ: L" />
-                                                    {errors?.waistband_code ? <Box as="div" mt={1} textColor="red.600">{errors.waistband_code?.type === 'required' ? "Vui lòng điền mã màu!" : errors.waistband_code.message}</Box> : null}
+                                                    <Input {...field} placeholder="VM00932" />
+                                                    {errors?.waistband_code ? <Box as="div" mt={1} textColor="red.600">{errors.waistband_code?.type === 'required' ? "Vui lòng điền mã cạp quần!" : errors.waistband_code.message}</Box> : null}
                                                 </div>
                                             )
                                         }}

@@ -18,8 +18,6 @@ import CustomerListPage from './pages/Customer/list';
 import CustomerCreateUpdatePage from './pages/Customer/create-update';
 import CategoryListPage from './pages/Catalog/Categories/list';
 import CategoryCreateUpdatePage from './pages/Catalog/Categories/create-update';
-import PromotionListPage from './pages/Marketing/Promotions/list';
-import PromotionCreateUpdatePage from './pages/Marketing/Promotions/create-update';
 import AssetsPage from './pages/Catalog/Assets';
 import OrderListPage from './pages/Sales/Orders/list';
 import OrderDetailPage from './pages/Sales/Orders/detail';
@@ -45,12 +43,12 @@ const ProtectRoute = ({ children }: ProtectRouteProps) => {
   const accessToken = localStorage.getItem("accessToken")
   const navigate = useNavigate()
 
-  // React.useEffect(() => {
-  //   if (!accessToken) {
-  //     navigate('/login')
-  //   }
-  //   // navigate('/dashboard')
-  // }, [accessToken])
+  React.useEffect(() => {
+    if (!accessToken) {
+      navigate('/login')
+    }
+    navigate('/dashboard')
+  }, [accessToken])
 
   return (
     <React.Fragment>
@@ -118,13 +116,6 @@ const App = () => {
               <Route index element={<EmployeeListPage />} />
               <Route path='create' element={<EmployeeCreateUpdatePage />} />
               <Route path='update/:id' element={<EmployeeCreateUpdatePage />} />
-            </Route>
-            <Route path='marketing'>
-              <Route path='promotions'>
-                <Route index element={<PromotionListPage />} />
-                <Route path='create' element={<PromotionCreateUpdatePage />} />
-                <Route path='update/:id' element={<PromotionCreateUpdatePage />} />
-              </Route>
             </Route>
             <Route path='settings'>
               <Route path='administrators'>

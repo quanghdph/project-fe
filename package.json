@@ -30,8 +30,9 @@
     "@emotion/styled": "^11.10.8",
     "@types/lodash": "4.14.194",
     "framer-motion": "^10.12.7",
+    "javascript-time-ago": "2.5.9",
     "lodash": "4.17.21",
-    "javascript-time-ago": "2.5.9"
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "concurrently": "8.0.1"

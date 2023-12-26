@@ -11,7 +11,7 @@ import autoAnimate from '@formkit/auto-animate'
 
 
 type Inputs = {
-    email: string,
+    username: string,
     password: string,
 }
 
@@ -27,15 +27,15 @@ const LoginPage: React.FC = () => {
 
     const { control, handleSubmit, setError, formState: { errors } } = useForm<Inputs>({
         defaultValues: {
-            email: 'superadmin@gmail.com',
-            password: 'superadmin'
+            username: 'quang123',
+            password: '123'
         }
     });
-    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-        loginUser({ email, password }, dispatch, navigate, setError, axiosClient);
+    const onSubmit: SubmitHandler<Inputs> = async ({ username, password }) => {
+        loginUser({ username, password }, dispatch, navigate, setError, axiosClient);
     };
 
-    const emailErrorRef = React.useRef(null);
+    const usernameErrorRef = React.useRef(null);
     const passwordErrorRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
     }, [accessToken])
 
     React.useEffect(() => {
-        emailErrorRef.current && autoAnimate(emailErrorRef.current);
+        usernameErrorRef.current && autoAnimate(usernameErrorRef.current);
         passwordErrorRef.current && autoAnimate(passwordErrorRef.current)
     }, [parent])
 
@@ -67,14 +67,14 @@ const LoginPage: React.FC = () => {
                             >
                                 <Form.Item label="Email">
                                     <Controller
-                                        name="email"
+                                        name="username"
                                         control={control}
                                         rules={{ required: true }}
                                         render={({ field }) => {
                                             return (
-                                                <div ref={emailErrorRef}>
+                                                <div ref={usernameErrorRef}>
                                                     <Input placeholder='superadmin@gmail.com' {...field} />
-                                                    {errors?.email ? <Box as="div" mt={1} textColor="red.600">{errors.email?.type === 'required' ? "Vui lòng điền email!" : errors.email.message}</Box> : null}
+                                                    {errors?.username ? <Box as="div" mt={1} textColor="red.600">{errors.username?.type === 'required' ? "Vui lòng điền username!" : errors.username.message}</Box> : null}
                                                 </div>
                                             )
                                         }}

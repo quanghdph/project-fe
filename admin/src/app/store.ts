@@ -8,7 +8,6 @@ import customerSlice from 'src/features/customer/customerSlice';
 import addressSlice from 'src/features/address/addressSlice';
 import categorySlice from 'src/features/catalog/category/categorySlice';
 import orderSlice from 'src/features/sale/order/actionSlice';
-import promotionSlice from 'src/features/promotion/promotionSlice';
 
 import {
   persistStore,
@@ -47,7 +46,6 @@ const rootReducer = combineReducers({
   material: materialSlice,
   waistband: waistbandSlice,
   employee: employeeSlice,
-  promotion: promotionSlice,
   order: orderSlice
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)

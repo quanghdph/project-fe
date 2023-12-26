@@ -7,6 +7,7 @@ import {
   Divider,
   Input,
   Modal,
+  PaginationProps,
   Row,
   Select,
   Space,
@@ -110,8 +111,6 @@ const Size = () => {
     name: string;
   }>();
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
-  const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
 
   // ** Variables
@@ -158,22 +157,10 @@ const Size = () => {
       axiosClientJwt,
       dispatch,
     });
-  }, [page, limit, refresh, value]);
+  }, [page, limit, refresh]);
 
   // ** Function handle
   const dataRender = (): DataType[] => {
-    // if (!category.list.loading && category.list.result) {
-    //     return category.list.result.categories.map((category, index: number) => {
-    //         return {
-    //             key: index,
-    //             id: category.id,
-    //             category_code: category.category_code,
-    //             category_name: category.category_name,
-    //             active: category.active,
-    //             description: category.description
-    //         }
-    //     })
-    // }
     if (!size.list.loading && size.list.result) {
       return size.list.result.listSizes.map((size, index: number) => {
         return {
@@ -205,12 +192,17 @@ const Size = () => {
   };
 
   const handleOnChangePagination = (e: number) => {
-    // setSkip((e - 1) * take)
     setPage(e)
   };
+  const handleOnShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+    setPage(current)
+    setLimit(pageSize)
+  };
+
 
   const onChangeStatus = (value: string) => {
     setStatus(value);
+
   };
 
   return (
@@ -228,36 +220,6 @@ const Size = () => {
           <Row>
             <Col span={24}>
               <Flex justifyContent={"flex-end"} alignItems={"center"}>
-                <Box mr={3} flex={2}>
-                  <Input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                    }}
-                  />
-                </Box>
-                <Box mr={3} flex={1}>
-                  <Select
-                    value={status}
-                    placeholder="Status"
-                    onChange={onChangeStatus}
-                    options={[
-                      {
-                        value: "all",
-                        label: "Tất cả",
-                      },
-                      {
-                        value: "active",
-                        label: "Hoạt động",
-                      },
-                      {
-                        value: "disabled",
-                        label: "Vô hiệu hóa",
-                      },
-                    ]}
-                  />
-                </Box>
                 <Button
                   style={{ textTransform: "uppercase" }}
                   type="primary"
@@ -286,8 +248,11 @@ const Size = () => {
                     total: size.list.result?.total,
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`,
-                    onChange: handleOnChangePagination,
+                     onChange: handleOnChangePagination,
+                    defaultPageSize: page,
+                    onShowSizeChange: handleOnShowSizeChange,
                     responsive: true,
+
                   }}
                 />
               </Card>

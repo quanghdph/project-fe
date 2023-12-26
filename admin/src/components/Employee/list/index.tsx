@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import {
+  Avatar,
   Breadcrumb,
   Button,
   Card,
@@ -7,6 +8,7 @@ import {
   Divider,
   Input,
   Modal,
+  PaginationProps,
   Row,
   Select,
   Space,
@@ -25,7 +27,11 @@ import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import type { ColumnsType } from "antd/es/table";
 import { useDebounce } from "use-debounce";
-import { deleteEmployee, getListEmployee } from "src/features/employee/action";
+import {
+  deleteEmployee,
+  getListEmployee,
+  getListSearchEmployee,
+} from "src/features/employee/action";
 
 interface DataType {
   key: number;
@@ -51,9 +57,16 @@ const columns = (
   {
     title: "Tên",
     dataIndex: "employee_name",
-    ellipsis: true,
     key: "employee_name",
-    width: "20%"
+    width: "20%",
+    render: (name, record) => {
+      return (
+        <Flex alignItems={"center"}>
+          <Avatar src={<img src={record.url} style={{ width: 40 }} />} />
+          <Box ml={2}>{name}</Box>
+        </Flex>
+      );
+    },
   },
   {
     title: "Mã nhân viên",
@@ -78,7 +91,7 @@ const columns = (
     dataIndex: "employee_email",
     ellipsis: true,
     key: "employee_email",
-    width: "20%"
+    width: "20%",
   },
   {
     title: "Số điện thoại",
@@ -102,12 +115,12 @@ const columns = (
             shape="circle"
             icon={<DeleteOutlined />}
             onClick={() => {
-               setIsModalOpen(true);
-               setEmployeeDelete({
-                  ...employeeDelete,
-                  id: record.id,
-                  name: record.employee_name,
-                });
+              setIsModalOpen(true);
+              setEmployeeDelete({
+                ...employeeDelete,
+                id: record.id,
+                name: record.employee_name,
+              });
             }}
           />
         </Space>
@@ -118,11 +131,9 @@ const columns = (
 
 const Employee = () => {
   // ** State
-  // const [take, setTake] = useState<number>(10)
-  // const [skip, setSkip] = useState<number>(0)
-  const [page, setPage] = useState<number>(1)
-  const [limit, setLimit] = useState<number>(10)
-  const [filter, setFilter] = useState<string>('')
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [filter, setFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [employeeDelete, setEmployeeDelete] = useState<{
     id: number;
@@ -132,6 +143,7 @@ const Employee = () => {
   const [search, setSearch] = useState<string>("");
   const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
+  const [gender, setGender] = useState<boolean>(true);
 
   // ** Variables
   const employee = useAppSelector((state) => state.employee);
@@ -142,88 +154,83 @@ const Employee = () => {
   const navigate = useNavigate();
 
   // ** Effect
-  // useEffect(() => {
-  //     getListCategory({
-  //         pagination: {
-  //             skip,
-  //             take,
-  //             search: value,
-  //             status
-  //         },
-  //         navigate,
-  //         axiosClientJwt,
-  //         dispatch,
-  //     })
-  // }, [skip, take, refresh, value, status])
   useEffect(() => {
-    // getListCategory({
-    //     pagination: {
-    //         skip,
-    //         take,
-    //         search: value,
-    //         status
-    //     },
-    //     navigate,
-    //     axiosClientJwt,
-    //     dispatch,
-    // })
-    getListEmployee({
+    if (value && search !== "") {
+      getListSearchEmployee({
         params: {
-            page,
-            limit,
-            filter
+          value,
         },
-      navigate,
-      axiosClientJwt,
-      dispatch,
-    });
+        navigate,
+        axiosClientJwt,
+        dispatch,
+      });
+    } else {
+      getListEmployee({
+        params: {
+          page,
+          limit,
+          filter,
+        },
+        navigate,
+        axiosClientJwt,
+        dispatch,
+      });
+    }
   }, [page, limit, refresh, value]);
 
   // ** Function handle
   const dataRender = (): DataType[] => {
-    // if (!category.list.loading && category.list.result) {
-    //     return category.list.result.categories.map((category, index: number) => {
-    //         return {
-    //             key: index,
-    //             id: category.id,
-    //             category_code: category.category_code,
-    //             category_name: category.category_name,
-    //             active: category.active,
-    //             description: category.description
-    //         }
-    //     })
-    // }
-    if (!employee.list.loading && employee.list.result) {
-      return employee.list.result.listEmployees.map((employee, index: number) => {
-        const fullname = `${employee.firstName} ${employee.lastName}`;
-        const filgender = employee.gender == 1 ? "Nam" : "Nữ";
-        return {
-          key: index,
-          id: employee.id,
-          employee_code: employee.employeeCode,
-          employee_name: fullname,
-          employee_gender:  filgender,
-          employee_birth: employee.dateOfBirth,
-          employee_email: employee.email,
-          employee_phone: employee.phoneNumber,
-          // employee_status: ,
-        };
-      });
+    if (!employee.list.loading && employee.list.result?.listEmployees) {
+      return employee.list.result.listEmployees.map(
+        (employee, index: number) => {
+          const fullname = `${employee.firstName} ${employee.lastName}`;
+          const filgender = employee.gender == 1 ? "Nam" : "Nữ";
+          return {
+            key: index,
+            id: employee.id,
+            employee_code: employee.employeeCode,
+            employee_name: fullname,
+            employee_gender: filgender,
+            employee_birth: employee.dateOfBirth,
+            employee_email: employee.email,
+            employee_phone: employee.phoneNumber,
+            // employee_status: ,
+          };
+        },
+      );
+    } else if(!employee.list.loading &&employee.list.result) {
+      return employee.list.result.map(
+        (employee, index: number) => {
+          const fullname = `${employee.firstName} ${employee.lastName}`;
+          const filgender = employee.gender == 1 ? "Nam" : "Nữ";
+          return {
+            key: index,
+            id: employee.id,
+            employee_code: employee.employeeCode,
+            employee_name: fullname,
+            employee_gender: filgender,
+            employee_birth: employee.dateOfBirth,
+            employee_email: employee.email,
+            employee_phone: employee.phoneNumber,
+            // employee_status: ,
+          };
+        },
+      );
     }
     return [];
   };
 
   const handleOk = async () => {
     await deleteEmployee({
-        axiosClientJwt,
-        dispatch,
-        navigate,
-        id: employeeDelete?.id!,
-        refresh,
-        setIsModalOpen,
-        setRefresh,
-        message
-    })
+      axiosClientJwt,
+      dispatch,
+      navigate,
+      id: employeeDelete?.id!,
+      refresh,
+      setIsModalOpen,
+      setRefresh,
+      message,
+    });
   };
 
   const handleCancel = () => {
@@ -231,12 +238,23 @@ const Employee = () => {
   };
 
   const handleOnChangePagination = (e: number) => {
-    // setSkip((e - 1) * take)
-    setPage(e)
+    setPage(e);
+  };
+
+  const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    current,
+    pageSize,
+  ) => {
+    setPage(current);
+    setLimit(pageSize);
   };
 
   const onChangeStatus = (value: string) => {
     setStatus(value);
+  };
+
+  const handleChangeGender = (value: boolean) => {
+    setGender(value);
   };
 
   return (
@@ -313,6 +331,7 @@ const Employee = () => {
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`,
                     onChange: handleOnChangePagination,
+                    onShowSizeChange: handleOnShowSizeChange,
                     responsive: true,
                   }}
                 />

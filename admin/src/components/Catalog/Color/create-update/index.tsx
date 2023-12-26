@@ -68,7 +68,6 @@ const ColorCreateUpdate = () => {
 
     useEffect(() => {
         if (id && !color.single.loading && color.single.result) {
-            console.log(color.single);
             setValue("color_code", color.single.result.colorCode)
             setValue("color_name", color.single.result.colorName)
         }
@@ -80,7 +79,6 @@ const ColorCreateUpdate = () => {
             updateColor({
                 axiosClientJwt,
                 color: {
-                    colorCode: data.color_code,
                     colorName: data.color_name,
                 },
                 dispatch,
@@ -93,7 +91,6 @@ const ColorCreateUpdate = () => {
             createColor({
                 axiosClientJwt,
                 color: {
-                    colorCode: data.color_code,
                     colorName: data.color_name,
                 },
                 dispatch,
@@ -150,7 +147,9 @@ const ColorCreateUpdate = () => {
                                         }}
                                     />
                                 </Form.Item>
-                                <Form.Item label="Mã màu">
+                             {
+                                id && (
+                                    <Form.Item label="Mã màu">
                                     <Controller
                                         name="color_code"
                                         control={control}
@@ -158,13 +157,15 @@ const ColorCreateUpdate = () => {
                                         render={({ field }) => {
                                             return (
                                                 <div ref={colorCodeErrorRef}>
-                                                    <Input {...field} placeholder="Ví dụ: 040493" />
+                                                    <Input {...field} placeholder="Ví dụ: 040493" disabled />
                                                     {errors?.color_code ? <Box as="div" mt={1} textColor="red.600">{errors.color_code?.type === 'required' ? "Vui lòng điền mã màu!" : errors.color_code.message}</Box> : null}
                                                 </div>
                                             )
                                         }}
                                     />
                                 </Form.Item>
+                                )
+                             }
                             </Col>
                         </Form>
 

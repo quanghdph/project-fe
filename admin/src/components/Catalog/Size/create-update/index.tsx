@@ -144,13 +144,13 @@ const SizeCreateUpdate = () => {
                                             return (
                                                 <div ref={sizeNameErrorRef}>
                                                     <Input {...field} placeholder="Ví dụ: Size L" />
-                                                    {errors?.size_name ? <Box as="div" mt={1} textColor="red.600">{errors.size_name?.type === 'required' ? "Vui lòng điền tên màu!" : errors.size_name.message}</Box> : null}
+                                                    {errors?.size_name ? <Box as="div" mt={1} textColor="red.600">{errors.size_name?.type === 'required' ? "Vui lòng điền tên!" : errors.size_name.message}</Box> : null}
                                                 </div>
                                             )
                                         }}
                                     />
                                 </Form.Item>
-                                <Form.Item label="Mã màu">
+                                <Form.Item label="Biến thể">
                                     <Controller
                                         name="size_code"
                                         control={control}
@@ -159,7 +159,7 @@ const SizeCreateUpdate = () => {
                                             return (
                                                 <div ref={sizeCodeErrorRef}>
                                                     <Input {...field} placeholder="Ví dụ: L" />
-                                                    {errors?.size_code ? <Box as="div" mt={1} textColor="red.600">{errors.size_code?.type === 'required' ? "Vui lòng điền mã màu!" : errors.size_code.message}</Box> : null}
+                                                    {errors?.size_code ? <Box as="div" mt={1} textColor="red.600">{errors.size_code?.type === 'required' ? "Vui lòng điền biến thể!" : errors.size_code.message}</Box> : null}
                                                 </div>
                                             )
                                         }}

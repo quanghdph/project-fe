@@ -89,7 +89,7 @@ const ProductDetail = () => {
         }
     }, [id, product.single.loading, product.single.result])
 
-    const onSubmit = async (data: FormValuesProduct) => {
+    const onSubmit = async (data: any) => {
         if (id) {
             await updateProduct({
                 product: {

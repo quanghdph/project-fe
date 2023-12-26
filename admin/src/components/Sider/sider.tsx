@@ -148,22 +148,6 @@ const SiderBar = () => {
                 ]
             },
             {
-                key: "marketing",
-                icon: "",
-                label: "Tiếp thị",
-                children: [
-                    {
-                        key: "promotions",
-                        icon: <TagOutlined />,
-                        label: "Khuyến mãi",
-                        className: location.pathname === "/marketing/promotions" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('/marketing/promotions')
-                        }
-                    },
-                ]
-            },
-            {
                 key: "settings",
                 icon: "",
                 label: "Cài đặt",
