@@ -23,23 +23,17 @@ import { CreateCustomerParams, DeleteCustomerParams, GetCustomerParams, GetListC
 
 export const getListCustomer = async ({ pagination, dispatch, axiosClientJwt, navigate }: GetListCustomerParams) => {
     try {
-        const { skip, take, search, status } = pagination;
+        // const { skip, take, search, status } = pagination;
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListCustomerStart());
-        const res: IAxiosResponse<User> = await axiosClientJwt.get('/user/customers', {
-            params: {
-                take,
-                skip,
-                search,
-                status
-            },
+        const res: IAxiosResponse<User> = await axiosClientJwt.get('/customer', {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        if (res?.statuse === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(getListCustomerSuccess(res.response.data));
+                dispatch(getListCustomerSuccess(res.data));
             }, 1000)
         } else {
             dispatch(getListCustomerFailed(null));

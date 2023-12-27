@@ -193,12 +193,14 @@ export const createEmployee = async ({
     const {
       firstName,
       lastName,
-      gende,
+      gender,
       dateOfBirth,
       createDate,
       updateDate,
       email,
       phoneNumber,
+      image, 
+      encryptedPassword
     } = employee;
     dispatch(createEmployeeStart());
     const accessToken = localStorage.getItem("accessToken");
@@ -207,12 +209,14 @@ export const createEmployee = async ({
       {
         firstName,
         lastName,
-        gende,
+        gender,
         dateOfBirth,
         createDate,
         updateDate,
         email,
         phoneNumber,
+        image,
+        encryptedPassword
       },
       {
         headers: {
@@ -220,11 +224,12 @@ export const createEmployee = async ({
         },
       },
     );
+    console.log(res);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(createEmployeeSuccess(res.data));
         message.success("Tạo nhân viên thành công!");
-        navigate("/catalog/employees");
+        navigate("/employee");
       }, 1000);
     }
     // else if (res?.response?.code === 400 && !res?.response?.success) {
@@ -314,15 +319,32 @@ export const updateEmployee = async ({
   id,
 }: any) => {
   try {
-    const { employeeName, employeeCode } = employee;
+    const {  firstName,
+      lastName,
+      gende,
+      dateOfBirth,
+      createDate,
+      updateDate,
+      email,
+      phoneNumber,
+      image,
+      encryptedPassword } = employee;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateEmployeeStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
         `/employee/${id}`,
         {
-          employeeName,
-          employeeCode,
+          firstName,
+        lastName,
+        gender,
+        dateOfBirth,
+        createDate,
+        updateDate,
+        email,
+        phoneNumber,
+        image,
+        encryptedPassword
         },
         {
           headers: {

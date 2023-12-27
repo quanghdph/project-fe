@@ -44,6 +44,15 @@ const SiderBar = () => {
                         }
                     },
                     {
+                        key: "brands",
+                        icon: <InboxOutlined />,
+                        label: "Nhãn hiệu",
+                        className: location.pathname === "catalog/brands" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/brands')
+                        }
+                    },
+                    {
                         key: "sizes",
                         icon: <InboxOutlined />,
                         label: "Kích thước",
@@ -111,6 +120,15 @@ const SiderBar = () => {
                         className: location.pathname === "sales/orders" ? "ant-menu-item-selected" : "",
                         onClick: () => {
                             navigate('sales/orders')
+                        }
+                    },
+                    {
+                        key: "bills",
+                        icon: <ShoppingCartOutlined />,
+                        label: "Hóa đơn",
+                        className: location.pathname === "sales/bills" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('sales/bills')
                         }
                     },
                 ]

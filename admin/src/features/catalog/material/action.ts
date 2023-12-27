@@ -25,18 +25,13 @@ export const getListMaterial = async ({ params, dispatch, axiosClientJwt, naviga
         const {page, limit, filter} = params
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListMaterialStart());
-        const res: any = await axiosClientJwt.get(`/material?page=${page}&limit=${limit}&filter=${filter}`
-        // , {
-        //     params: {
-        //         take,
-        //         skip,
-        //         search,
-        //         status
-        //     },
-        //     headers: {
-        //         Authorization: `Bearer ${accessToken}`
-        //     }
-        // }
+        const url = page || limit || filter ? `/material?page=${page}&limit=${limit}&filter=${filter}` : '/material'
+        const res: any = await axiosClientJwt.get(url
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
         );
         
         if (res?.status === 200 && res?.data && res?.data.listMaterials) {

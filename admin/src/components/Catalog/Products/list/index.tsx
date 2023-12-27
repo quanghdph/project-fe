@@ -8,6 +8,7 @@ import {
   Divider,
   Input,
   Modal,
+  PaginationProps,
   Row,
   Select,
   Space,

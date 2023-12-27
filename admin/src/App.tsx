@@ -34,6 +34,11 @@ import WaistbandListPage from './pages/Catalog/Waistband/list';
 import WaistbandCreateUpdatePage from './pages/Catalog/Waistband/create-update';
 import EmployeeListPage from './pages/Employee/list';
 import EmployeeCreateUpdatePage from './pages/Employee/create-update';
+import BrandListPage from './pages/Catalog/Brand/list';
+import BrandCreateUpdatePage from './pages/Catalog/Brand/create-update';
+import BillListPage from './pages/Sales/Bills/list';
+import BillDetailPage from './pages/Sales/Bills/detail';
+import BillCreateUpdatePage from './pages/Sales/Bills/create-update';
 
 interface ProtectRouteProps {
   children: React.ReactNode
@@ -42,20 +47,26 @@ interface ProtectRouteProps {
 const ProtectRoute = ({ children }: ProtectRouteProps) => {
   const accessToken = localStorage.getItem("accessToken")
   const navigate = useNavigate()
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (!accessToken) {
       navigate('/login')
+    } else {
+      navigate('/dashboard')
     }
-    navigate('/dashboard')
+
+    // Update loading state to stop displaying the children briefly
+    setLoading(false);
   }, [accessToken])
 
   return (
     <React.Fragment>
-      {children}
+        {loading ? null : children}
     </React.Fragment>
   )
 }
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -70,7 +81,12 @@ const App = () => {
               <Route path='products'>
                 <Route index element={<ProductListPage />} />
                 <Route path='create' element={<ProductCreatePage />} />
-                <Route path='detail-update/:id' element={<ProductDetailUpdatePage />} />
+                <Route path='detail-update/:id' element={<ProductCreatePage />} />
+              </Route>
+              <Route path='brands'>
+                <Route index element={<BrandListPage />} />
+                <Route path='create' element={<BrandCreateUpdatePage />} />
+                <Route path='detail-update/:id' element={<BrandCreateUpdatePage />} />
               </Route>
               <Route path='colors'>
                 <Route index element={<ColorListPage />} />
@@ -105,6 +121,11 @@ const App = () => {
               <Route path='orders'>
                 <Route index element={<OrderListPage />} />
                 <Route path='detail/:id' element={<OrderDetailPage />} />
+              </Route>
+              <Route path='bills'>
+                <Route index element={<BillListPage />} />
+                <Route path='create' element={<BillCreateUpdatePage />} />
+                <Route path='detail/:id' element={<BillDetailPage />} />
               </Route>
             </Route>
             <Route path='customers'>

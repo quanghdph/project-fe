@@ -1,24 +1,24 @@
 import {
-  getListCategoryStart,
-  getListCategorySuccess,
-  getListCategoryFailed,
-  deleteCategoryStart,
-  deleteCategorySuccess,
-  deleteCategoryFailed,
-  getCategoryStart,
-  getCategorySuccess,
-  getCategoryFailed,
-  createCategoryStart,
-  createCategorySuccess,
-  createCategoryFailed,
-  updateCategoryStart,
-  updateCategorySuccess,
-  updateCategoryFailed,
-} from "./categorySlice";
+  getListBrandStart,
+  getListBrandSuccess,
+  getListBrandFailed,
+  deleteBrandStart,
+  deleteBrandSuccess,
+  deleteBrandFailed,
+  getBrandStart,
+  getBrandSuccess,
+  getBrandFailed,
+  createBrandStart,
+  createBrandSuccess,
+  createBrandFailed,
+  updateBrandStart,
+  updateBrandSuccess,
+  updateBrandFailed,
+} from "./brandSlice";
 import { Inotification } from "src/common";
 import { IAxiosResponse } from "src/types/axiosResponse";
 
-export const getListCategory = async ({
+export const getListBrand = async ({
   params,
   dispatch,
   axiosClientJwt,
@@ -27,9 +27,8 @@ export const getListCategory = async ({
   try {
     const { page, limit, filter } = params;
     const accessToken = localStorage.getItem("accessToken");
-    dispatch(getListCategoryStart());
-    const url = page || limit || filter ? `/category?page=${page}&limit=${limit}&filter=${filter}` : '/category'
-    console.log(url)
+    dispatch(getListBrandStart());
+    const url = page || limit || filter ? `/brand?page=${page}&limit=${limit}&filter=${filter}` : '/brand'
     const res: any = await axiosClientJwt.get(url,
       {
         headers: {
@@ -39,13 +38,13 @@ export const getListCategory = async ({
     );
     if (res?.status === 200 && res?.data && res?.data) {
       setTimeout(function () {
-        dispatch(getListCategorySuccess(res.data));
+        dispatch(getListBrandSuccess(res.data));
       }, 1000);
     } else {
-      dispatch(getListCategoryFailed(null));
+      dispatch(getListBrandFailed(null));
     }
   } catch (error: any) {
-    dispatch(getListCategoryFailed(null));
+    dispatch(getListBrandFailed(null));
     if (
       error?.response?.status === 403 &&
       error?.response?.statusText === "Forbidden"
@@ -66,7 +65,7 @@ export const getListCategory = async ({
   }
 };
 
-export const deleteCategory = async ({
+export const deleteBrand = async ({
   id,
   dispatch,
   axiosClientJwt,
@@ -77,10 +76,10 @@ export const deleteCategory = async ({
   setRefresh,
 }: any) => {
   try {
-    dispatch(deleteCategoryStart());
+    dispatch(deleteBrandStart());
     // const accessToken = localStorage.getItem("accessToken")
     const res: IAxiosResponse<{}> = await axiosClientJwt.delete(
-      `/category/${id}`,
+      `/brand/${id}`,
       // , {
       //     headers: {
       //         Authorization: `Bearer ${accessToken}`
@@ -89,7 +88,7 @@ export const deleteCategory = async ({
     );
 
     if (res.data.operationResult == "ERROR") {
-      dispatch(deleteCategoryFailed(res.data.operationMessage));
+      dispatch(deleteBrandFailed(res.data.operationMessage));
       setTimeout(function () {
         setIsModalOpen(false);
       }, 300);
@@ -100,7 +99,7 @@ export const deleteCategory = async ({
     }
 
     if (res.data.operationResult == "SUCCESS") {
-      dispatch(deleteCategoryFailed(res.data.operationMessage));
+      dispatch(deleteBrandFailed(res.data.operationMessage));
       setTimeout(function () {
         setIsModalOpen(false);
       }, 300);
@@ -111,20 +110,20 @@ export const deleteCategory = async ({
 
     // if (res?.response?.code === 200 && res?.response?.success) {
     //     setTimeout(function () {
-    //         dispatch(deleteCategorySuccess(res.response.data))
+    //         dispatch(deleteBrandSuccess(res.response.data))
     //         message.success('Xóa màu thành công!')
     //         setIsModalOpen(false)
     //         setRefresh(!refresh)
     //     }, 1000);
     // } else {
-    //     dispatch(deleteCategoryFailed(null));
+    //     dispatch(deleteBrandFailed(null));
     //     setTimeout(function () {
     //         setIsModalOpen(false)
     //     }, 1000)
 
     // }
   } catch (error: any) {
-    dispatch(deleteCategoryFailed(null));
+    dispatch(deleteBrandFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -147,8 +146,8 @@ export const deleteCategory = async ({
   }
 };
 
-export const createCategory = async ({
-  category,
+export const createBrand = async ({
+  brand,
   dispatch,
   axiosClientJwt,
   navigate,
@@ -156,13 +155,13 @@ export const createCategory = async ({
   setError,
 }: any) => {
   try {
-    const { categoryName, status } = category;
-    dispatch(createCategoryStart());
+    const { brandName, status } = brand;
+    dispatch(createBrandStart());
     const accessToken = localStorage.getItem("accessToken")
     const res: IAxiosResponse<{}> = await axiosClientJwt.post(
-      `/category`,
+      `/brand`,
       {
-        categoryName,
+        brandName,
         status: status
       },
       {
@@ -173,20 +172,20 @@ export const createCategory = async ({
     );
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(createCategorySuccess(res.data));
-        message.success("Tạo danh mục thành công!");
-        navigate("/catalog/categories");
+        dispatch(createBrandSuccess(res.data));
+        message.success("Tạo thương hiệu thành công!");
+        navigate("/catalog/brands");
       }, 1000);
     }
     // else if (res?.response?.code === 400 && !res?.response?.success) {
-    //     dispatch(createCategoryFailed(null));
-    //     setError(res?.response?.fieldError as keyof FormValuesCategory, { message: res?.response?.message })
+    //     dispatch(createBrandFailed(null));
+    //     setError(res?.response?.fieldError as keyof FormValuesBrand, { message: res?.response?.message })
     // }
     else {
-      dispatch(createCategoryFailed(null));
+      dispatch(createBrandFailed(null));
     }
   } catch (error: any) {
-    dispatch(createCategoryFailed(null));
+    dispatch(createBrandFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -208,7 +207,7 @@ export const createCategory = async ({
   }
 };
 
-export const getCategory = async ({
+export const getBrand = async ({
   id,
   dispatch,
   axiosClientJwt,
@@ -216,9 +215,9 @@ export const getCategory = async ({
 }: any) => {
   try {
     // const accessToken = localStorage.getItem("accessToken")
-    dispatch(getCategoryStart());
+    dispatch(getBrandStart());
     const res: IAxiosResponse<{}> = await axiosClientJwt.get(
-      `/category/${id}`,
+      `/brand/${id}`,
       // , {
       //     headers: {
       //         Authorization: `Bearer ${accessToken}`
@@ -227,13 +226,13 @@ export const getCategory = async ({
     );
     if (res?.status === 200) {
       setTimeout(function () {
-        dispatch(getCategorySuccess(res.data));
+        dispatch(getBrandSuccess(res.data));
       }, 1000);
     } else {
-      dispatch(getCategoryFailed(null));
+      dispatch(getBrandFailed(null));
     }
   } catch (error: any) {
-    dispatch(getCategoryFailed(null));
+    dispatch(getBrandFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -255,8 +254,8 @@ export const getCategory = async ({
   }
 };
 
-export const updateCategory = async ({
-  category,
+export const updateBrand = async ({
+  brand,
   axiosClientJwt,
   dispatch,
   navigate,
@@ -265,14 +264,14 @@ export const updateCategory = async ({
   id,
 }: any) => {
   try {
-    const { categoryName, status } = category;
+    const { brandName, status } = brand;
     const accessToken = localStorage.getItem("accessToken");
-    dispatch(updateCategoryStart());
+    dispatch(updateBrandStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
-        `/category/${id}`,
+        `/brand/${id}`,
         {
-          categoryName,
+          brandName,
           status,
         },
         {
@@ -284,21 +283,21 @@ export const updateCategory = async ({
     ]);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(updateCategorySuccess(res.data));
-        message.success("Cập nhật danh mục thành công");
+        dispatch(updateBrandSuccess(res.data));
+        message.success("Cập nhật thương hiệu thành công");
         navigate("/catalog/categories");
       }, 1000);
     }
 
     // else if (res?.response?.code === 400 && !res?.response?.success) {
-    //     dispatch(updateCategoryFailed(null));
-    //     setError(res?.response?.fieldError as keyof FormValuesCategory, { message: res?.response?.message })
+    //     dispatch(updateBrandFailed(null));
+    //     setError(res?.response?.fieldError as keyof FormValuesBrand, { message: res?.response?.message })
     // }
     else {
-      dispatch(updateCategoryFailed(null));
+      dispatch(updateBrandFailed(null));
     }
   } catch (error: any) {
-    dispatch(updateCategoryFailed(null));
+    dispatch(updateBrandFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',

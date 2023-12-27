@@ -34,122 +34,51 @@ export const createProduct = async ({
   message,
 }: any) => {
   try {
-    // const { active, description, name, featured_asset_id, opti } = product;
     const {
       productName,
-      mainImage,
       description,
-      createDate,
-      updateDate,
+      material,
+      category,
+      waistband,
+      brand,
       status,
-      productCode,
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
-    console.log(product);
-    const res: IAxiosResponse<Product> = await axiosClientJwt.post(
+    const res: any = await axiosClientJwt.post(
       `/product`,
       {
         productName,
-        mainImage,
         description,
-        createDate,
-        updateDate,
         status,
-        productCode,
+        material,
+        category,
+        waistband,
+        brand,
+        images: ""
       },
-      // {
-      //     headers: {
-      //         Authorization: `Bearer ${accessToken}`,
-      //     },
-      // },
+      {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+          },
+      },
     );
-    return res;
-    // if (resCreateProduct?.response?.code === 200 && resCreateProduct?.response?.success) {
-    //     const resCreateProductOption = await createProductOption({ options, axiosClientJwt, productId: resCreateProduct.response.data?.id })
-    //     if (resCreateProductOption?.response?.code === 200 && resCreateProductOption?.response?.success) {
-    //         const colorValue = resCreateProductOption.response.data?.filter((item) => item.name === "Color")
-    //         const sizeValue = resCreateProductOption.response.data?.filter((item) => item.name === "Size")
-    //         let result: { name: string, option_ids: number[], product_id: number }[] = [];
-    //         if (colorValue.length > 0 && sizeValue.length > 0) {
-    //             colorValue.map((item) => {
-    //                 const all = sizeValue.map((size) => {
-    //                     return {
-    //                         name: `${item.value}-${size.value}`,
-    //                         option_ids: [item.id, size.id],
-    //                         product_id: resCreateProduct.response.data?.id,
-    //                     };
-    //                 });
-    //                 result.push(...all);
-    //             });
-    //         } else if (colorValue.length > 0) {
-    //             colorValue.length > 0 && colorValue.map((item) => {
-    //                 return result.push({
-    //                     name: `${item.value}`,
-    //                     option_ids: [item.id],
-    //                     product_id: resCreateProduct.response.data?.id
-    //                 });
-    //             });
-    //         } else {
-    //             sizeValue.length > 0 && sizeValue.map((item) => {
-    //                 return result.push({
-    //                     name: `${item.value}`,
-    //                     option_ids: [item.id],
-    //                     product_id: resCreateProduct.response.data?.id
-    //                 });
-    //             });
-    //         }
-    //         const variants = result.map((item, index) => {
-    //             return {
-    //                 sku: getValues("sku") && getValues("sku")[index] as string,
-    //                 name: `${getValues("name")}-${item.name}`,
-    //                 option_ids: item.option_ids,
-    //                 product_id: item.product_id,
-    //                 stock: getValues("stock") && getValues("stock")[index] as number,
-    //                 origin_price: getValues("originPrice") && getValues("originPrice")[index] as number,
-    //                 price: getValues("price") && getValues("price")[index] as number
-    //             };
-    //         });
-    //         const resCreateProductVariant = await createProductVariant({ axiosClientJwt, variants })
-    //         if (resCreateProductVariant?.response?.code === 200 && resCreateProductVariant?.response?.success) {
-    //             setTimeout(function () {
-    //                 dispatch(createProductSuccess(resCreateProduct.response.data));
-    //                 message.success('Tạo sản phẩm thành công!');
-    //                 navigate("/catalog/products")
-    //             }, 1000);
-    //         } else if (resCreateProductVariant?.response?.code === 400 && !resCreateProductVariant?.response?.success) {
-    //             dispatch(createProductFailed(null));
-    //             const indexValuesError = resCreateProductVariant.response?.valuesError!.map((value) => {
-    //                 return getValues("sku").indexOf(value);
-    //             })
-    //             indexValuesError.map((i) => {
-    //                 setError(`${resCreateProductVariant?.response?.fieldError}[${i}]` as keyof FormValuesProductVariant, { message: resCreateProductVariant?.response?.message })
-    //             })
-    //         } else {
-    //             dispatch(createProductFailed(null));
-    //         }
-    //     } else {
-    //         dispatch(createProductFailed(null));
-    //     }
-    // } else {
-    //     dispatch(createProductFailed(null));
-    // }
+    if (res?.status === 200 && res?.data) {
+      setTimeout(function () {
+          dispatch(createProductSuccess(res.data));
+          message.success('Tạo sản phẩm thành công!');
+          navigate("/catalog/products")
+      }, 1000);
+  }else {
+    dispatch(createProductFailed(null));
+}
+   
   } catch (error: any) {
     dispatch(createProductFailed(null));
-    // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-    //     Inotification({
-    //         type: 'error',
-    //         message: 'Bạn không có quyền để thực hiện hành động này!'
-    //     })
-    //     setTimeout(function () {
-    //         navigate('/')
-    //     }, 1000);
-    // } else {
-    //     Inotification({
-    //         type: 'error',
-    //         message: 'Something went wrong!'
-    //     })
-    // }
+           Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
   }
 };
 
@@ -307,32 +236,36 @@ export const getProduct = async ({
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    if (res?.response?.code === 200 && res?.response?.success) {
+    if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(getProductSuccess(res.response.data));
+        dispatch(getProductSuccess(res.data));
       }, 1000);
     } else {
       dispatch(getProductFailed(null));
     }
   } catch (error: any) {
     dispatch(getProductFailed(null));
-    if (
-      error?.response?.status === 403 &&
-      error?.response?.statusText === "Forbidden"
-    ) {
-      Inotification({
-        type: "error",
-        message: "Bạn không có quyền để thực hiện hành động này!",
-      });
-      setTimeout(function () {
-        navigate("/");
-      }, 1000);
-    } else {
-      Inotification({
-        type: "error",
-        message: "Something went wrong!",
-      });
-    }
+    // if (
+    //   error?.response?.status === 403 &&
+    //   error?.response?.statusText === "Forbidden"
+    // ) {
+    //   Inotification({
+    //     type: "error",
+    //     message: "Bạn không có quyền để thực hiện hành động này!",
+    //   });
+    //   setTimeout(function () {
+    //     navigate("/");
+    //   }, 1000);
+    // } else {
+    //   Inotification({
+    //     type: "error",
+    //     message: "Something went wrong!",
+    //   });
+    // }
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
   }
 };
 
@@ -348,19 +281,29 @@ export const updateProduct = async ({
   setRefresh,
 }: any) => {
   try {
-    const { active, name, description, featured_asset_id, category_id } =
-      product;
+    const {
+      productName,
+      description,
+      material,
+      category,
+      waistband,
+      brand,
+      status,
+    } = product;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateProductStart());
+    console.log(id)
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
-        `/product/update/${id}`,
+        `/product/${id}`,
         {
-          active,
-          name,
-          description,
-          featured_asset_id,
-          category_id,
+          productName,
+      description,
+      material,
+      category,
+      waistband,
+      brand,
+      status,
         },
         {
           headers: {
@@ -369,9 +312,9 @@ export const updateProduct = async ({
         },
       ),
     ]);
-    if (res?.response?.code === 200 && res?.response?.success) {
+    if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(updateProductSuccess(res.response.data));
+        dispatch(updateProductSuccess(res.data));
         message.success("Cập nhật sản phẩm thành công!");
         setRefresh(!refresh);
       }, 1000);

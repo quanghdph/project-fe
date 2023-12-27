@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Breadcrumb, Button, Card, Col, Divider, Input, Row, Select, Space, Table, Tag } from 'antd';
+import { Breadcrumb, Button, Card, Col, Divider, Input, PaginationProps, Row, Select, Space, Table, Tag } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
@@ -43,6 +43,131 @@ interface DataType {
 const columns = (
     navigate: NavigateFunction
 ): ColumnsType<DataType> => [
+        // {
+        //     title: 'Mã đơn hàng',
+        //     ellipsis: true,
+        //     dataIndex: 'code',
+        //     key: 'code',
+        //     width: '15%',
+        //     fixed: 'left'
+        // },
+        // {
+        //     title: 'Khách hàng',
+        //     dataIndex: 'customer_name',
+        //     ellipsis: true,
+        //     width: '15%',
+        //     key: 'customer_name',
+        //     render: (customer_name: string, record) => {
+        //         return (
+        //             <Flex alignItems={"center"}>
+        //                 <UserOutlined />
+        //                 <Link to={`/customers/update/${record.users_id}`} style={{ marginLeft: "5px" }}>{customer_name}</Link>
+        //             </Flex>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Trạng thái',
+        //     dataIndex: 'status',
+        //     ellipsis: true,
+        //     key: 'status',
+        //     width: '100px',
+        //     render: (status: string) => {
+        //         return (
+        //             <span>
+        //                 {(() => {
+        //                     switch (status) {
+        //                         case StatusOrder.Confirm:
+        //                             return <Tag color="cyan">Xác nhận</Tag>
+        //                         case StatusOrder.Shipped:
+        //                             return <Tag color="orange">Đang vận chuyển</Tag>
+        //                         case StatusOrder.Completed:
+        //                             return <Tag color="green">Hoàn thành</Tag>
+        //                         case StatusOrder.Cancel:
+        //                             return <Tag color="red">Hủy</Tag>
+        //                         case StatusOrder.Refund:
+        //                             return <Tag color="magenta">Hoàn trả</Tag>
+        //                         default:
+        //                             return <Tag color="blue">Mở</Tag>
+        //                     }
+        //                 })()}
+        //             </span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Giá gốc',
+        //     dataIndex: 'origin_price',
+        //     ellipsis: true,
+        //     key: 'origin_price',
+        //     width: '150px',
+        //     render: (origin_price: number) => {
+        //         return (
+        //             <span>{currency(origin_price)}</span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Giá bán',
+        //     dataIndex: 'price',
+        //     ellipsis: true,
+        //     key: 'price',
+        //     width: '100px',
+        //     render: (price: number) => {
+        //         return (
+        //             <span>{currency(price)}</span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Số lượng',
+        //     dataIndex: 'quantity',
+        //     ellipsis: true,
+        //     key: 'quantity',
+        //     width: '100px',
+        //     render: (quantity: number) => {
+        //         return (
+        //             <span>{quantity}</span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Tổng giá',
+        //     dataIndex: 'total_price',
+        //     ellipsis: true,
+        //     key: 'total_price',
+        //     width: '100px',
+        //     render: (total_price: number) => {
+        //         return (
+        //             <span>{currency(total_price)}</span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Lợi nhuận',
+        //     ellipsis: true,
+        //     key: 'profit',
+        //     width: '100px',
+        //     render: (_, record) => {
+        //         return (
+        //             <span style={{ color: record.payment ? 'green' : 'red' }}>+{currency((record.total_price - (record.origin_price * record.quantity)))}</span>
+        //         )
+        //     }
+        // },
+        // {
+        //     title: 'Phương thức thanh toán',
+        //     dataIndex: 'payment_method',
+        //     ellipsis: true,
+        //     key: 'payment_method',
+        //     width: '100px',
+        //     render: (payment_method: string) => {
+        //         return (
+        //             <span>
+        //                 <Tag>{payment_method === 'Standard' ? "Thanh toán thường" : "Paypal"}</Tag>
+        //             </span>
+        //         )
+        //     }
+        // },
         {
             title: 'Mã đơn hàng',
             ellipsis: true,
@@ -50,123 +175,6 @@ const columns = (
             key: 'code',
             width: '15%',
             fixed: 'left'
-        },
-        {
-            title: 'Khách hàng',
-            dataIndex: 'customer_name',
-            ellipsis: true,
-            width: '15%',
-            key: 'customer_name',
-            render: (customer_name: string, record) => {
-                return (
-                    <Flex alignItems={"center"}>
-                        <UserOutlined />
-                        <Link to={`/customers/update/${record.users_id}`} style={{ marginLeft: "5px" }}>{customer_name}</Link>
-                    </Flex>
-                )
-            }
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            ellipsis: true,
-            key: 'status',
-            width: '100px',
-            render: (status: string) => {
-                return (
-                    <span>
-                        {(() => {
-                            switch (status) {
-                                case StatusOrder.Confirm:
-                                    return <Tag color="cyan">Xác nhận</Tag>
-                                case StatusOrder.Shipped:
-                                    return <Tag color="orange">Đang vận chuyển</Tag>
-                                case StatusOrder.Completed:
-                                    return <Tag color="green">Hoàn thành</Tag>
-                                case StatusOrder.Cancel:
-                                    return <Tag color="red">Hủy</Tag>
-                                case StatusOrder.Refund:
-                                    return <Tag color="magenta">Hoàn trả</Tag>
-                                default:
-                                    return <Tag color="blue">Mở</Tag>
-                            }
-                        })()}
-                    </span>
-                )
-            }
-        },
-        {
-            title: 'Giá gốc',
-            dataIndex: 'origin_price',
-            ellipsis: true,
-            key: 'origin_price',
-            width: '150px',
-            render: (origin_price: number) => {
-                return (
-                    <span>{currency(origin_price)}</span>
-                )
-            }
-        },
-        {
-            title: 'Giá bán',
-            dataIndex: 'price',
-            ellipsis: true,
-            key: 'price',
-            width: '100px',
-            render: (price: number) => {
-                return (
-                    <span>{currency(price)}</span>
-                )
-            }
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'quantity',
-            ellipsis: true,
-            key: 'quantity',
-            width: '100px',
-            render: (quantity: number) => {
-                return (
-                    <span>{quantity}</span>
-                )
-            }
-        },
-        {
-            title: 'Tổng giá',
-            dataIndex: 'total_price',
-            ellipsis: true,
-            key: 'total_price',
-            width: '100px',
-            render: (total_price: number) => {
-                return (
-                    <span>{currency(total_price)}</span>
-                )
-            }
-        },
-        {
-            title: 'Lợi nhuận',
-            ellipsis: true,
-            key: 'profit',
-            width: '100px',
-            render: (_, record) => {
-                return (
-                    <span style={{ color: record.payment ? 'green' : 'red' }}>+{currency((record.total_price - (record.origin_price * record.quantity)))}</span>
-                )
-            }
-        },
-        {
-            title: 'Phương thức thanh toán',
-            dataIndex: 'payment_method',
-            ellipsis: true,
-            key: 'payment_method',
-            width: '100px',
-            render: (payment_method: string) => {
-                return (
-                    <span>
-                        <Tag>{payment_method === 'Standard' ? "Thanh toán thường" : "Paypal"}</Tag>
-                    </span>
-                )
-            }
         },
         {
             title: 'Hành động',
@@ -185,8 +193,9 @@ const columns = (
 
 const Orders = () => {
     // ** State
-    const [take, setTake] = useState<number>(10)
-    const [skip, setSkip] = useState<number>(0)
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [filter, setFilter] = useState('')
     const [search, setSearch] = useState<string>('')
     const [value] = useDebounce(search, 1000);
     const [status, setStatus] = useState<string>('all')
@@ -202,21 +211,20 @@ const Orders = () => {
     // ** Effect
     useEffect(() => {
         getListOrder({
-            pagination: {
-                skip,
-                take,
-                search: value,
-                status
+            params: {
+                page,
+                limit,
+                filter
             },
             navigate,
             axiosClientJwt,
             dispatch,
         })
-    }, [skip, take, value, status])
+    }, [page, limit, value, status])
 
     // ** Function handle
     const handleOnChangePagination = (e: number) => {
-        setSkip((e - 1) * take)
+        setPage(e)
     }
 
     const onChangeStatus = (value: string) => {
@@ -224,29 +232,49 @@ const Orders = () => {
     };
 
     const dataRender = (): DataType[] => {
-        if (!order.list.loading && order.list.result) {
-            return order.list.result.orders.map((order, index: number) => {
-                return {
-                    key: index,
-                    id: order.id,
-                    code: order.code,
-                    created_date: order.created_date,
-                    status: order.status,
-                    customer_name: order.users.first_name + order.users.last_name,
-                    modified_date: order.modified_date,
-                    payment_method: order.payment_method,
-                    total_price: order.total_price,
-                    users_id: order.users_id,
-                    quantity: order.quantity,
-                    price: order.product_variant.price,
-                    origin_price: order.product_variant.origin_price,
-                    promotion: order.promotion,
-                    payment: order.payment
-                }
-            })
+        // if (!order.list.loading && order.list.result) {
+        //     return order.list.result.orders.map((order, index: number) => {
+        //         return {
+        //             key: index,
+        //             id: order.id,
+        //             code: order.code,
+        //             created_date: order.created_date,
+        //             status: order.status,
+        //             customer_name: order.users.first_name + order.users.last_name,
+        //             modified_date: order.modified_date,
+        //             payment_method: order.payment_method,
+        //             total_price: order.total_price,
+        //             users_id: order.users_id,
+        //             quantity: order.quantity,
+        //             price: order.product_variant.price,
+        //             origin_price: order.product_variant.origin_price,
+        //             promotion: order.promotion,
+        //             payment: order.payment
+        //         }
+        //     })
+        // }
+        if (!order.list.loading && order.list.result?.list) {
+            return order.list.result?.list?.listBill.map((order, index: number) => {
+              return {
+                key: index,
+                id: order.id,
+                name: order.orderName,
+                // url: order?.featured_asset?.url,
+                active: order.status,
+              };
+            });
         }
-        return []
+        // return []
     }
+
+    const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
+        current,
+        pageSize,
+      ) => {
+        setPage(current);
+        setLimit(pageSize);
+      };
+      
 
     return (
         <Fragment>
@@ -317,9 +345,8 @@ const Orders = () => {
                                     pagination={{
                                         total: order.list.result?.total,
                                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                                        defaultCurrent: skip + 1,
                                         onChange: handleOnChangePagination,
-                                        defaultPageSize: take,
+                                        onShowSizeChange: handleOnShowSizeChange,
                                         responsive: true
                                     }}
                                 />

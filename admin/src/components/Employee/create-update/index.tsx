@@ -39,6 +39,7 @@ export type FormValuesEmployee = {
 };
 
 const dateFormat = "YYYY/MM/DD";
+const outputFormat = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
 const EmployeeCreateUpdate = () => {
   // ** State
@@ -102,6 +103,10 @@ const EmployeeCreateUpdate = () => {
       // setValue("employee_gender", employee.single.result.gender);
       setValue("employee_email", employee.single.result.email);
       setValue("employee_phone", employee.single.result.phoneNumber);
+      console.log(employee.single)
+      employee.single.result?.dateOfBirth && setDateOfBirth(moment(employee.single.result?.dateOfBirth).format(outputFormat))
+      employee.single.result?.createDate && setCreateDate(moment(employee.single.result?.createDate).format(outputFormat))
+      employee.single.result?.updateDate && setUpdateDate(moment(employee.single.result?.updateDate).format(outputFormat))
     }
   }, [id, employee.single.loading, employee.single.result]);
 
@@ -136,6 +141,10 @@ const EmployeeCreateUpdate = () => {
 
   // ** Function handle
   const onSubmit = async (data: FormValuesEmployee) => {
+    const formatDateOfBirth =  moment(dateOfBirth).format("YYYY-MM-DD")
+    const formatCreateDate = moment(createDate).format("YYYY-MM-DD")
+    const formatUpdateDate = moment(updateDate).format("YYYY-MM-DD")
+
     console.log(data);
     if (id) {
       updateEmployee({
@@ -145,7 +154,9 @@ const EmployeeCreateUpdate = () => {
           firstName: data.employee_firstname,
           lastName: data.employee_lastname,
           gender: gender.value,
-          // dateOfBirth:
+          dateOfBirth: formatDateOfBirth,
+          createDate: formatCreateDate,
+          updateDate: formatUpdateDate,
           email: data.employee_email,
           phoneNumber: data.employee_phone,
         },
@@ -156,17 +167,19 @@ const EmployeeCreateUpdate = () => {
         setError,
       });
     } else {
-      createEmployee({
+      data && createEmployee({
         axiosClientJwt,
         employee: {
           employeeCode: data.employee_code,
           firstName: data.employee_firstname,
           lastName: data.employee_lastname,
           gender: gender.value,
-          dateOfBirth: dateOfBirth,
-          createDate: createDate,
-          updateDate: updateDate,
+          dateOfBirth: formatDateOfBirth,
+          createDate: formatCreateDate,
+          updateDate: formatUpdateDate,
           email: data.employee_email,
+          encryptedPassword: "hashed_password1",
+          image: '',
           phoneNumber: data.employee_phone,
         },
         dispatch,
@@ -313,18 +326,18 @@ const EmployeeCreateUpdate = () => {
                         return (
                           <DatePicker
                           // id="employee_birth"
-                          //   value={
-                          //     dateOfBirth
-                          //       ? moment(
-                          //           dateOfBirth?.substring(0, 10),
-                          //           dateFormat,
-                          //         )
-                          //       : ("" as any)
-                          //   }
-                          //   onChange={onChangeDatePicker}
+                            value={
+                              dateOfBirth
+                                ? moment(
+                                    dateOfBirth?.substring(0, 10),
+                                    dateFormat,
+                                  )
+                                : ("" as any)
+                            }
+                            onChange={onChangeDatePicker}
                           placeholder='Select date'
-                          onChange={(date) => field.onChange(date)}
-                          value={field.value}
+                          // onChange={(date) => field.onChange(date)}
+                          // value={field.value}
                           />
                         );
                       }}

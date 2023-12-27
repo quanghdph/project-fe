@@ -1,24 +1,24 @@
 import {
-  getListCategoryStart,
-  getListCategorySuccess,
-  getListCategoryFailed,
-  deleteCategoryStart,
-  deleteCategorySuccess,
-  deleteCategoryFailed,
-  getCategoryStart,
-  getCategorySuccess,
-  getCategoryFailed,
-  createCategoryStart,
-  createCategorySuccess,
-  createCategoryFailed,
-  updateCategoryStart,
-  updateCategorySuccess,
-  updateCategoryFailed,
-} from "./categorySlice";
+  getListBillStart,
+  getListBillSuccess,
+  getListBillFailed,
+  deleteBillStart,
+  deleteBillSuccess,
+  deleteBillFailed,
+  getBillStart,
+  getBillSuccess,
+  getBillFailed,
+  createBillStart,
+  createBillSuccess,
+  createBillFailed,
+  updateBillStart,
+  updateBillSuccess,
+  updateBillFailed,
+} from "./billSlice";
 import { Inotification } from "src/common";
 import { IAxiosResponse } from "src/types/axiosResponse";
 
-export const getListCategory = async ({
+export const getListBill = async ({
   params,
   dispatch,
   axiosClientJwt,
@@ -27,8 +27,8 @@ export const getListCategory = async ({
   try {
     const { page, limit, filter } = params;
     const accessToken = localStorage.getItem("accessToken");
-    dispatch(getListCategoryStart());
-    const url = page || limit || filter ? `/category?page=${page}&limit=${limit}&filter=${filter}` : '/category'
+    dispatch(getListBillStart());
+    const url = page || limit || filter ? `/bill?page=${page}&limit=${limit}&filter=${filter}` : '/bill'
     console.log(url)
     const res: any = await axiosClientJwt.get(url,
       {
@@ -39,13 +39,13 @@ export const getListCategory = async ({
     );
     if (res?.status === 200 && res?.data && res?.data) {
       setTimeout(function () {
-        dispatch(getListCategorySuccess(res.data));
+        dispatch(getListBillSuccess(res.data));
       }, 1000);
     } else {
-      dispatch(getListCategoryFailed(null));
+      dispatch(getListBillFailed(null));
     }
   } catch (error: any) {
-    dispatch(getListCategoryFailed(null));
+    dispatch(getListBillFailed(null));
     if (
       error?.response?.status === 403 &&
       error?.response?.statusText === "Forbidden"
@@ -66,7 +66,7 @@ export const getListCategory = async ({
   }
 };
 
-export const deleteCategory = async ({
+export const deleteBill = async ({
   id,
   dispatch,
   axiosClientJwt,
@@ -77,10 +77,10 @@ export const deleteCategory = async ({
   setRefresh,
 }: any) => {
   try {
-    dispatch(deleteCategoryStart());
+    dispatch(deleteBillStart());
     // const accessToken = localStorage.getItem("accessToken")
     const res: IAxiosResponse<{}> = await axiosClientJwt.delete(
-      `/category/${id}`,
+      `/bill/${id}`,
       // , {
       //     headers: {
       //         Authorization: `Bearer ${accessToken}`
@@ -89,7 +89,7 @@ export const deleteCategory = async ({
     );
 
     if (res.data.operationResult == "ERROR") {
-      dispatch(deleteCategoryFailed(res.data.operationMessage));
+      dispatch(deleteBillFailed(res.data.operationMessage));
       setTimeout(function () {
         setIsModalOpen(false);
       }, 300);
@@ -100,7 +100,7 @@ export const deleteCategory = async ({
     }
 
     if (res.data.operationResult == "SUCCESS") {
-      dispatch(deleteCategoryFailed(res.data.operationMessage));
+      dispatch(deleteBillFailed(res.data.operationMessage));
       setTimeout(function () {
         setIsModalOpen(false);
       }, 300);
@@ -111,20 +111,20 @@ export const deleteCategory = async ({
 
     // if (res?.response?.code === 200 && res?.response?.success) {
     //     setTimeout(function () {
-    //         dispatch(deleteCategorySuccess(res.response.data))
+    //         dispatch(deleteBillSuccess(res.response.data))
     //         message.success('Xóa màu thành công!')
     //         setIsModalOpen(false)
     //         setRefresh(!refresh)
     //     }, 1000);
     // } else {
-    //     dispatch(deleteCategoryFailed(null));
+    //     dispatch(deleteBillFailed(null));
     //     setTimeout(function () {
     //         setIsModalOpen(false)
     //     }, 1000)
 
     // }
   } catch (error: any) {
-    dispatch(deleteCategoryFailed(null));
+    dispatch(deleteBillFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -147,8 +147,8 @@ export const deleteCategory = async ({
   }
 };
 
-export const createCategory = async ({
-  category,
+export const createBill = async ({
+  bill,
   dispatch,
   axiosClientJwt,
   navigate,
@@ -156,13 +156,13 @@ export const createCategory = async ({
   setError,
 }: any) => {
   try {
-    const { categoryName, status } = category;
-    dispatch(createCategoryStart());
+    const { billName, status } = bill;
+    dispatch(createBillStart());
     const accessToken = localStorage.getItem("accessToken")
     const res: IAxiosResponse<{}> = await axiosClientJwt.post(
-      `/category`,
+      `/bill`,
       {
-        categoryName,
+        billName,
         status: status
       },
       {
@@ -173,20 +173,20 @@ export const createCategory = async ({
     );
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(createCategorySuccess(res.data));
-        message.success("Tạo danh mục thành công!");
+        dispatch(createBillSuccess(res.data));
+        message.success("Tạo hóa đơn thành công!");
         navigate("/catalog/categories");
       }, 1000);
     }
     // else if (res?.response?.code === 400 && !res?.response?.success) {
-    //     dispatch(createCategoryFailed(null));
-    //     setError(res?.response?.fieldError as keyof FormValuesCategory, { message: res?.response?.message })
+    //     dispatch(createBillFailed(null));
+    //     setError(res?.response?.fieldError as keyof FormValuesBill, { message: res?.response?.message })
     // }
     else {
-      dispatch(createCategoryFailed(null));
+      dispatch(createBillFailed(null));
     }
   } catch (error: any) {
-    dispatch(createCategoryFailed(null));
+    dispatch(createBillFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -208,7 +208,7 @@ export const createCategory = async ({
   }
 };
 
-export const getCategory = async ({
+export const getBill = async ({
   id,
   dispatch,
   axiosClientJwt,
@@ -216,9 +216,9 @@ export const getCategory = async ({
 }: any) => {
   try {
     // const accessToken = localStorage.getItem("accessToken")
-    dispatch(getCategoryStart());
+    dispatch(getBillStart());
     const res: IAxiosResponse<{}> = await axiosClientJwt.get(
-      `/category/${id}`,
+      `/bill/${id}`,
       // , {
       //     headers: {
       //         Authorization: `Bearer ${accessToken}`
@@ -227,13 +227,13 @@ export const getCategory = async ({
     );
     if (res?.status === 200) {
       setTimeout(function () {
-        dispatch(getCategorySuccess(res.data));
+        dispatch(getBillSuccess(res.data));
       }, 1000);
     } else {
-      dispatch(getCategoryFailed(null));
+      dispatch(getBillFailed(null));
     }
   } catch (error: any) {
-    dispatch(getCategoryFailed(null));
+    dispatch(getBillFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',
@@ -255,8 +255,8 @@ export const getCategory = async ({
   }
 };
 
-export const updateCategory = async ({
-  category,
+export const updateBill = async ({
+  bill,
   axiosClientJwt,
   dispatch,
   navigate,
@@ -265,14 +265,14 @@ export const updateCategory = async ({
   id,
 }: any) => {
   try {
-    const { categoryName, status } = category;
+    const { billName, status } = bill;
     const accessToken = localStorage.getItem("accessToken");
-    dispatch(updateCategoryStart());
+    dispatch(updateBillStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
-        `/category/${id}`,
+        `/bill/${id}`,
         {
-          categoryName,
+          billName,
           status,
         },
         {
@@ -284,21 +284,21 @@ export const updateCategory = async ({
     ]);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(updateCategorySuccess(res.data));
+        dispatch(updateBillSuccess(res.data));
         message.success("Cập nhật danh mục thành công");
-        navigate("/catalog/categories");
+        navigate("/sales/bills");
       }, 1000);
     }
 
     // else if (res?.response?.code === 400 && !res?.response?.success) {
-    //     dispatch(updateCategoryFailed(null));
-    //     setError(res?.response?.fieldError as keyof FormValuesCategory, { message: res?.response?.message })
+    //     dispatch(updateBillFailed(null));
+    //     setError(res?.response?.fieldError as keyof FormValuesBill, { message: res?.response?.message })
     // }
     else {
-      dispatch(updateCategoryFailed(null));
+      dispatch(updateBillFailed(null));
     }
   } catch (error: any) {
-    dispatch(updateCategoryFailed(null));
+    dispatch(updateBillFailed(null));
     // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
     //     Inotification({
     //         type: 'error',

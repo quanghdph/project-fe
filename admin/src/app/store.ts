@@ -25,6 +25,8 @@ import sizeSlice from 'src/features/catalog/size/sizeSlice';
 import materialSlice from 'src/features/catalog/material/materialSlice';
 import waistbandSlice from 'src/features/catalog/waistband/waistbandSlice';
 import employeeSlice from 'src/features/employee/employeeSlice';
+import brandSlice from 'src/features/catalog/brand/brandSlice';
+import billSlice from 'src/features/sale/bill/billSlice';
 
 const persistConfig = {
   key: 'root',
@@ -45,8 +47,10 @@ const rootReducer = combineReducers({
   size: sizeSlice,
   material: materialSlice,
   waistband: waistbandSlice,
+  brand: brandSlice,
   employee: employeeSlice,
-  order: orderSlice
+  order: orderSlice,
+  bill: billSlice
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

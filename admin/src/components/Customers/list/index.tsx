@@ -90,8 +90,11 @@ const columns = (
 
 const Customers = () => {
     // ** State
-    const [take, setTake] = useState<number>(10)
-    const [skip, setSkip] = useState<number>(0)
+    // const [take, setTake] = useState<number>(10)
+    // const [skip, setSkip] = useState<number>(0)
+    const [page, setPage] = useState<number>(1)
+    const [limit, setLimit] = useState<number>(10)
+    const [filter, setFilter] = useState<string>('')
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [customerDelete, setCustomerDelete] = useState<{ id: number, email: string }>()
     const [refresh, setRefresh] = useState<boolean>(false)
@@ -111,16 +114,15 @@ const Customers = () => {
     useEffect(() => {
         getListCustomer({
             pagination: {
-                skip,
-                take,
-                search: value,
-                status
+                page,
+                limit,
+                filter
             },
             navigate,
             axiosClientJwt,
             dispatch,
         })
-    }, [skip, take, refresh, value, status])
+    }, [page, limit, refresh, value, status])
 
     // ** Function handle
     const dataRender = (): DataType[] => {

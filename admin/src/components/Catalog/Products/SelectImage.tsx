@@ -103,16 +103,16 @@ const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, 
     const axiosClientJwt = createAxiosJwt();
 
     useEffect(() => {
-        getListAsset({
-            pagination: {
-                skip,
-                take,
-                search: value
-            },
-            axiosClientJwt,
-            dispatch,
-            navigate
-        });
+        // getListAsset({
+        //     pagination: {
+        //         skip,
+        //         take,
+        //         search: value
+        //     },
+        //     axiosClientJwt,
+        //     dispatch,
+        //     navigate
+        // });
     }, [skip, take, value, refresh])
 
     // ** Function handle
@@ -125,16 +125,16 @@ const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, 
     };
 
     const dataRender = (): DataType[] => {
-        if (!store.list.loading && store.list.result && store.list.result?.assets?.length > 0) {
-            return store.list.result.assets.map((asset, index) => {
-                return {
-                    id: asset.id,
-                    key: index,
-                    name: asset.name,
-                    url: asset.url
-                }
-            })
-        }
+        // if (!store.list.loading && store.list.result && store.list.result?.assets?.length > 0) {
+        //     return store.list.result.assets.map((asset, index) => {
+        //         return {
+        //             id: asset.id,
+        //             key: index,
+        //             name: asset.name,
+        //             url: asset.url
+        //         }
+        //     })
+        // }
         return []
     }
 
@@ -165,9 +165,7 @@ const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, 
                             total: store.list.result?.total,
                             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                             defaultCurrent: skip + 1,
-                             onChange: handleOnChangePagination,
-                    defaultPageSize: page,
-                    onShowSizeChange: handleOnShowSizeChange,
+                            onChange: handleOnChangePagination,
                             defaultPageSize: take,
                             responsive: true
                         }}
