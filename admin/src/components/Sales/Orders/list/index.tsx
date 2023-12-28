@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Breadcrumb, Button, Card, Col, Divider, Input, PaginationProps, Row, Select, Space, Table, Tag } from 'antd';
+import { Breadcrumb, Button, Card, Col, Divider, Input, PaginationProps, Row, Select, Space, Table, Tabs, TabsProps, Tag } from 'antd';
 import React, { Fragment, useState, useEffect } from 'react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
@@ -16,6 +16,9 @@ import en from 'javascript-time-ago/locale/en'
 import { currency } from 'src/helper/currencyPrice';
 import { StatusOrder } from 'src/types';
 import { Promotion } from 'src/types/promotion';
+import Title from 'antd/lib/typography/Title';
+import CreateOrder from './CreateOrder';
+import BillList from './BillList';
 
 TimeAgo.addDefaultLocale(en)
 
@@ -274,68 +277,35 @@ const Orders = () => {
         setPage(current);
         setLimit(pageSize);
       };
+
+      const onChange = (key: string) => {
+        console.log(key);
+      };
       
+      const items: TabsProps['items'] = [
+        {
+          key: '1',
+          label: 'Tạo mới',
+          children: <CreateOrder />,
+        },
+        {
+          key: '2',
+          label: 'Danh sách hóa đơn',
+          children: <BillList />,
+        },
+      ];  
 
     return (
         <Fragment>
             <Row gutter={[0, 16]}>
                 <Col span={24}>
-                    <Breadcrumb>
-                        <Breadcrumb.Item>
-                            <Link to='/'>Trang chủ</Link>
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item>Đơn hàng</Breadcrumb.Item>
-                    </Breadcrumb>
-                </Col>
-                <Col span={24}>
                     <Row>
                         <Col span={24}>
-                            <Flex>
-                                <Box mr={3} flex={1}>
-                                    <Input type='text' placeholder='Tìm theo mã đơn hàng' />
-                                </Box>
-                                <Box mr={3}>
-                                    <Select
-                                        value={status}
-                                        placeholder="Status"
-                                        onChange={onChangeStatus}
-                                        options={[
-                                            {
-                                                value: 'all',
-                                                label: 'Tất cả',
-                                            },
-                                            {
-                                                value: StatusOrder.Confirm,
-                                                label: 'Xác nhận',
-                                            },
-                                            {
-                                                value: StatusOrder.Cancel,
-                                                label: 'Hủy',
-                                            },
-                                            {
-                                                value: StatusOrder.Completed,
-                                                label: 'Hoàn thành',
-                                            },
-                                            {
-                                                value: StatusOrder.Open,
-                                                label: 'Mở',
-                                            },
-                                            {
-                                                value: StatusOrder.Refund,
-                                                label: 'Hoàn trả',
-                                            },
-                                            {
-                                                value: StatusOrder.Shipped,
-                                                label: 'Đang vận chuyển',
-                                            },
-                                        ]}
-                                    />
-                                </Box>
-                            </Flex>
-                        </Col>
-                        <Divider />
-                        <Col span={24}>
                             <Card>
+                                <Title level={5}>Quản lý đơn hàng</Title>
+                                <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+                            </Card>
+                            {/* <Card>
                                 <Table
                                     bordered
                                     columns={columns(navigate)}
@@ -350,7 +320,7 @@ const Orders = () => {
                                         responsive: true
                                     }}
                                 />
-                            </Card>
+                            </Card> */}
                         </Col>
                     </Row>
                 </Col>

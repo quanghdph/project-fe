@@ -29,25 +29,22 @@ import { getListCategory } from "src/features/catalog/category/action";
 import { getListBrand } from "src/features/catalog/brand/action";
 import { getListMaterial } from "src/features/catalog/material/action";
 import { getListWaistband } from "src/features/catalog/waistband/action";
-import { getBrandSelectName, getCategorySelectName, getMaterialSelectName, getWaistbandSelectName } from "src/hooks/catalog";
+import {
+  getBrandSelectName,
+  getCategorySelectName,
+  getMaterialSelectName,
+  getWaistbandSelectName,
+} from "src/hooks/catalog";
 
 export interface FormValuesProduct {
   name: string;
 }
 
-interface ItemProps {
-  label: string;
-  value: number;
-}
-
 const ProductDetail = () => {
   // ** State
-  const [description, setDescription] = useState<string>("");
-  const [active, setActive] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [featuredAsset, setFeaturedAsset] = useState<Asset>();
   const [isModalAssetOpen, setIsModalAssetOpen] = useState<boolean>(false);
-  const [categoryId, setCategoryId] = useState<number | null>(null);
 
   const [categorySelect, setCategorySelect] = useState();
   const [brandSelect, setBrandSelect] = useState();
@@ -69,11 +66,11 @@ const ProductDetail = () => {
       productName: "",
       category: {
         value: 0,
-        label: "Chọn danh mục"
+        label: "Chọn danh mục",
       },
       brand: {
         value: 0,
-        label: "Chọn thương hiệu"
+        label: "Chọn thương hiệu",
       },
       mainImage: null,
       description: "",
@@ -82,12 +79,12 @@ const ProductDetail = () => {
       status: 0,
       waistband: {
         value: 0,
-        label: "Chọn cạp quần"
+        label: "Chọn cạp quần",
       },
       productCode: "",
       material: {
         value: 0,
-        label: "Chọn chất liệu"
+        label: "Chọn chất liệu",
       },
     },
   });
@@ -97,9 +94,6 @@ const ProductDetail = () => {
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
-  // ** Ref
-  const slugErrorRef = useRef(null);
-  const productNameErrorRef = useRef(null);
   const category = useAppSelector((state) => state.category);
   const brand = useAppSelector((state) => state.brand);
   const material = useAppSelector((state) => state.material);
@@ -134,123 +128,116 @@ const ProductDetail = () => {
 
   // ** Effect
 
-  // useEffect(() => {
-  //     slugErrorRef.current && autoAnimate(slugErrorRef.current);
-  //     productNameErrorRef.current && autoAnimate(productNameErrorRef.current);
-  // }, [parent])
-
   useEffect(() => {
     if (id && !product.single.loading && product.single.result) {
       setValue("productName", product.single.result.productName);
       setValue("description", product.single.result.description);
       setValue("category", {
         value: product.single.result.category.id,
-        label: product.single.result.category.categoryName
+        label: product.single.result.category.categoryName,
       });
       setValue("material", {
         value: product.single.result.material.id,
-        label: product.single.result.material.materialName
+        label: product.single.result.material.materialName,
       });
       setValue("waistband", {
         value: product.single.result.waistband.id,
-        label: product.single.result.waistband.waistbandName
+        label: product.single.result.waistband.waistbandName,
       });
       setValue("brand", {
         value: product.single.result.brand.id,
-        label: product.single.result.brand.brandName
+        label: product.single.result.brand.brandName,
       });
-    //   setCategorySelect({
-    //     value: product.single.result.category.id,
-    //     label: product.single.result.category.categoryName
-    //   })
-      // setValue("description", product.single.result.description)
-      // setValue("description", product.single.result.description)
-      // setValue("description", product.single.result.description)
-      // setValue("description", product.single.result.description)
-      // setValue("description", product.single.result.description)
-      // setDescription(product.single.result.description || '')
-      // setActive(product.single.result.active)
-      // setFeaturedAsset(product.single.result.featured_asset)
-      // setCategoryId(product.single.result.category_id)'
     }
   }, [id, product.single.loading, product.single.result]);
 
   const onSubmit = async (data: any) => {
     if (id) {
-        console.log("123", data);
       await updateProduct({
         product: {
-            productName: data.productName,
-            description: data.description,
-            status: 1,
-            brand: {
-               id: data.brand.label ? data.brand.value :data.brand
-            },
-            material: {
-               id: data.material.label ? data.material.value : data.material
-            },
-            waistband: {
-               id: data.waistband.label ? data.waistband.value :data.waistband
-            },
-            category: {
-               id: data.category.label ? data.category.value : data.category
-            }
-         },
-          axiosClientJwt,
-          dispatch,
-          id: +id,
-          message,
-          navigate,
-          setError,
-          refresh,
-          setRefresh
-      })
+          productName: data.productName,
+          description: data.description,
+          status: 1,
+          brand: {
+            id: data.brand.label ? data.brand.value : data.brand,
+          },
+          material: {
+            id: data.material.label ? data.material.value : data.material,
+          },
+          waistband: {
+            id: data.waistband.label ? data.waistband.value : data.waistband,
+          },
+          category: {
+            id: data.category.label ? data.category.value : data.category,
+          },
+        },
+        axiosClientJwt,
+        dispatch,
+        id: +id,
+        message,
+        navigate,
+        setError,
+        refresh,
+        setRefresh,
+      });
     }
   };
 
   useEffect(() => {
-    if(category && category.list.result?.listCategories && !category.list.loading) {
-       const optionArray = getCategorySelectName(category.list.result.listCategories)
-       setCategorySelect(optionArray)
-    } 
-    if(brand && brand.list.result?.listBrand && !brand.list.loading) {
-       const optionArray = getBrandSelectName(brand.list.result.listBrand)
-       setBrandSelect(optionArray)
+    if (
+      category &&
+      category.list.result?.listCategories &&
+      !category.list.loading
+    ) {
+      const optionArray = getCategorySelectName(
+        category.list.result.listCategories,
+      );
+      setCategorySelect(optionArray);
     }
-    if(waistband && waistband.list.result?.listWaistbands && !waistband.list.loading) {
-       const optionArray = getWaistbandSelectName(waistband.list.result.listWaistbands)
-       setWaistbandSelect(optionArray)
+    if (brand && brand.list.result?.listBrand && !brand.list.loading) {
+      const optionArray = getBrandSelectName(brand.list.result.listBrand);
+      setBrandSelect(optionArray);
     }
-    if(material && material.list.result?.listMaterials && !material.list.loading) {
-       const optionArray = getMaterialSelectName(material.list.result.listMaterials)
-       setMaterialSelect(optionArray)
+    if (
+      waistband &&
+      waistband.list.result?.listWaistbands &&
+      !waistband.list.loading
+    ) {
+      const optionArray = getWaistbandSelectName(
+        waistband.list.result.listWaistbands,
+      );
+      setWaistbandSelect(optionArray);
     }
- }, [category, material, waistband, brand])
-
-  const dataCategories = (): ItemProps[] => {
-    // if (id && !category.list.loading && category.list.result) {
-    //     return category.list.result.categories.map((category) => {
-    //         return {
-    //             label: category.category_name,
-    //             value: category.id
-    //         }
-    //     })
-    // }
-    return [];
-  };
+    if (
+      material &&
+      material.list.result?.listMaterials &&
+      !material.list.loading
+    ) {
+      const optionArray = getMaterialSelectName(
+        material.list.result.listMaterials,
+      );
+      setMaterialSelect(optionArray);
+    }
+  }, [category, material, waistband, brand]);
 
   return (
     <Fragment>
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-      <Flex justifyContent="space-between" alignItems="center">
-                           <Flex justifyContent="center" alignItems="center">
-                              <Switch checked={true} size="small" onChange={() => {}} />
-                              <Box as="span" ml={2} fontWeight="semibold">Hoạt động</Box>
-                           </Flex>
-                           <Button type="primary" htmlType="submit" loading={product.createProduct.loading}>
-                            Cập nhật
-                           </Button>
-                        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Flex justifyContent="center" alignItems="center">
+            <Switch checked={true} size="small" onChange={() => {}} />
+            <Box as="span" ml={2} fontWeight="semibold">
+              Hoạt động
+            </Box>
+          </Flex>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={product.createProduct.loading}
+          >
+            Cập nhật
+          </Button>
+        </Flex>
         <Spin spinning={product.single.loading}>
           <Row>
             <Flex direction={"column"}>
@@ -326,7 +313,7 @@ const ProductDetail = () => {
                       <Select
                         value={value}
                         onChange={(selectedOption) => {
-                            console.log(selectedOption);
+                          console.log(selectedOption);
                           setValue("category", selectedOption); // Update 'category' field
                         }}
                         options={categorySelect}

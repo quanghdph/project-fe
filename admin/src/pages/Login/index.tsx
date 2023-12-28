@@ -27,8 +27,8 @@ const LoginPage: React.FC = () => {
 
     const { control, handleSubmit, setError, formState: { errors } } = useForm<Inputs>({
         defaultValues: {
-            username: 'quang123',
-            password: '123'
+            username: 'admin',
+            password: '1'
         }
     });
     const onSubmit: SubmitHandler<Inputs> = async ({ username, password }) => {

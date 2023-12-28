@@ -7,6 +7,7 @@ import { logOut } from 'src/features/auth/actions';
 import { useNavigate } from 'react-router-dom';
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import SiderBar from 'src/components/Sider/sider';
+import Title from 'antd/lib/typography/Title';
 
 const { Header, Content } = Layout;
 
@@ -30,7 +31,8 @@ const HomePage = () => {
                 <Row justify='start' align='middle' style={{ height: "100%" }} >
                     <Col span={4}>
                         <Link to='/dashboard'>
-                            <img src={logo} alt='Logo' />
+                            {/* <img src={logo} alt='Logo' /> */}
+                            <Title level={2}>Young Boy</Title>
                         </Link>
                     </Col>
                     <Col span={20}>

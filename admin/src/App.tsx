@@ -53,12 +53,12 @@ const ProtectRoute = ({ children }: ProtectRouteProps) => {
     if (!accessToken) {
       navigate('/login')
     } else {
-      navigate('/dashboard')
+      // navigate('/dashboard')
     }
 
     // Update loading state to stop displaying the children briefly
     setLoading(false);
-  }, [accessToken])
+  }, [])
 
   return (
     <React.Fragment>
@@ -120,7 +120,7 @@ const App = () => {
             <Route path='sales'>
               <Route path='orders'>
                 <Route index element={<OrderListPage />} />
-                <Route path='detail/:id' element={<OrderDetailPage />} />
+                {/* <Route path='detail/:id' element={<OrderDetailPage />} /> */}
               </Route>
               <Route path='bills'>
                 <Route index element={<BillListPage />} />

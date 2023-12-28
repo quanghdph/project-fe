@@ -50,7 +50,7 @@ const columns = (
     dataIndex: "id",
     ellipsis: true,
     key: "id",
-    width: "15%",
+    width: "5%",
   },
   {
     title: "Tên",
@@ -70,7 +70,7 @@ const columns = (
     title: 'Hoạt động',
     dataIndex: 'status',
     key: 'status',
-    width: '180px',
+    width: "15%",
     render: (status: number) => {
         return (
             <Tag color={status ? 'green' : 'gold'}>{status ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
@@ -87,7 +87,7 @@ const columns = (
           <Button
             shape="circle"
             icon={<EditOutlined />}
-            onClick={() => navigate(`update/${record.id}`)}
+            onClick={() => navigate(`detail-update/${record.id}`)}
           />
           <Button
             shape="circle"
@@ -126,7 +126,7 @@ const Brand = () => {
   const brand = useAppSelector((state) => state.brand);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
-  console.log(brand);
+
   // ** Third party
   const navigate = useNavigate();
 

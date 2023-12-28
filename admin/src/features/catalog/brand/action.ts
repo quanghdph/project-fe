@@ -285,7 +285,7 @@ export const updateBrand = async ({
       setTimeout(function () {
         dispatch(updateBrandSuccess(res.data));
         message.success("Cập nhật thương hiệu thành công");
-        navigate("/catalog/categories");
+        navigate("/catalog/brands");
       }, 1000);
     }
 

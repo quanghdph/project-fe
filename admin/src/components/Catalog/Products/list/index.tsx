@@ -49,14 +49,14 @@ const columns = (
   navigate: NavigateFunction,
 ): ColumnsType<DataType> => [
   {
-    title: "ID",
+    title: "#",
     dataIndex: "id",
     ellipsis: true,
     key: "id",
     width: "5%",
   },
   {
-    title: "Tên sản phẩm",
+    title: "Tên",
     dataIndex: "name",
     key: "name",
     render: (name, record) => {
@@ -67,6 +67,16 @@ const columns = (
         </Flex>
       );
     },
+  },
+  {
+    title: "Danh mục",
+    dataIndex: "category",
+    key: "category",
+  },
+  {
+    title: "Thương hiệu",
+    dataIndex: "brand",
+    key: "brand",
   },
   {
     title: "Hoạt động",
@@ -110,6 +120,7 @@ const columns = (
     },
   },
 ];
+
 const Products: React.FC = () => {
   // ** State
   const [page, setPage] = useState<number>(1);
@@ -166,7 +177,9 @@ const Products: React.FC = () => {
           key: index,
           id: product.id,
           name: product.productName,
-          // url: product?.featured_asset?.url,
+          category: product.category?.categoryName,
+          brand: product.brand?.brandName,
+          url: product?.mainImage,
           active: product.status,
         };
       });

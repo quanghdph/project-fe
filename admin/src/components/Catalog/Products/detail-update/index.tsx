@@ -13,9 +13,7 @@ const ProductDetailUpdate = () => {
     <Fragment>
       <Row gutter={[0, 16]}>
         <Col span={24}>
-          <Card>
-          <ProductDetail />
-          </Card>
+        <ProductDetail />
         </Col>
       </Row>
     </Fragment>

@@ -217,19 +217,12 @@ const ProductCreate: React.FC = () => {
                </Card>
             </Col>
          </Row>
-         {/* <SelectImage
+         <SelectImage
             isModalAssetOpen={isModalAssetOpen}
             setIsModalAssetOpen={setIsModalAssetOpen}
             setFeaturedAsset={setFeaturedAsset}
             featuredAsset={featuredAsset as Asset}
-         /> */}
-          <Upload
-      action="http://localhost:8080/product?images"
-      onChange={handleChange}
-      showUploadList={false} // This will hide the default Ant Design file list
-    >
-      <Button type="primary">Tải ảnh lên</Button>
-    </Upload>
+         />
       </Fragment>
    );
 };
