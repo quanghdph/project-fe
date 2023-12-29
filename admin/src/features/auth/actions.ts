@@ -5,21 +5,20 @@ import type { Axios, AxiosInstance } from "axios";
 import { User } from "src/types/user";
 import { IAxiosResponse } from "src/types/axiosResponse";
 
-export const loginUser = async (user: { email: string, password: string }, dispatch: AppDispatch, navigate: Function, setError: Function, axiosClient: Axios) => {
+export const loginUser = async (user: { username: string, password: string }, dispatch: AppDispatch, navigate: Function, setError: Function, axiosClient: Axios) => {
     dispatch(loginStart());
     try {
-        const res: IAxiosResponse<User> = await axiosClient.post('auth/login', user);
-        if (res?.response?.code === 200 && res?.response?.success) {
+        const res: IAxiosResponse<User> = await axiosClient.post('api/auth/login', user);
+        if (res.status == 200 && res?.data.data) {
             setTimeout(function () {
-                dispatch(loginSuccess(res.response.data));
-                localStorage.setItem("accessToken", res.response.access_token as string)
-                localStorage.setItem("refreshToken", res.response.refresh_token as string)
+                dispatch(loginSuccess(res.data.data));
+                localStorage.setItem("accessToken", res.data.data.token as string)
                 navigate('/');
             }, 1000);
-        } else if (res?.response?.code === 400 && !res?.response?.success) {
+        } else {
             setTimeout(function () {
                 dispatch(loginFailed(null));
-                setError(res.response.fieldError, { message: res.response.message })
+                // setError(res.response.fieldError, { message: res.response.message })
             }, 1000);
         }
     } catch (error) {

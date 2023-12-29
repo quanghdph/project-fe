@@ -28,45 +28,45 @@ import { IAxiosResponse } from "src/types/axiosResponse";
 import { Inotification } from "src/common";
 import { CancelOrderParams, CompletedOrderParams, ConfirmOrderParams, DeleteOrderParams, GetListOrderParams, GetOrderParams, RefundOrderParams, ShippedOrderParams } from './type';
 
-export const getListOrder = async ({ pagination, dispatch, axiosClientJwt, navigate }: GetListOrderParams) => {
+export const getListOrder = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
     try {
-        const { skip, take, search, status } = pagination;
+        const { page, limit, filter } = params;
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListOrderStart());
-        const res: IAxiosResponse<{}> = await axiosClientJwt.get('/order', {
-            params: {
-                take,
-                skip,
-                search,
-                status
-            },
+        const url = page || limit || filter ? `/bill?page=${page}&limit=${limit}&filter=${filter}` : '/bill'
+        const res: IAxiosResponse<{}> = await axiosClientJwt.get(url, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        console.log(res);
+        if (res?.status === 200 && res.data) {
             setTimeout(function () {
-                dispatch(getListOrderSuccess(res.response.data));
+                dispatch(getListOrderSuccess(res.data));
             }, 1000)
         } else {
             dispatch(getListOrderFailed(null));
         }
     } catch (error: any) {
         dispatch(getListOrderFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Bạn không có quyền để thực hiện hành động này!'
+        //     })
+        //     setTimeout(function () {
+        //         navigate('/')
+        //     }, 1000);
+        // } else {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Something went wrong!'
+        //     })
+        // }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
     }
 }
 

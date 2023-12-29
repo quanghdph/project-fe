@@ -7,6 +7,7 @@ import {
   Divider,
   Input,
   Modal,
+  PaginationProps,
   Row,
   Select,
   Space,
@@ -110,8 +111,6 @@ const Color = () => {
     name: string;
   }>();
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
-  const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
 
   // ** Variables
@@ -122,32 +121,7 @@ const Color = () => {
   // ** Third party
   const navigate = useNavigate();
 
-  // ** Effect
-  // useEffect(() => {
-  //     getListCategory({
-  //         pagination: {
-  //             skip,
-  //             take,
-  //             search: value,
-  //             status
-  //         },
-  //         navigate,
-  //         axiosClientJwt,
-  //         dispatch,
-  //     })
-  // }, [skip, take, refresh, value, status])
   useEffect(() => {
-    // getListCategory({
-    //     pagination: {
-    //         skip,
-    //         take,
-    //         search: value,
-    //         status
-    //     },
-    //     navigate,
-    //     axiosClientJwt,
-    //     dispatch,
-    // })
     getListColor({
         params: {
             page,
@@ -158,22 +132,10 @@ const Color = () => {
       axiosClientJwt,
       dispatch,
     });
-  }, [page, limit, refresh, value]);
+  }, [page, limit, refresh]);
 
   // ** Function handle
   const dataRender = (): DataType[] => {
-    // if (!category.list.loading && category.list.result) {
-    //     return category.list.result.categories.map((category, index: number) => {
-    //         return {
-    //             key: index,
-    //             id: category.id,
-    //             category_code: category.category_code,
-    //             category_name: category.category_name,
-    //             active: category.active,
-    //             description: category.description
-    //         }
-    //     })
-    // }
     if (!color.list.loading && color.list.result) {
       return color.list.result.listColors.map((color, index: number) => {
         return {
@@ -205,12 +167,16 @@ const Color = () => {
   };
 
   const handleOnChangePagination = (e: number) => {
-    // setSkip((e - 1) * take)
     setPage(e)
   };
 
   const onChangeStatus = (value: string) => {
     setStatus(value);
+  };
+
+  const handleOnShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+    setPage(current)
+    setLimit(pageSize)
   };
 
   return (
@@ -228,36 +194,6 @@ const Color = () => {
           <Row>
             <Col span={24}>
               <Flex justifyContent={"flex-end"} alignItems={"center"}>
-                <Box mr={3} flex={2}>
-                  <Input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                    }}
-                  />
-                </Box>
-                <Box mr={3} flex={1}>
-                  <Select
-                    value={status}
-                    placeholder="Status"
-                    onChange={onChangeStatus}
-                    options={[
-                      {
-                        value: "all",
-                        label: "Tất cả",
-                      },
-                      {
-                        value: "active",
-                        label: "Hoạt động",
-                      },
-                      {
-                        value: "disabled",
-                        label: "Vô hiệu hóa",
-                      },
-                    ]}
-                  />
-                </Box>
                 <Button
                   style={{ textTransform: "uppercase" }}
                   type="primary"
@@ -287,6 +223,7 @@ const Color = () => {
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`,
                     onChange: handleOnChangePagination,
+                    onShowSizeChange: handleOnShowSizeChange,
                     responsive: true,
                   }}
                 />

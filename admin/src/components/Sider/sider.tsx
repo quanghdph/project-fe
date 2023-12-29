@@ -44,6 +44,15 @@ const SiderBar = () => {
                         }
                     },
                     {
+                        key: "brands",
+                        icon: <InboxOutlined />,
+                        label: "Thương hiệu",
+                        className: location.pathname === "catalog/brands" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('catalog/brands')
+                        }
+                    },
+                    {
                         key: "sizes",
                         icon: <InboxOutlined />,
                         label: "Kích thước",
@@ -103,17 +112,29 @@ const SiderBar = () => {
                 key: "sales",
                 icon: "",
                 label: "Bán hàng",
-                children: [
-                    {
-                        key: "orders",
-                        icon: <ShoppingCartOutlined />,
-                        label: "Đơn hàng",
-                        className: location.pathname === "sales/orders" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('sales/orders')
-                        }
-                    },
-                ]
+                onClick: () => {
+                    navigate('/sales/orders')
+                }
+                // children: [
+                //     {
+                //         key: "orders",
+                //         icon: <ShoppingCartOutlined />,
+                //         label: "Đơn hàng",
+                //         className: location.pathname === "sales/orders" ? "ant-menu-item-selected" : "",
+                //         onClick: () => {
+                //             navigate('sales/orders')
+                //         }
+                //     },
+                //     {
+                //         key: "bills",
+                //         icon: <ShoppingCartOutlined />,
+                //         label: "Hóa đơn",
+                //         className: location.pathname === "sales/bills" ? "ant-menu-item-selected" : "",
+                //         onClick: () => {
+                //             navigate('sales/bills')
+                //         }
+                //     },
+                // ]
             },
             {
                 key: "employee",
@@ -143,22 +164,6 @@ const SiderBar = () => {
                         className: location.pathname === "/customers" ? "ant-menu-item-selected" : "",
                         onClick: () => {
                             navigate('/customers')
-                        }
-                    },
-                ]
-            },
-            {
-                key: "marketing",
-                icon: "",
-                label: "Tiếp thị",
-                children: [
-                    {
-                        key: "promotions",
-                        icon: <TagOutlined />,
-                        label: "Khuyến mãi",
-                        className: location.pathname === "/marketing/promotions" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('/marketing/promotions')
                         }
                     },
                 ]

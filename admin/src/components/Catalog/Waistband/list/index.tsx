@@ -5,13 +5,11 @@ import {
   Card,
   Col,
   Divider,
-  Input,
   Modal,
+  PaginationProps,
   Row,
-  Select,
   Space,
   Table,
-  Tag,
   message,
 } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
@@ -23,12 +21,7 @@ import {
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
-import {
-  deleteCategory,
-  getListCategory,
-} from "src/features/catalog/category/action";
 import type { ColumnsType } from "antd/es/table";
-import { useDebounce } from "use-debounce";
 import { deleteWaistband, getListWaistband } from "src/features/catalog/waistband/action";
 
 interface DataType {
@@ -99,8 +92,6 @@ const columns = (
 
 const Waistband = () => {
   // ** State
-  // const [take, setTake] = useState<number>(10)
-  // const [skip, setSkip] = useState<number>(0)
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
   const [filter, setFilter] = useState<string>('')
@@ -110,9 +101,6 @@ const Waistband = () => {
     name: string;
   }>();
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
-  const [value] = useDebounce(search, 1000);
-  const [status, setStatus] = useState<string>("all");
 
   // ** Variables
   const waistband = useAppSelector((state) => state.waistband);
@@ -123,31 +111,7 @@ const Waistband = () => {
   const navigate = useNavigate();
 
   // ** Effect
-  // useEffect(() => {
-  //     getListCategory({
-  //         pagination: {
-  //             skip,
-  //             take,
-  //             search: value,
-  //             status
-  //         },
-  //         navigate,
-  //         axiosClientJwt,
-  //         dispatch,
-  //     })
-  // }, [skip, take, refresh, value, status])
   useEffect(() => {
-    // getListCategory({
-    //     pagination: {
-    //         skip,
-    //         take,
-    //         search: value,
-    //         status
-    //     },
-    //     navigate,
-    //     axiosClientJwt,
-    //     dispatch,
-    // })
     getListWaistband({
         params: {
             page,
@@ -158,22 +122,10 @@ const Waistband = () => {
       axiosClientJwt,
       dispatch,
     });
-  }, [page, limit, refresh, value]);
+  }, [page, limit, refresh]);
 
   // ** Function handle
   const dataRender = (): DataType[] => {
-    // if (!category.list.loading && category.list.result) {
-    //     return category.list.result.categories.map((category, index: number) => {
-    //         return {
-    //             key: index,
-    //             id: category.id,
-    //             category_code: category.category_code,
-    //             category_name: category.category_name,
-    //             active: category.active,
-    //             description: category.description
-    //         }
-    //     })
-    // }
     if (!waistband.list.loading && waistband.list.result) {
       return waistband.list.result.listWaistbands.map((waistband, index: number) => {
         return {
@@ -205,12 +157,12 @@ const Waistband = () => {
   };
 
   const handleOnChangePagination = (e: number) => {
-    // setSkip((e - 1) * take)
     setPage(e)
   };
 
-  const onChangeStatus = (value: string) => {
-    setStatus(value);
+  const handleOnShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+    setPage(current)
+    setLimit(pageSize)
   };
 
   return (
@@ -228,36 +180,6 @@ const Waistband = () => {
           <Row>
             <Col span={24}>
               <Flex justifyContent={"flex-end"} alignItems={"center"}>
-                <Box mr={3} flex={2}>
-                  <Input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                    }}
-                  />
-                </Box>
-                <Box mr={3} flex={1}>
-                  <Select
-                    value={status}
-                    placeholder="Status"
-                    onChange={onChangeStatus}
-                    options={[
-                      {
-                        value: "all",
-                        label: "Tất cả",
-                      },
-                      {
-                        value: "active",
-                        label: "Hoạt động",
-                      },
-                      {
-                        value: "disabled",
-                        label: "Vô hiệu hóa",
-                      },
-                    ]}
-                  />
-                </Box>
                 <Button
                   style={{ textTransform: "uppercase" }}
                   type="primary"
@@ -287,6 +209,7 @@ const Waistband = () => {
                     showTotal: (total, range) =>
                       `${range[0]}-${range[1]} of ${total} items`,
                     onChange: handleOnChangePagination,
+                    onShowSizeChange: handleOnShowSizeChange,
                     responsive: true,
                   }}
                 />

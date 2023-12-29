@@ -1,41 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Cateogry } from 'src/types/category';
 
-interface CategoryState {
-    list: {
-        result: {
-            categories: Array<Cateogry>
-            skip: number
-            take: number
-            total: number
-            totalPage: number
-        } | null;
-        loading: boolean;
-        error: boolean;
-    },
-    delete: {
-        result: Cateogry | null;
-        loading: boolean;
-        error: boolean;
-    },
-    update: {
-        result: Cateogry | null;
-        loading: boolean;
-        error: boolean;
-    },
-    single: {
-        result: Cateogry | null;
-        loading: boolean;
-        error: boolean;
-    },
-    create: {
-        result: Cateogry | null,
-        loading: boolean,
-        error: boolean
-    },
-}
-
-const initialState: CategoryState = {
+const initialState = {
     create: {
         result: null,
         loading: false,
@@ -61,13 +26,13 @@ const initialState: CategoryState = {
         loading: false,
         error: false
     }
-} as CategoryState;
+};
 
 export const categorySlice = createSlice({
     name: 'category',
     initialState,
     reducers: {
-        // ** Get categories
+        // ** Get category
         getListCategoryStart: (state) => {
             state.list.loading = true;
         },

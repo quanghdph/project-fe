@@ -10,28 +10,29 @@ import { Asset } from 'src/types/asset';
 import { useDebounce } from 'use-debounce';
 import type { ColumnsType } from 'antd/es/table';
 
-const props = (refresh: boolean, setRefresh: (refresh: boolean) => void, setLoading: (loading: boolean) => void): UploadProps => {
-    const accessToken = localStorage.getItem("accessToken")
-    return {
-        name: 'files',
-        action: 'http://localhost:1234/asset/upload',
-        multiple: true,
-        showUploadList: false,
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        },
-        onChange(info) {
-            setLoading(true)
-            if (info.fileList.every((file) => file.status === "done")) {
-                setTimeout(function () {
-                    setRefresh(!refresh)
-                    message.success(`File uploaded successfully!`);
-                    setLoading(false)
-                }, 1000);
-            }
-        },
-    }
-};
+// const props = (refresh: boolean, setRefresh: (refresh: boolean) => void, setLoading: (loading: boolean) => void): UploadProps => {
+//     const accessToken = localStorage.getItem("accessToken")
+//     return {
+//         name: 'files',
+//         action: 'http://localhost:1234/asset/upload',
+//         multiple: true,
+//         showUploadList: false,
+//         headers: {
+//             Authorization: `Bearer ${accessToken}`
+//         },
+//         onChange(info) {
+//             setLoading(true)
+//             if (info.fileList.every((file) => file.status === "done")) {
+//                 setTimeout(function () {
+//                     setRefresh(!refresh)
+//                     message.success(`File uploaded successfully!`);
+//                     setLoading(false)
+//                 }, 1000);
+//             }
+//         },
+//     }
+// };
+
 
 interface DataType {
     key: number
@@ -39,6 +40,11 @@ interface DataType {
     name: string;
     url: string
 }
+
+
+
+
+
 
 const columns = (
     setFeaturedAsset: (asset: Asset) => void,
@@ -53,7 +59,7 @@ const columns = (
             render: (name, record) => {
                 return (
                     <Flex alignItems={"center"}>
-                        <Avatar src={<img src={record.url} style={{ width: 40 }} />} />
+                        <img src={record.url} style={{ width: 60 ,height: 80}} />
                         <Box ml={2}>{name}</Box>
                     </Flex>
                 )
@@ -96,63 +102,139 @@ const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, 
     const [value] = useDebounce(search, 1000);
     const [loading, setLoading] = useState<boolean>(false)
 
+    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+
+
     // ** Variables
     const navigate = useNavigate();
     const store = useAppSelector((state) => state.asset);
     const dispatch = useAppDispatch();
     const axiosClientJwt = createAxiosJwt();
 
-    useEffect(() => {
-        getListAsset({
-            pagination: {
-                skip,
-                take,
-                search: value
+    const props = (refresh: boolean, setRefresh: (refresh: boolean) => void, setLoading: (loading: boolean) => void): UploadProps => {
+        const accessToken = localStorage.getItem("accessToken")
+        return {
+            name: 'files',
+            action: 'http://localhost:1234/asset/upload',
+            multiple: true,
+            showUploadList: false,
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             },
-            axiosClientJwt,
-            dispatch,
-            navigate
-        });
+            // Update onChange to handle selected files
+            onChange(info) {
+                setLoading(true)
+                if (info.fileList.every((file) => file.status === "done")) {
+                    setTimeout(function () {
+                        setRefresh(!refresh)
+                        message.success(`File uploaded successfully!`);
+                        setLoading(false)
+                    }, 1000);
+                }
+            },
+            // Additional props to handle file selection
+            beforeUpload: (file) => {
+                setSelectedFiles((prev) => {
+                    if (prev) {
+                        const files = Array.from(prev);
+                        files.push(file);
+                        return new FileList(files);
+                    }
+                    return new FileList([file]);
+                });
+                return false; // Prevent default upload behavior
+            },
+        };
+    };
+
+    useEffect(() => {
+        // getListAsset({
+        //     pagination: {
+        //         skip,
+        //         take,
+        //         search: value
+        //     },
+        //     axiosClientJwt,
+        //     dispatch,
+        //     navigate
+        // });
     }, [skip, take, value, refresh])
 
     // ** Function handle
-    const handleOk = () => {
-        setIsModalAssetOpen(false);
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setSelectedFiles(e.target.files);
+        }
     };
+
+
+ 
+    
+    const handleOnChangePagination = (e: number) => {
+        setSkip((e - 1) * take);
+    };
+    
+   
+    
 
     const handleCancel = () => {
         setIsModalAssetOpen(false);
     };
 
+    // const dataRender = (): DataType[] => {
+    //     if (!store.list.loading && store.list.result && store.list.result?.assets?.length > 0) {
+    //         return store.list.result.assets.map((asset, index) => {
+    //             return {
+    //                 id: asset.id,
+    //                 key: index,
+    //                 name: asset.name,
+    //                 url: asset.url,
+    //             };
+    //         });
+    //     }
+    //     return [];
+    // };
     const dataRender = (): DataType[] => {
+        const selectedImages = selectedFiles
+            ? Array.from(selectedFiles).map((file, index) => ({
+                  id: -index, // Use negative values to distinguish from fetched assets
+                  key: -index,
+                  name: file.name,
+                  url: URL.createObjectURL(file),
+              }))
+            : [];
+    
         if (!store.list.loading && store.list.result && store.list.result?.assets?.length > 0) {
-            return store.list.result.assets.map((asset, index) => {
-                return {
-                    id: asset.id,
-                    key: index,
-                    name: asset.name,
-                    url: asset.url
-                }
-            })
+            return [...selectedImages, ...store.list.result.assets.map((asset, index) => ({
+                id: asset.id,
+                key: index,
+                name: asset.name,
+                url: asset.url,
+            }))];
         }
-        return []
-    }
+    
+        return selectedImages;
+    };
+    const handleOk = () => {
+        setIsModalAssetOpen(false);
+    };
 
-    const handleOnChangePagination = (e: number) => {
-        setSkip((e - 1) * take)
-    }
 
     return (
         <Modal title="Chọn ảnh" open={isModalAssetOpen} onOk={handleOk} onCancel={handleCancel} centered width={"90%"} footer={null}>
             <Row>
                 <Col span={24}>
                     <Flex>
-                        <Box mr={3} flex={1}>
-                            <Input type='text' placeholder='Search by asset name' onChange={(e) => { setSearch(e.target.value); }} />
-                        </Box>
-                        <Upload {...props(refresh, setRefresh, setLoading)}>
-                            <Button type="primary" loading={loading}>Tải ảnh lên</Button>
-                        </Upload>
+                            <Box mr={3} flex={1}>
+                                {/* Update file input to trigger file selection */}
+                                <Input type='file' onChange={handleFileChange} multiple />
+                            </Box>
+                            <Box>
+                                {/* Trigger file selection when clicking the button */}
+                                <Button type="primary" loading={loading} onClick={() => setSelectedFiles(null)}>
+                                    Tải ảnh lên
+                                </Button>
+                            </Box>
                     </Flex>
                 </Col>
                 <Divider />
