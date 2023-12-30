@@ -218,7 +218,7 @@ const Orders = () => {
   const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
 
-  const [productChoose, setProductChoose] = useState([]);
+  const [cart, setCart] = useState([]);
 
   // ** Third party
   const navigate = useNavigate();
@@ -312,7 +312,7 @@ const Orders = () => {
     },
   ];
 
-  console.log(productChoose);
+  console.log(cart);
 
   return (
     <Fragment>
@@ -369,13 +369,13 @@ const Orders = () => {
                 />
               </Box>
             </Flex>
-            <ProductList navigate={navigate} productChoose={productChoose} setProductChoose={setProductChoose} />
+            <ProductList navigate={navigate} cart={cart} setCart={setCart} />
           </Card>
         </Col>
         <Col span={12}>
           <Card>
             <Title level={5}></Title>
-            <CreateOrder productChoose={productChoose} setProductChoose={setProductChoose} />
+            <CreateOrder cart={cart} setCart={setCart} />
           </Card>
         </Col>
       </Row>

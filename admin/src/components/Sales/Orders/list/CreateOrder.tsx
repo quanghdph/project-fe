@@ -14,7 +14,7 @@ function generateRandomNumberString(length) {
   return randomString;
 }
 
-function CreateOrder({productChoose, setProductChoose}) {
+function CreateOrder({cart, setCart}) {
   const [listOrder, setListOrder] = useState(["HD15030032"])
   
   const onChange = (key: string) => {
@@ -38,7 +38,7 @@ function CreateOrder({productChoose, setProductChoose}) {
     return {
       key: index.toString(),
       label: item,
-      children: <OrderDetail orderCode={item} productChoose={productChoose} setProductChoose={setProductChoose} />
+      children: <OrderDetail orderCode={item} cart={cart} setCart={setCart} />
     }
   })
 

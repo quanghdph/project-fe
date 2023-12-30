@@ -16,9 +16,9 @@ const columns = (
   // setProductDelete: ({ id, name }: { id: number; name: string }) => void,
   navigate: NavigateFunction,
   // onInputChange,
-  productChoose: any,
-  setProductChoose: any,
-): any=> [
+  cart: any,
+  setCart: any,
+): any => [
   {
     title: "#",
     dataIndex: "id",
@@ -98,17 +98,26 @@ const columns = (
           /> */}
           <Button
             type="primary"
-            onClick={() =>{
-              return setProductChoose([
-                ...productChoose,
-                {
-                  id: record.id,
-                  product: record.product,
-                  quantity: 1
-                }
-              ])
-            }
-            }
+            onClick={() => {
+              const existingProductIndex = cart.findIndex(
+                (e) => e.id == record.id,
+              );
+
+              if (existingProductIndex !== -1) {
+                const updatedCart = [...cart];
+                updatedCart[existingProductIndex].quantity += 1;
+                return setCart(updatedCart);
+              } else {
+                return setCart([
+                  ...cart,
+                  {
+                    id: record.id,
+                    product: record.product,
+                    quantity: 1,
+                  },
+                ]);
+              }
+            }}
           >
             Chọn
           </Button>
@@ -118,7 +127,7 @@ const columns = (
   },
 ];
 
-function ProductList({ navigate, productChoose, setProductChoose }) {
+function ProductList({ navigate, cart, setCart }) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
@@ -181,7 +190,7 @@ function ProductList({ navigate, productChoose, setProductChoose }) {
     <Fragment>
       <Table
         bordered
-        columns={columns(navigate, productChoose, setProductChoose)}
+        columns={columns(navigate, cart, setCart)}
         dataSource={dataRender()}
         loading={product.list?.loading}
         pagination={{
