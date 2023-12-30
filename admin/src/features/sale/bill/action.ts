@@ -29,7 +29,6 @@ export const getListBill = async ({
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getListBillStart());
     const url = page || limit || filter ? `/bill?page=${page}&limit=${limit}&filter=${filter}` : '/bill'
-    console.log(url)
     const res: any = await axiosClientJwt.get(url,
       {
         headers: {

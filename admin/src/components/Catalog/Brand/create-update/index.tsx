@@ -98,7 +98,6 @@ const BrandCreateUpdate = () => {
   // ** Function handle
   const onSubmit = async (data: FormValuesBrand) => {
     if (id) {
-      console.log(status);
       updateBrand({
         axiosClientJwt,
         brand: {

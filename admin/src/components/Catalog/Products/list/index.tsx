@@ -62,7 +62,7 @@ const columns = (
     render: (name, record) => {
       return (
         <Flex alignItems={"center"}>
-          <Avatar src={<img src={record.url} style={{ width: 40 }} />} />
+          {/* <Avatar src={<img src={record.url} style={{ width: 40 }} />} /> */}
           <Box ml={2}>{name}</Box>
         </Flex>
       );

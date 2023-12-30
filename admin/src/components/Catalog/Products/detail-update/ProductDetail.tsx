@@ -45,6 +45,7 @@ const ProductDetail = () => {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [featuredAsset, setFeaturedAsset] = useState<Asset>();
   const [isModalAssetOpen, setIsModalAssetOpen] = useState<boolean>(false);
+  const [enabled, setEnabled] = useState<boolean>(true);
 
   const [categorySelect, setCategorySelect] = useState();
   const [brandSelect, setBrandSelect] = useState();
@@ -157,7 +158,7 @@ const ProductDetail = () => {
         product: {
           productName: data.productName,
           description: data.description,
-          status: 1,
+          status: enabled ? 1 : 0,
           brand: {
             id: data.brand.label ? data.brand.value : data.brand,
           },
@@ -222,10 +223,10 @@ const ProductDetail = () => {
 
   return (
     <Fragment>
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        <Flex justifyContent="space-between" alignItems="center">
+      <Form layout="vertical" onFinish={handleSubmit(onSubmit)} style={{width: "100%"}}>
+        <Flex justifyContent="space-between" alignItems="center" mb={5}>
           <Flex justifyContent="center" alignItems="center">
-            <Switch checked={true} size="small" onChange={() => {}} />
+            <Switch checked={enabled} size="small" onChange={() => setEnabled(!enabled)} />
             <Box as="span" ml={2} fontWeight="semibold">
               Hoạt động
             </Box>
@@ -239,7 +240,8 @@ const ProductDetail = () => {
           </Button>
         </Flex>
         <Spin spinning={product.single.loading}>
-          <Row>
+        <Flex justifyContent={"space-between"}>
+          <Flex width={"70%"} direction={"column"}>
             <Flex direction={"column"}>
               <Box mb={3}>
                 <Box as="label" htmlFor="productName" fontWeight="semibold">
@@ -296,117 +298,162 @@ const ProductDetail = () => {
                   }}
                 />
               </Box>
+            </Flex>
+            <Flex direction={"column"}>
               <Box mb={3}>
-                <Box
-                  as="span"
-                  fontWeight="semibold"
-                  mb={1}
-                  sx={{ display: "inline-block" }}
-                >
-                  Danh mục
-                </Box>
-                <Controller
-                  name="category"
-                  control={control}
-                  render={({ field: { value, ...other } }) => {
-                    return (
-                      <Select
-                        value={value}
-                        onChange={(selectedOption) => {
-                          console.log(selectedOption);
-                          setValue("category", selectedOption); // Update 'category' field
-                        }}
-                        options={categorySelect}
-                      />
-                    );
-                  }}
-                />
+                <Flex direction={"column"}>
+                  <Box
+                    as="span"
+                    fontWeight="semibold"
+                    mb={1}
+                    sx={{ display: "inline-block" }}
+                  >
+                    Danh mục
+                  </Box>
+                  <Controller
+                    name="category"
+                    control={control}
+                    render={({ field: { value, ...other } }) => {
+                      return (
+                        <Select
+                          value={value}
+                          onChange={(selectedOption) => {
+                            console.log(selectedOption);
+                            setValue("category", selectedOption); // Update 'category' field
+                          }}
+                          options={categorySelect}
+                        />
+                      );
+                    }}
+                  />
+                </Flex>
               </Box>
               <Box mb={3}>
-                <Box
-                  as="span"
-                  fontWeight="semibold"
-                  mb={1}
-                  sx={{ display: "inline-block" }}
-                >
-                  Thương hiệu
-                </Box>
-                <Controller
-                  name="brand"
-                  control={control}
-                  render={({ field: { value, ...other } }) => {
-                    return (
-                      <Select
-                        value={value}
-                        onChange={(selectedOption) => {
-                          setValue("brand", selectedOption); // Update 'category' field
-                        }}
-                        options={brandSelect}
-                      />
-                    );
-                  }}
-                />
-              </Box>
-              <Box mb={3}>
-                <Box
-                  as="span"
-                  fontWeight="semibold"
-                  mb={1}
-                  sx={{ display: "inline-block" }}
-                >
-                  Cạp quần
-                </Box>
-                <Controller
-                  name="waistband"
-                  control={control}
-                  render={({ field: { value, ...other } }) => {
-                    return (
-                      <Select
-                        value={value}
-                        onChange={(selectedOption) => {
-                          setValue("waistband", selectedOption); // Update 'category' field
-                        }}
-                        options={waistbandSelect}
-                      />
-                    );
-                  }}
-                />
-              </Box>
-              <Box mb={3}>
-                <Box
-                  as="span"
-                  fontWeight="semibold"
-                  mb={1}
-                  sx={{ display: "inline-block" }}
-                >
-                  Chất liệu
-                </Box>
-                <Controller
-                  name="material"
-                  control={control}
-                  render={({ field: { value, ...other } }) => {
-                    return (
-                      <Select
-                        value={value}
-                        onChange={(selectedOption) => {
-                          setValue("material", selectedOption); // Update 'category' field
-                        }}
-                        options={materialSelect}
-                      />
-                    );
-                  }}
-                />
+                <Flex direction={"column"}>
+                  <Box
+                    as="span"
+                    fontWeight="semibold"
+                    mb={1}
+                    sx={{ display: "inline-block" }}
+                  >
+                    Thương hiệu
+                  </Box>
+                  <Controller
+                    name="brand"
+                    control={control}
+                    render={({ field: { value, ...other } }) => {
+                      return (
+                        <Select
+                          value={value}
+                          onChange={(selectedOption) => {
+                            setValue("brand", selectedOption); // Update 'category' field
+                          }}
+                          options={brandSelect}
+                        />
+                      );
+                    }}
+                  />
+                </Flex>
               </Box>
             </Flex>
-          </Row>
+            <Flex direction={"column"}>
+              <Box mb={3}>
+                <Flex direction={"column"}>
+                  <Box
+                    as="span"
+                    fontWeight="semibold"
+                    mb={1}
+                    sx={{ display: "inline-block" }}
+                  >
+                    Cạp quần
+                  </Box>
+                  <Controller
+                    name="waistband"
+                    control={control}
+                    render={({ field: { value, ...other } }) => {
+                      return (
+                        <Select
+                          value={value}
+                          onChange={(selectedOption) => {
+                            setValue("waistband", selectedOption); // Update 'category' field
+                          }}
+                          options={waistbandSelect}
+                        />
+                      );
+                    }}
+                  />
+                </Flex>
+              </Box>
+              <Box mb={3}>
+                <Flex direction={"column"}>
+                  <Box
+                    as="span"
+                    fontWeight="semibold"
+                    mb={1}
+                    sx={{ display: "inline-block" }}
+                  >
+                    Chất liệu
+                  </Box>
+                  <Controller
+                    name="material"
+                    control={control}
+                    render={({ field: { value, ...other } }) => {
+                      return (
+                        <Select
+                          value={value}
+                          onChange={(selectedOption) => {
+                            setValue("material", selectedOption); // Update 'category' field
+                          }}
+                          options={materialSelect}
+                        />
+                      );
+                    }}
+                  />
+                </Flex>
+              </Box>
+            </Flex>
+
+           
+          </Flex>
+          <Flex  flexDirection={"column"} alignItems={"center"}>
+                <Box
+                  border={"1px solid #dbdbdb"}
+                  borderRadius={"10px"}
+                  w={"100%"}
+                >
+                  <img
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      height: "300px",
+                      objectFit: "contain",
+                    }}
+                    // src={
+                    //   featuredAsset
+                    //     ? featuredAsset.url
+                    //     : "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132484366.jpg"
+                    // }
+                     src={`${import.meta.env.VITE_BACKEND_URL}/product/${
+                id
+              }/image-main`}
+                  />
+                </Box>
+                <Button
+                  onClick={() => setIsModalAssetOpen(true)}
+                  style={{ marginTop: "10px" }}
+                >
+                  Chọn ảnh
+                </Button>
+              </Flex>
+            </Flex>
         </Spin>
       </Form>
       <SelectImage
-        isModalAssetOpen={isModalAssetOpen}
-        setIsModalAssetOpen={setIsModalAssetOpen}
-        setFeaturedAsset={setFeaturedAsset}
-        featuredAsset={featuredAsset as Asset}
-      />
+            isModalAssetOpen={isModalAssetOpen}
+            setIsModalAssetOpen={setIsModalAssetOpen}
+            setFeaturedAsset={setFeaturedAsset}
+            featuredAsset={featuredAsset as Asset}
+         />
     </Fragment>
   );
 };

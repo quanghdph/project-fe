@@ -39,7 +39,6 @@ export const getListOrder = async ({ params, dispatch, axiosClientJwt, navigate 
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        console.log(res);
         if (res?.status === 200 && res.data) {
             setTimeout(function () {
                 dispatch(getListOrderSuccess(res.data));

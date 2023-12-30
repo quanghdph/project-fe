@@ -32,6 +32,9 @@ import Title from "antd/lib/typography/Title";
 import CreateOrder from "./CreateOrder";
 import BillList from "./BillList";
 import ProductList from "./ProductList";
+import ModalProductDetail from "./ModalProductDetail";
+import { getListProduct, getListSearchProduct } from "src/features/catalog/product/actions";
+import { getListCustomer } from "src/features/customer/action";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -214,6 +217,7 @@ const Orders = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [filter, setFilter] = useState("");
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
@@ -230,17 +234,37 @@ const Orders = () => {
 
   // ** Effect
   useEffect(() => {
-    getListOrder({
-      params: {
-        page,
-        limit,
-        filter,
-      },
+    if (value && search !== "") {
+      getListSearchProduct({
+        params: {
+          value,
+        },
+        navigate,
+        axiosClientJwt,
+        dispatch,
+      });
+    } else {
+      getListProduct({
+        params: {
+          page,
+          limit,
+          filter,
+        },
+        navigate,
+        axiosClientJwt,
+        dispatch,
+      });
+    }
+  }, [page, limit, value, refresh]);
+
+  useEffect(() => {
+    getListCustomer({
+      params: {},
       navigate,
       axiosClientJwt,
       dispatch,
-    });
-  }, [page, limit, value, status]);
+  })
+  })
 
   // ** Function handle
   const handleOnChangePagination = (e: number) => {
@@ -251,41 +275,6 @@ const Orders = () => {
     setStatus(value);
   };
 
-  const dataRender = (): DataType[] => {
-    // if (!order.list.loading && order.list.result) {
-    //     return order.list.result.orders.map((order, index: number) => {
-    //         return {
-    //             key: index,
-    //             id: order.id,
-    //             code: order.code,
-    //             created_date: order.created_date,
-    //             status: order.status,
-    //             customer_name: order.users.first_name + order.users.last_name,
-    //             modified_date: order.modified_date,
-    //             payment_method: order.payment_method,
-    //             total_price: order.total_price,
-    //             users_id: order.users_id,
-    //             quantity: order.quantity,
-    //             price: order.product_variant.price,
-    //             origin_price: order.product_variant.origin_price,
-    //             promotion: order.promotion,
-    //             payment: order.payment
-    //         }
-    //     })
-    // }
-    if (!order.list.loading && order.list.result?.list) {
-      return order.list.result?.list?.listBill.map((order, index: number) => {
-        return {
-          key: index,
-          id: order.id,
-          name: order.orderName,
-          // url: order?.featured_asset?.url,
-          active: order.status,
-        };
-      });
-    }
-    // return []
-  };
 
   const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
@@ -312,8 +301,6 @@ const Orders = () => {
     },
   ];
 
-  console.log(cart);
-
   return (
     <Fragment>
       <Row gutter={[10, 16]}>
@@ -323,36 +310,8 @@ const Orders = () => {
               <Card>
                 <Title level={5}>Quản lý đơn hàng</Title>
               </Card>
-
-              {/* <Card>
-                                <Table
-                                    bordered
-                                    columns={columns(navigate)}
-                                    dataSource={dataRender()}
-                                    loading={order.list.loading}
-                                    scroll={{ x: '120vw' }}
-                                    pagination={{
-                                        total: order.list.result?.total,
-                                        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                                        onChange: handleOnChangePagination,
-                                        onShowSizeChange: handleOnShowSizeChange,
-                                        responsive: true
-                                    }}
-                                />
-                            </Card> */}
             </Col>
 
-            {/* <Flex gap={2}>
-            <Col span={12}>
-              <Card>
-                <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card>
-              </Card>
-            </Col>
-            </Flex> */}
           </Row>
         </Col>
         <Col span={12}>
@@ -369,7 +328,7 @@ const Orders = () => {
                 />
               </Box>
             </Flex>
-            <ProductList navigate={navigate} cart={cart} setCart={setCart} />
+            <ProductList navigate={navigate} cart={cart} setCart={setCart} setPage={setPage} setLimit={setLimit}  />
           </Card>
         </Col>
         <Col span={12}>

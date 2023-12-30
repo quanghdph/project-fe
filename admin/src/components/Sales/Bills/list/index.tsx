@@ -124,7 +124,6 @@ const Bill = () => {
   const bill = useAppSelector((state) => state.bill);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
-  console.log(bill);
   // ** Third party
   const navigate = useNavigate();
 

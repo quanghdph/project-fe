@@ -29,7 +29,6 @@ export const getListCategory = async ({
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getListCategoryStart());
     const url = page || limit || filter ? `/category?page=${page}&limit=${limit}&filter=${filter}` : '/category'
-    console.log(url)
     const res: any = await axiosClientJwt.get(url,
       {
         headers: {

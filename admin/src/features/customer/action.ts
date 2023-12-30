@@ -21,17 +21,18 @@ import { User } from "src/types/user";
 import { FormValuesCustomer } from "src/components/Customers/create-update";
 import { CreateCustomerParams, DeleteCustomerParams, GetCustomerParams, GetListCustomerParams, UpdateCustomerParams } from "./type";
 
-export const getListCustomer = async ({ pagination, dispatch, axiosClientJwt, navigate }: GetListCustomerParams) => {
+export const getListCustomer = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
     try {
-        // const { skip, take, search, status } = pagination;
+        const { page, limit, filter } = params;
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListCustomerStart());
-        const res: IAxiosResponse<User> = await axiosClientJwt.get('/customer', {
+        const url = page || limit || filter ? `/customer?page=${page}&limit=${limit}&filter=${filter}` : '/customer'
+        const res: IAxiosResponse<User> = await axiosClientJwt.get(url, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.statuse === 200 && res?.data) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
                 dispatch(getListCustomerSuccess(res.data));
             }, 1000)
@@ -236,4 +237,36 @@ export const updateCustomer = async ({ customer, axiosClientJwt, dispatch, navig
     }
 }
 
-
+export const getListSearchCustomer = async ({
+    params,
+    dispatch,
+    axiosClientJwt,
+    navigate,
+  }: any) => {
+    try {
+      const { value } = params;
+      const accessToken = localStorage.getItem("accessToken");
+      dispatch(getListCustomerStart());
+      const res: any = await axiosClientJwt.get(
+        `/customer/search?customerName=${value}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (res?.status === 200 && res?.data) {
+        setTimeout(function () {
+          dispatch(getListCustomerSuccess(res.data));
+        }, 1000);
+      } else {
+        dispatch(getListCustomerFailed(null));
+      }
+    } catch (error: any) {
+      dispatch(getListCustomerFailed(null));
+      Inotification({
+        type: "error",
+        message: "Something went wrong!",
+      });
+    }
+  };

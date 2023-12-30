@@ -15,6 +15,12 @@ import {
   updateProductStart,
   updateProductSuccess,
   updateProductFailed,
+  getImageSuccess,
+  getImageStart,
+  getImageFailed,
+  getProductDetailSuccess,
+  getProductDetailStart,
+  getProductDetailFailed,
 } from "./productSlice";
 import { IAxiosResponse } from "src/types/axiosResponse";
 import { FormValuesProduct } from "src/components/Catalog/Products/detail-update/ProductDetail";
@@ -100,7 +106,6 @@ export const getListProduct = async ({
         },
       },
     );
-    // console.log(res)
     if (res?.status === 200 && res?.data && res?.data.list) {
       setTimeout(function () {
         dispatch(getListProductSuccess(res.data));
@@ -227,7 +232,7 @@ export const getProduct = async ({
   dispatch,
   axiosClientJwt,
   navigate,
-}: GetProductParams) => {
+}: any) => {
   try {
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getProductStart());
@@ -237,6 +242,7 @@ export const getProduct = async ({
       },
     });
     if (res?.status === 200 && res?.data) {
+      console.log(res);
       setTimeout(function () {
         dispatch(getProductSuccess(res.data));
       }, 1000);
@@ -292,7 +298,6 @@ export const updateProduct = async ({
     } = product;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateProductStart());
-    console.log(id)
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
         `/product/${id}`,
@@ -316,6 +321,7 @@ export const updateProduct = async ({
       setTimeout(function () {
         dispatch(updateProductSuccess(res.data));
         message.success("Cập nhật sản phẩm thành công!");
+        navigate("/catalog/products");
         setRefresh(!refresh);
       }, 1000);
     } else if (res?.response?.code === 400 && !res?.response?.success) {
@@ -345,5 +351,69 @@ export const updateProduct = async ({
         message: "Something went wrong!",
       });
     }
+  }
+};
+
+export const getProductImage = async ({
+  id,
+  dispatch,
+  axiosClientJwt,
+  navigate,
+}: any) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(getImageStart());
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product/${id}/image-main`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (res?.status === 200) {
+      setTimeout(function () {
+        dispatch(getImageSuccess(res.data));
+      }, 1000);
+    } else {
+      dispatch(getImageFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(getImageFailed(null));
+    
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
+  }
+};
+
+
+export const getProductDetail = async ({
+  id,
+  dispatch,
+  axiosClientJwt,
+  navigate,
+}: any) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(getProductDetailStart());
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product-detail/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log(res);
+    if (res?.status === 200 && res?.data) {
+      setTimeout(function () {
+        dispatch(getProductDetailSuccess(res.data));
+      }, 1000);
+    } else {
+      dispatch(getProductDetailFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(getProductDetailFailed(null));
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
   }
 };

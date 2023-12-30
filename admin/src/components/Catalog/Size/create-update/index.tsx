@@ -68,7 +68,6 @@ const SizeCreateUpdate = () => {
 
     useEffect(() => {
         if (id && !size.single.loading && size.single.result) {
-            console.log(size.single);
             setValue("size_code", size.single.result.sizeCode)
             setValue("size_name", size.single.result.sizeName)
         }

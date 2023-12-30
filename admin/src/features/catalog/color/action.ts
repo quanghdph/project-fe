@@ -152,7 +152,6 @@ export const createColor = async ({ color, dispatch, axiosClientJwt, navigate, m
         //     }
         // }
         );
-        console.log(res);
         if (res?.status === 200 && res?.data) {
             setTimeout(function () {
                 dispatch(createColorSuccess(res.data));

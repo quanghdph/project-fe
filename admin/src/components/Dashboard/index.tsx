@@ -35,8 +35,6 @@ const Dashboard = () => {
         })
     }, [])
 
-    console.log(dashboard);
-
     return (
         <Fragment>
             <Row>

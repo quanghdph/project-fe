@@ -155,7 +155,6 @@ const ProductCreate: React.FC = () => {
    const handleChange = (info: UploadChangeParam) => {
       if (info.file.status === 'done') {
         // You can access the file path or URL here
-        console.log('File path:', info.file.response.filePath);
       }
     };
 

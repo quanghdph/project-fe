@@ -58,6 +58,16 @@ interface ProductState {
         loading: boolean;
         error: boolean;
     }
+    singleImage: {
+        result: Product | null;
+        loading: boolean;
+        error: boolean;
+    }
+    detail: {
+        result: Product | null;
+        loading: boolean;
+        error: boolean;
+    }
 }
 
 const initialState: ProductState = {
@@ -85,7 +95,17 @@ const initialState: ProductState = {
         result: null,
         loading: false,
         error: false
-    }
+    },
+    singleImage: {
+        result: null,
+        loading: false,
+        error: false
+    },
+    detail: {
+        result: null,
+        loading: false,
+        error: false
+    },
 } as ProductState;
 
 export const productSlice = createSlice({
@@ -161,7 +181,35 @@ export const productSlice = createSlice({
             state.update.loading = false;
             state.update.result = action.payload;
             state.update.error = true;
-        }
+        },
+         // ** Get image
+        getImageStart: (state) => {
+            state.single.loading = true;
+        },
+        getImageSuccess: (state, action) => {
+            state.single.loading = false;
+            state.single.result = action.payload;
+            state.single.error = false
+        },
+        getImageFailed: (state, action) => {
+            state.single.loading = false;
+            state.single.result = action.payload;
+            state.single.error = true;
+        },
+         // ** Get product detail
+         getProductDetailStart: (state) => {
+            state.detail.loading = true;
+        },
+        getProductDetailSuccess: (state, action) => {
+            state.detail.loading = false;
+            state.detail.result = action.payload;
+            state.detail.error = false
+        },
+        getProductDetailFailed: (state, action) => {
+            state.detail.loading = false;
+            state.detail.result = action.payload;
+            state.detail.error = true;
+        },
     }
 });
 
@@ -181,6 +229,12 @@ export const {
     updateProductStart,
     updateProductSuccess,
     updateProductFailed,
+    getImageStart,
+    getImageSuccess,
+    getImageFailed,
+    getProductDetailStart,
+    getProductDetailSuccess,
+    getProductDetailFailed,
 } = productSlice.actions;
 
 export default productSlice.reducer;

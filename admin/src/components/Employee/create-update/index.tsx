@@ -103,7 +103,6 @@ const EmployeeCreateUpdate = () => {
       // setValue("employee_gender", employee.single.result.gender);
       setValue("employee_email", employee.single.result.email);
       setValue("employee_phone", employee.single.result.phoneNumber);
-      console.log(employee.single)
       employee.single.result?.dateOfBirth && setDateOfBirth(moment(employee.single.result?.dateOfBirth).format(outputFormat))
       employee.single.result?.createDate && setCreateDate(moment(employee.single.result?.createDate).format(outputFormat))
       employee.single.result?.updateDate && setUpdateDate(moment(employee.single.result?.updateDate).format(outputFormat))
@@ -145,7 +144,6 @@ const EmployeeCreateUpdate = () => {
     const formatCreateDate = moment(createDate).format("YYYY-MM-DD")
     const formatUpdateDate = moment(updateDate).format("YYYY-MM-DD")
 
-    console.log(data);
     if (id) {
       updateEmployee({
         axiosClientJwt,
