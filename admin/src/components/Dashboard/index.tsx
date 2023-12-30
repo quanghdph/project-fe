@@ -11,45 +11,31 @@ import PotentialCustomers from './PotentialCustomers';
 import Pagination from "antd/es/pagination";
 
 interface Dashboard {
-    totalCustomers: number
-    totalProducts: number
-    totalAdministrators: number,
-    totalOrders: number,
-    totalOrdersOpen: number,
-    totalOrderConfirm: number,
-    totalOrderShipped: number,
-    totalOrderCompleted: number,
-    totalOrderRefund: number,
-    totalOrderCancel: number
-    potentialCustomers: Array<{ _sum: { total_price: number }, user: User }>,
-    salesReport: Array<Order>
-    hotSellingProducts: Array<{ _sum: { quantity: number }, variant: ProductVariant }>
+    totalBill: number
+    totalCustomer: number
+    totalEmployee0: number
+    totalProduct: number
 }
 
 const Dashboard = () => {
     // ** State
     const [dashboard, setDashboard] = useState<Dashboard>()
-    const [money, setMoney] = useState<number>(1000)
-    const [startDate, setStartDate] = React.useState<string>(moment(new Date())?.toISOString() as string)
-    const [endDate, setEndDate] = React.useState<string>()
+    // const [money, setMoney] = useState<number>(1000)
+    // const [startDate, setStartDate] = React.useState<string>(moment(new Date())?.toISOString() as string)
+    // const [endDate, setEndDate] = React.useState<string>()
 
-    console.log(startDate)
     // ** Variables
     const axiosClient = createAxiosClient();
 
     // ** Effect 
     useEffect(() => {
-        axiosClient.get('/dashboard', {
-            params: {
-                start_day: startDate,
-                end_day: endDate,
-                money
-            }
-        }).then((r) => {
-            const d = {...r} as unknown as { response: Dashboard }
-            setDashboard(d.response)
+        axiosClient.get('/DashBoard').then((r) => {
+            const d = {...r.data} as unknown as { data: Dashboard }
+            setDashboard(d)
         })
-    }, [startDate, endDate, money])
+    }, [])
+
+    console.log(dashboard);
 
     return (
         <Fragment>
@@ -59,28 +45,28 @@ const Dashboard = () => {
                         <Col span={6}>
                             <Card>
                                 <Box color="#8c8c8c" fontWeight={600}>Số lượng sản phẩm</Box>
-                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalProducts}</Box>
+                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalProduct}</Box>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
                                 <Box color="#8c8c8c" fontWeight={600}>Số lượng khách hàng</Box>
-                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalCustomers}</Box>
+                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalCustomer}</Box>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
-                                <Box color="#8c8c8c" fontWeight={600}>Số lượng quản trị viên</Box>
-                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalAdministrators}</Box>
+                                <Box color="#8c8c8c" fontWeight={600}>Số lượng nhân viên</Box>
+                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalEmployee0}</Box>
                             </Card>
                         </Col>
                         <Col span={6}>
                             <Card>
                                 <Box color="#8c8c8c" fontWeight={600}>Số lượng đơn hàng</Box>
-                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalOrders}</Box>
+                                <Box fontWeight="bold" fontSize="3xl">{dashboard?.totalBill}</Box>
                             </Card>
                         </Col>
-                        <Col span={24} style={{marginTop: "1rem"}}>
+                        {/* <Col span={24} style={{marginTop: "1rem"}}>
                             <Row gutter={[16, 16]}>
                                 <Col span={24}>
                                     <Card title="Sản phẩm bán chạy">
@@ -171,7 +157,7 @@ const Dashboard = () => {
                                     />
                                 </Col>
                             </Row>
-                        </Col>
+                        </Col> */}
                     </Row>
                 </Col>
             </Row>

@@ -197,7 +197,7 @@ const SiderBar = () => {
     }, [location.pathname])
 
     return (
-        <Sider width={300} className="site-layout-background">
+        <Sider width={200} className="site-layout-background">
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}

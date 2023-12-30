@@ -1,31 +1,31 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Box, Flex } from "@chakra-ui/react";
-import { Avatar, Button, Card, Image, InputNumber, Modal, Space, Table, Tag } from "antd";
+import { Button, Image, InputNumber, Modal, Space, Table } from "antd";
+import { PaginationProps } from "antd/es/pagination";
 import { ColumnsType } from "antd/lib/table";
 import Title from "antd/lib/typography/Title";
-import React, { Fragment, useState } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import ModalProduct from "./ModalProduct";
-
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+import React, { Fragment, useEffect, useState } from "react";
+import { NavigateFunction } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { getListProduct } from "src/features/catalog/product/actions";
+import { createAxiosJwt } from "src/helper/axiosInstance";
 
 const columns = (
-  setIsModalOpen: (open: boolean) => void,
-  productDelete: { id: number; name: string } | undefined,
-  setProductDelete: ({ id, name }: { id: number; name: string }) => void,
+  // setIsModalOpen: (open: boolean) => void,
+  // productDelete: { id: number; name: string } | undefined,
+  // setProductDelete: ({ id, name }: { id: number; name: string }) => void,
   navigate: NavigateFunction,
-): ColumnsType<DataType> => [
+  // onInputChange,
+  productChoose: any,
+  setProductChoose: any,
+): any=> [
   {
     title: "#",
     dataIndex: "id",
     ellipsis: true,
     key: "id",
+    width: "8%",
+    fixed: "left",
   },
   {
     title: "Sản phẩm",
@@ -56,27 +56,34 @@ const columns = (
     dataIndex: "quantity",
     key: "quantity",
     width: "50px",
-    render: (_, record) => {
-      return (
-        <InputNumber
-          min={1}
-          defaultValue={1}
-          // onChange={(value) => onInputChange(value, record.key)}
-        />
-      );
-    },
+    // render: (_, record) => {
+    //   return (
+    //     <InputNumber
+    //       min={1}
+    //       defaultValue={1}
+    //       // onChange={(value) => onInputChange(value, record.key)}
+    //     />
+    //   );
+    // },
   },
   {
-    title: "Tổng tiền",
+    title: "Đơn giá",
     dataIndex: "price",
     key: "price",
   },
   {
     title: "Hành động",
     key: "action",
+    width: "150px",
+    // fixed: "right",
     render: (_, record) => {
       return (
         <Space size="middle">
+          {/* <Button
+            shape="circle"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`detail-update/${record.id}`)}
+          />
           <Button
             shape="circle"
             icon={<DeleteOutlined />}
@@ -88,119 +95,108 @@ const columns = (
                 name: record.name,
               });
             }}
-          />
+          /> */}
+          <Button
+            type="primary"
+            onClick={() =>{
+              return setProductChoose([
+                ...productChoose,
+                {
+                  id: record.id,
+                  product: record.product,
+                  quantity: 1
+                }
+              ])
+            }
+            }
+          >
+            Chọn
+          </Button>
         </Space>
       );
     },
   },
 ];
 
-function OrderDetail(props: any) {
-  const { orderCode, productChoose, setProductChoose } = props;
+function ProductList({ navigate, productChoose, setProductChoose }) {
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [filter, setFilter] = useState<string>("");
+  const [quantity, setQuantity] = useState<number>(1);
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [productDelete, setProductDelete] = useState<{
-    id: number;
-    name: string;
-  }>();
-  const [open, setOpen] = useState(false);
+  const product = useAppSelector((state) => state.product);
+  const dispatch = useAppDispatch();
+  const axiosClientJwt = createAxiosJwt();
 
-  // ** Third party
-  const navigate = useNavigate();
+  useEffect(() => {
+    getListProduct({
+      params: {
+        page,
+        limit,
+        filter,
+      },
+      navigate,
+      axiosClientJwt,
+      dispatch,
+    });
+  }, [page, limit]);
 
   const dataRender = (): any => {
-    // if (!product.list.loading && product.list.result?.list) {
-    //   return product.list.result?.list.map((product, index: number) => {
-    //     return {
-    //       key: index,
-    //       id: product.id,
-    //       name: product.productName,
-    //       category: product.category?.categoryName,
-    //       brand: product.brand?.brandName,
-    //       url: product?.mainImage,
-    //       active: product.status,
-    //     };
-    //   });
-    // } else if(!product.list.loading &&product.list.result) {
-    //     return product.list?.result.map((product, index: number) => {
-    //         return {
-    //           key: index,
-    //           id: product.id,
-    //           name: product.productName,
-    //           // url: product?.featured_asset?.url,
-    //           active: product.status,
-    //         };
-    //       });
-    // } else {
-    //     return []
-    // }
-    console.log("1231", productChoose);
-    return productChoose.map((product, index) => {
-    
-      return {
-        key: index,
-        id: product.id,
-        product: {
-          productName: product.product.productName,
-          productCode: product.product.productCode,
-          brand: product.product.brand,
-        },
-      }
-    })
-    // return [];
+    if (!product.list.loading && product.list.result?.list) {
+      return product.list.result?.list.map((product, index: number) => {
+        return {
+          key: index,
+          id: product.id,
+          product: {
+            productName: product.productName,
+            color: "Màu đỏ",
+            productCode: product.productCode,
+            size: "10",
+            brand: product.brand,
+            waistband: product.waistband,
+          },
+        };
+      });
+    }
   };
 
-  const handleAddProduct = () => {
-    setOpen(true);
+  const onInputChange = (value, recordKey) => {
+    console.log(`Quantity changed for record with key ${recordKey}: ${value}`);
+    // You can use the value and recordKey as needed, for example, update the state.
+  };
+
+  const handleOnChangePagination = (e: number) => {
+    setPage(e);
+  };
+
+  const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    current,
+    pageSize,
+  ) => {
+    setPage(current);
+    setLimit(pageSize);
   };
 
   return (
     <Fragment>
-      <Flex justifyContent={"space-between"} mb={5}>
-        <Title level={5}>Đơn hàng {`#${orderCode}`}</Title>
-      </Flex>
-      <Flex direction={"column"} gap={3}>
-          <Table
-          title={() => 'Giỏ hàng'}
-            bordered
-            columns={columns(
-              setIsModalOpen,
-              productDelete,
-              setProductDelete,
-              navigate,
-            )}
-            dataSource={dataRender()}
-            // loading={product.list.loading}
-            // pagination={{
-            //   total: product.list.result?.total,
-            //   showTotal: (total, range) =>
-            //     `${range[0]}-${range[1]} of ${total} items`,
-            //   onChange: handleOnChangePagination,
-            //   onShowSizeChange: handleOnShowSizeChange,
-            //   responsive: true,
-            // }}
-            pagination={false}
-            scroll={{ x: true }}
-          />
-        <Card>
-          <Flex justifyContent={"space-between"}>
-            <Title level={5}>Thông tin khách hàng</Title>
-            <Button>Thêm mới khách hàng</Button>
-          </Flex>
-          <Box>Tên khách hàng: </Box>
-          <Box>Email: </Box>
-          <Box>Số điện thoaị: </Box>
-        </Card>
-
-        <Card>
-          <Flex justifyContent={"space-between"}>
-            <Title level={5}>Thông tin thanh toán</Title>
-          </Flex>
-        </Card>
-      </Flex>
-      <ModalProduct navigate={navigate} setOpen={setOpen} open={open} />
+      <Table
+        bordered
+        columns={columns(navigate, productChoose, setProductChoose)}
+        dataSource={dataRender()}
+        loading={product.list?.loading}
+        pagination={{
+          total: product.list.result?.total,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+          onChange: handleOnChangePagination,
+          onShowSizeChange: handleOnShowSizeChange,
+          responsive: true,
+        }}
+        scroll={{ x: true }}
+        // style={{maxWidth: 600}}
+      />
     </Fragment>
   );
 }
 
-export default OrderDetail;
+export default ProductList;

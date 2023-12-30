@@ -14,7 +14,7 @@ function generateRandomNumberString(length) {
   return randomString;
 }
 
-function CreateOrder() {
+function CreateOrder({productChoose, setProductChoose}) {
   const [listOrder, setListOrder] = useState(["HD15030032"])
   
   const onChange = (key: string) => {
@@ -38,18 +38,18 @@ function CreateOrder() {
     return {
       key: index.toString(),
       label: item,
-      children: <OrderDetail orderCode={item} />
+      children: <OrderDetail orderCode={item} productChoose={productChoose} setProductChoose={setProductChoose} />
     }
   })
 
   const handleCreateOrder = () => {
     const orderCode = `HD${generateRandomNumberString(6)}`
-    if (listOrder.length < 5) {
+    if (listOrder.length < 1) {
       setListOrder([...listOrder, orderCode]);
     } else {
       Inotification({
         type: "error",
-        message: "Chỉ được tạo tối đa 5 đơn hàng!",
+        message: "Chỉ được tạo 1 đơn hàng!",
       });
     }
   }
