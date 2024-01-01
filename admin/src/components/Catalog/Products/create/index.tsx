@@ -30,6 +30,7 @@ const ProductCreate: React.FC = () => {
    const [brandSelect, setBrandSelect] = useState()
    const [waistbandSelect, setWaistbandSelect] = useState()
    const [materialSelect, setMaterialSelect] = useState()
+   const [files, setFiles] = useState();
 
    //** Third party
    const navigate = useNavigate();
@@ -147,7 +148,8 @@ const ProductCreate: React.FC = () => {
             },
             category: {
                id: data.category
-            }
+            },
+            images:files
          },
       });
    };
@@ -220,6 +222,7 @@ const ProductCreate: React.FC = () => {
             isModalAssetOpen={isModalAssetOpen}
             setIsModalAssetOpen={setIsModalAssetOpen}
             setFeaturedAsset={setFeaturedAsset}
+            setFiles={setFiles}
             featuredAsset={featuredAsset as Asset}
          />
       </Fragment>

@@ -92,8 +92,9 @@ interface SelectImageProps {
     setIsModalAssetOpen: (open: boolean) => void
     setFeaturedAsset: (asset: Asset) => void,
     featuredAsset: Asset
+    setFiles:any
 }
-const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, featuredAsset }: SelectImageProps) => {
+const SelectImage = ({setFiles, isModalAssetOpen,setFeaturedAsset, setIsModalAssetOpen, featuredAsset }: SelectImageProps) => {
     // ** State
     const [take, setTake] = useState<number>(12)
     const [skip, setSkip] = useState<number>(0)
@@ -165,6 +166,7 @@ const SelectImage = ({ isModalAssetOpen, setFeaturedAsset, setIsModalAssetOpen, 
         if (e.target.files) {
             setSelectedFiles(e.target.files);
         }
+        setFiles(e.target.files)
     };
 
 
