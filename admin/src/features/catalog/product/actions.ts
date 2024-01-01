@@ -47,25 +47,33 @@ export const createProduct = async ({
       category,
       waistband,
       brand,
-      status,
+      status,images
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
+
+    const formData = new FormData();
+    formData.append('productName', productName);
+    formData.append('description', description);
+    formData.append('status', status);
+    formData.append('material.id', material.id);
+    formData.append('category.id', category.id);
+    formData.append('waistband.id', waistband.id);
+    formData.append('brand.id', brand.id);
+
+    // Append each image file to FormData
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append('images', images[i]);
+      }
+    }
+
     const res: any = await axiosClientJwt.post(
       `/product`,
-      {
-        productName,
-        description,
-        status,
-        material,
-        category,
-        waistband,
-        brand,
-        images: ""
-      },
+        formData,
       {
           headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${accessToken}`
           },
       },
     );

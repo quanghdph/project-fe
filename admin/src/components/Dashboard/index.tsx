@@ -31,7 +31,8 @@ const Dashboard = () => {
     useEffect(() => {
         axiosClient.get('/DashBoard').then((r) => {
             const d = {...r.data} as unknown as { data: Dashboard }
-            setDashboard(d)
+            console.log(d);
+            setDashboard(d);
         })
     }, [])
 

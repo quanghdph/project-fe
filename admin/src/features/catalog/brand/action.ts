@@ -264,6 +264,7 @@ export const updateBrand = async ({
   id,
 }: any) => {
   try {
+     
     const { brandName, status } = brand;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateBrandStart());
