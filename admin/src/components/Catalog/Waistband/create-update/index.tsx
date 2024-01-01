@@ -157,7 +157,7 @@ const WaistbandCreateUpdate = () => {
                                         render={({ field }) => {
                                             return (
                                                 <div ref={waistbandCodeErrorRef}>
-                                                    <Input {...field} placeholder="VM00932" />
+                                                    <Input {...field} placeholder="VM00932" disabled />
                                                     {errors?.waistband_code ? <Box as="div" mt={1} textColor="red.600">{errors.waistband_code?.type === 'required' ? "Vui lòng điền mã cạp quần!" : errors.waistband_code.message}</Box> : null}
                                                 </div>
                                             )

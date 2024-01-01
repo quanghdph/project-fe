@@ -36,7 +36,16 @@ export type FormValuesCategory = {
 const CategoryCreateUpdate = () => {
   // ** State
   const [status, setStatus] = useState({ label: "Hoạt động", value: 1 });
-
+  const statusOptions = [
+                          {
+                            value: "1",
+                            label: "Hoạt động",
+                          },
+                          {
+                            value: "0",
+                            label: "Vô hiệu hóa",
+                          },
+                        ];
   // ** Third party
   const navigate = useNavigate();
   const params = useParams();
@@ -126,7 +135,10 @@ const CategoryCreateUpdate = () => {
   };
 
   const handleChangeStatus = (value: boolean) => {
-    setStatus(value)
+    let statusfind = statusOptions.find(option => {
+        return option.value == value;
+    })
+    setStatus(statusfind);
   };
 
   return (
@@ -226,16 +238,7 @@ const CategoryCreateUpdate = () => {
                             // {...field}
                             placeholder="Status"
                             onChange={handleChangeStatus}
-                            options={[
-                              {
-                                value: "1",
-                                label: "Hoạt động",
-                              },
-                              {
-                                value: "0",
-                                label: "Vô hiệu hóa",
-                              },
-                            ]}
+                            options={statusOptions}
                           />
                           {/* {errors?.category_code ? (
                             <Box as="div" mt={1} textColor="red.600">

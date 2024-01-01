@@ -9,7 +9,7 @@ export const createAxiosJwt = () => {
     const newInstance = axios.create({
         baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: {
-            "Content-Yype": "application/json",
+            "Content-Type": "application/json",
         },
         paramsSerializer: (params) => queryString.stringify(params),
     });

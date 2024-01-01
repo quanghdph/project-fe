@@ -13,6 +13,7 @@ import {
   message,
   Select,
 } from "antd";
+import console from "console";
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -35,7 +36,8 @@ export type FormValuesBrand = {
 
 const BrandCreateUpdate = () => {
   // ** State
-  const [status, setStatus] = useState({ label: "Hoạt động", value: 1 });
+  const [status, setStatus] = useState({label: "Hoạt động", value: 1});
+  const [statusValue, setStatusValue] = useState(1);
 
   // ** Third party
   const navigate = useNavigate();
@@ -64,6 +66,16 @@ const BrandCreateUpdate = () => {
   const brand = useAppSelector((state) => state.brand);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
+  let statusOptions = [
+                        {
+                          value: "1",
+                          label: "Hoạt động",
+                        },
+                        {
+                          value: "0",
+                          label: "Vô hiệu hóa",
+                        },
+                      ];
 
   // ** Effect
   useEffect(() => {
@@ -97,15 +109,16 @@ const BrandCreateUpdate = () => {
 
   // ** Function handle
   const onSubmit = async (data: FormValuesBrand) => {
+  
     if (id) {
       updateBrand({
         axiosClientJwt,
         brand: {
           brandName: data.brand_name,
-          status: status.value,
+          status:statusValue,
         },
         dispatch,
-        id: +id,
+        id: id,
         message,
         navigate,
         setError,
@@ -115,7 +128,7 @@ const BrandCreateUpdate = () => {
         axiosClientJwt,
         brand: {
           brandName: data.brand_name,
-          status: status.value
+          status: statusValue
         },
         dispatch,
         message,
@@ -125,8 +138,12 @@ const BrandCreateUpdate = () => {
     }
   };
 
-  const handleChangeStatus = (value: boolean) => {
-    setStatus(value)
+  const handleChangeStatus = (value: any) => {
+    setStatusValue(value)
+    let statusfind = statusOptions.find(option => {
+        return option.value == value;
+    })
+    setStatus(statusfind);
   };
 
   return (
@@ -140,6 +157,7 @@ const BrandCreateUpdate = () => {
             <Breadcrumb.Item>
               <Link to="/catalog/brands">Thương hiệu</Link>
             </Breadcrumb.Item>
+            <Breadcrumb.Item>{id ? "Cập nhật" : "Tạo"}</Breadcrumb.Item>
             <Breadcrumb.Item>{id ? "Cập nhật" : "Tạo"}</Breadcrumb.Item>
           </Breadcrumb>
         </Col>
@@ -226,16 +244,7 @@ const BrandCreateUpdate = () => {
                             // {...field}
                             placeholder="Status"
                             onChange={handleChangeStatus}
-                            options={[
-                              {
-                                value: "1",
-                                label: "Hoạt động",
-                              },
-                              {
-                                value: "0",
-                                label: "Vô hiệu hóa",
-                              },
-                            ]}
+                            options={statusOptions}
                           />
                           {/* {errors?.brand_code ? (
                             <Box as="div" mt={1} textColor="red.600">
