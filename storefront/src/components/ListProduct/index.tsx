@@ -22,14 +22,14 @@ interface ListProductProps {
 
 const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
     // ** State
-    const [products, setProducts] = React.useState<ProductList>()
-    const [total, setTotal] = React.useState()
+    const [products, setProducts] = useState<ProductList>()
+    const [total, setTotal] = useState()
     const [take, setTake] = useState<number>(12)
     const [skip, setSkip] = useState<number>(0)
     const [search, setSearch] = useState<string>('')
     const [value] = useDebounce(search, 1000);
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(12);
     const [filter, setFilter] = useState('')
 
     // ** Variables
@@ -51,18 +51,19 @@ const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
         // }
         ).then((res) => {
             const result = { ...res } as unknown as IAxiosResponse<Product[]>
-            console.log(result);
             // const filterProductActive = result.data.list.filter((e) => e.status === 1)
             // console.log(filterProductActive);
             setProducts(result.data.list as unknown as ProductList)
             setTotal(result.data.total)
         })
-    }, [filterCategories, value, price, page])
+    }, [filterCategories, value, price, page,limit])
 
     // ** Function handle
     const handleOnChangePagination = (e: number) => {
-        // setSkip((e - 1) * take)
         setPage(e)
+    }
+    const handleOnShowSizeChange = (current, pageSize) => {
+        setLimit(pageSize)
     }
 
     const dataToRender = () => {
@@ -70,8 +71,7 @@ const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
             return (
                 <Row gutter={[16, 16]}>
                     {products?.map((p, index) => {
-                        console.log(p)
-                        return <CardProduct key={index} span={6} product={p} />
+                        return <CardProduct key={p.id} span={6} product={p} />
                     })}
                 </Row>
             )
@@ -98,7 +98,8 @@ const ListProduct = ({ filterCategories, price, opts }: ListProductProps) => {
                                     showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
                                     // defaultCurrent={skip + 1}
                                     onChange={handleOnChangePagination}
-                                    // defaultPageSize={take}
+                                    onShowSizeChange={handleOnShowSizeChange} 
+                                    defaultPageSize={limit}
                                     responsive={true}
                                 />
                             </Flex>
