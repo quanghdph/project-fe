@@ -208,7 +208,7 @@ function OrderDetail(props: any) {
       });
       setCustomerOption(listOption);
     }
-  }, []);
+  }, [customer?.list.loading, customer.list.result]);
 
   return (
     <Fragment>

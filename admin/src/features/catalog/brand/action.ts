@@ -319,3 +319,38 @@ export const updateBrand = async ({
     });
   }
 };
+
+
+export const getListSearchBrand = async ({
+  params,
+  dispatch,
+  axiosClientJwt,
+  navigate,
+}: any) => {
+  try {
+    const { value } = params;
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(getListBrandStart());
+   
+    const res: any = await axiosClientJwt.get(`/brand/search?brandName=${value}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    if (res?.status === 200 && res?.data && res?.data) {
+      setTimeout(function () {
+        dispatch(getListBrandSuccess(res.data));
+      }, 1000);
+    } else {
+      dispatch(getListBrandFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(getListBrandFailed(null));
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
+  }
+};

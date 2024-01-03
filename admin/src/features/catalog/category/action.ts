@@ -318,3 +318,37 @@ export const updateCategory = async ({
     });
   }
 };
+
+export const getListSearchCategory = async ({
+  params,
+  dispatch,
+  axiosClientJwt,
+  navigate,
+}: any) => {
+  try {
+    const { value } = params;
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(getListCategoryStart());
+    // const url = page || limit || filter ? `/categoryName={?page=${page}&limit=${limit}&filter=${filter}` : '/category'
+    const res: any = await axiosClientJwt.get( `/category/search?categoryName=${value}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    if (res?.status === 200 && res?.data && res?.data) {
+      setTimeout(function () {
+        dispatch(getListCategorySuccess(res.data));
+      }, 1000);
+    } else {
+      dispatch(getListCategoryFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(getListCategoryFailed(null));
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
+  }
+};

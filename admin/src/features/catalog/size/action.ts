@@ -25,18 +25,13 @@ export const getListSize = async ({ params, dispatch, axiosClientJwt, navigate }
         const {page, limit, filter} = params
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListSizeStart());
-        const res: any = await axiosClientJwt.get(`/size?page=${page}&limit=${limit}&filter=${filter}`
-        // , {
-        //     params: {
-        //         take,
-        //         skip,
-        //         search,
-        //         status
-        //     },
-        //     headers: {
-        //         Authorization: `Bearer ${accessToken}`
-        //     }
-        // }
+        const url = page || limit || filter ? `/size?page=${page}&limit=${limit}&filter=${filter}` : '/size'
+        const res: any = await axiosClientJwt.get(url
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
         );
         
         if (res?.status === 200 && res?.data && res?.data.listSizes) {

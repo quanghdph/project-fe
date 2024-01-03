@@ -17,29 +17,22 @@ import {
 } from "./colorSlice";
 import { Inotification } from "src/common";
 import { IAxiosResponse } from "src/types/axiosResponse";
-import { FormValuesCategory } from "src/components/Catalog/Categories/create-update";
-// import { CreateCategoryParams, DeleteCategoryParams, GetCategoryParams, GetListCategoryParams, UpdateCategoryParams } from "./type";
 
 export const getListColor = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
     try {
         const {page, limit, filter} = params
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListColorStart());
-        const res: any = await axiosClientJwt.get(`/color?page=${page}&limit=${limit}&filter=${filter}`
-        // , {
-        //     params: {
-        //         take,
-        //         skip,
-        //         search,
-        //         status
-        //     },
-        //     headers: {
-        //         Authorization: `Bearer ${accessToken}`
-        //     }
-        // }
+        const url = page || limit || filter ? `/color?page=${page}&limit=${limit}&filter=${filter}` : '/color'
+        const res: any = await axiosClientJwt.get(url
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
         );
         
-        if (res?.status === 200 && res?.data && res?.data.listColors) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
                 dispatch(getListColorSuccess(res.data));
             }, 1000)
@@ -48,20 +41,10 @@ export const getListColor = async ({ params, dispatch, axiosClientJwt, navigate 
         }
     } catch (error: any) {
         dispatch(getListColorFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
     }
 }
 
@@ -279,6 +262,36 @@ export const updateColor = async ({ color, axiosClientJwt, dispatch, navigate, s
         //         message: 'Something went wrong!'
         //     })
         // }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
+
+
+export const getListSearchColor = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
+    try {
+        const {value} = params
+        const accessToken = localStorage.getItem("accessToken")
+        dispatch(getListColorStart());
+        const res: any = await axiosClientJwt.get(`/color/search?colorName=${value}`
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+        );
+        
+        if (res?.status === 200 && res?.data) {
+            setTimeout(function () {
+                dispatch(getListColorSuccess(res.data));
+            }, 1000)
+        } else {
+            dispatch(getListColorFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getListColorFailed(null));
         Inotification({
             type: 'error',
             message: 'Something went wrong!'
