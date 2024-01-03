@@ -39,6 +39,7 @@ import BrandCreateUpdatePage from './pages/Catalog/Brand/create-update';
 import BillListPage from './pages/Sales/Bills/list';
 import BillDetailPage from './pages/Sales/Bills/detail';
 import BillCreateUpdatePage from './pages/Sales/Bills/create-update';
+import ProductCreateUpdatePage from './pages/Catalog/Products/create-update';
 
 interface ProtectRouteProps {
   children: React.ReactNode
@@ -80,7 +81,7 @@ const App = () => {
             <Route path='catalog'>
               <Route path='products'>
                 <Route index element={<ProductListPage />} />
-                <Route path='create' element={<ProductCreatePage />} />
+                <Route path='create' element={<ProductCreateUpdatePage />} />
                 <Route path='detail-update/:id' element={<ProductCreatePage />} />
               </Route>
               <Route path='brands'>

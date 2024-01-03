@@ -8,7 +8,14 @@ import {
     FolderOpenOutlined,
     InboxOutlined,
     ShoppingCartOutlined,
-    TagOutlined
+    TagOutlined,
+    BgColorsOutlined,
+    FullscreenOutlined,
+    UnorderedListOutlined,
+    DeploymentUnitOutlined,
+    ScissorOutlined,
+    AlibabaOutlined,
+    
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -39,73 +46,66 @@ const SiderBar = () => {
                         icon: <InboxOutlined />,
                         label: "Sản phẩm",
                         className: location.pathname === "catalog/products" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
+                        onTitleClick: () => {
                             navigate('catalog/products')
-                        }
-                    },
-                    {
-                        key: "brands",
-                        icon: <InboxOutlined />,
-                        label: "Thương hiệu",
-                        className: location.pathname === "catalog/brands" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/brands')
-                        }
-                    },
-                    {
-                        key: "sizes",
-                        icon: <InboxOutlined />,
-                        label: "Kích thước",
-                        className: location.pathname === "catalog/sizes" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/sizes')
-                        }
-                    },
-                    {
-                        key: "colors",
-                        icon: <InboxOutlined />,
-                        label: "Màu sắc",
-                        className: location.pathname === "catalog/colors" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/colors')
-                        }
-                    },
-                    {
-                        key: "meterial",
-                        icon: <InboxOutlined />,
-                        label: "Chất liệu",
-                        className: location.pathname === "catalog/material" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/material')
-                        }
-                    },
-                    {
-                        key: "waistband",
-                        icon: <InboxOutlined />,
-                        label: "Cạp quần",
-                        className: location.pathname === "catalog/waistbands" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/waistbands')
-                        }
-                    },
-                    {
-                        key: "categories",
-                        icon: <FolderOpenOutlined />,
-                        label: "Danh mục",
-                        className: location.pathname === "catalog/categories" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/categories')
-                        }
-                    },
-                    {
-                        key: "assets",
-                        icon: <PictureOutlined />,
-                        label: "Ảnh",
-                        className: location.pathname === "catalog/assets" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('catalog/assets')
-                        }
-                    },
+                        },
+                        children: [
+                            {
+                                key: "brands",
+                                icon: <DeploymentUnitOutlined />,
+                                label: "Thương hiệu",
+                                className: location.pathname === "catalog/brands" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/brands')
+                                }
+                            },
+                            {
+                                key: "sizes",
+                                icon: <FullscreenOutlined />,
+                                label: "Kích thước",
+                                className: location.pathname === "catalog/sizes" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/sizes')
+                                }
+                            },
+                            {
+                                key: "colors",
+                                icon: <BgColorsOutlined />,
+                                label: "Màu sắc",
+                                className: location.pathname === "catalog/colors" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/colors')
+                                }
+                            },
+                            {
+                                key: "meterial",
+                                icon: <ScissorOutlined />,
+                                label: "Chất liệu",
+                                className: location.pathname === "catalog/material" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/material')
+                                }
+                            },
+                            {
+                                key: "waistband",
+                                icon: <AlibabaOutlined />,
+                                label: "Cạp quần",
+                                className: location.pathname === "catalog/waistbands" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/waistbands')
+                                }
+                            },
+                            {
+                                key: "categories",
+                                icon: <UnorderedListOutlined />,
+                                label: "Danh mục",
+                                className: location.pathname === "catalog/categories" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/categories')
+                                }
+                            },
+                        ]
+                    }
                 ]
             },
             {
@@ -199,7 +199,7 @@ const SiderBar = () => {
     return (
         <Sider width={200} className="site-layout-background">
             <Menu
-                mode="inline"
+                mode="vertical"
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
                 style={{ height: '100%', borderRight: 0 }}

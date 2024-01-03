@@ -280,3 +280,32 @@ export const updateMaterial = async ({ material, axiosClientJwt, dispatch, navig
         })
     }
 }
+
+export const getListSearchMaterial = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
+    try {
+        const {value} = params
+        const accessToken = localStorage.getItem("accessToken")
+        dispatch(getListMaterialStart());
+        const res: any = await axiosClientJwt.get(`/material/search?materialName=${value}`
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+        );
+        
+        if (res?.status === 200 && res?.data && res?.data.listMaterials) {
+            setTimeout(function () {
+                dispatch(getListMaterialSuccess(res.data));
+            }, 1000)
+        } else {
+            dispatch(getListMaterialFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getListMaterialFailed(null));
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
