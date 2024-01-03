@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import { useForm, Controller } from "react-hook-form"
-import formatMoney from 'src/shared/utils/formatMoney';
 import { Breadcrumb, BreadcrumbItem, Button, FormControl, HStack, Input, Select, useToast } from '@chakra-ui/react';
 import { ChevronRight } from 'react-feather';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -12,6 +11,7 @@ import { Col, Row, Divider } from 'antd';
 import Rating from '../Rating';
 
 const ProductDetail = () => {
+
     // ** Variables
     const cart = useAppSelector((state) => state.cart);
     const axiosClient = createAxiosClient();
@@ -21,12 +21,14 @@ const ProductDetail = () => {
     // ** State
     const [product, setProduct] = React.useState<Product>()
     const [color, setColor] = React.useState()
+    const [colorIdSelected, setColorIdSelected] = React.useState()
     const [colorId, setColorId] = React.useState<number>()
 
     // ** Third party
     const { id } = useParams()
     const toast = useToast()
     const navigate = useNavigate()
+
     const { control, setValue, handleSubmit } = useForm({
         defaultValues: {
             quantity: 1
@@ -63,9 +65,6 @@ const ProductDetail = () => {
     //     return arrayVariantOption.toString().replace(',', ' ')
     // }
 
-    const onChangeColor = (event) => {
-        setColorId(+event.target.value)
-    }
 
     const onSubmit = (data: { quantity: number }) => {
         if (id) {
@@ -103,31 +102,27 @@ const ProductDetail = () => {
                     <Col span={24}>
                         <Row gutter={[16, 16]} style={{ padding: "25px 0" }} justify="space-evenly">
                             <Col span={6}>
-                                {/* <img src={product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url ?
-                                    product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url :
-                                    "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/134557216-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
-                                } alt='' className='w-full object-cover rounded-md' /> */}
+            
                                    {product&& <img src={`http://localhost:8080/product/${product?.id}/image-main`} alt='' className='w-full object-cover rounded-md'/>}
                             </Col>
                             <Col span={12}>
                                 <div className='flex flex-col gap-3'>
                                     <p className='font-bold text-2xl'>{product?.name}</p>
-                                    {/* <p className='font-bold text-sm' style={{ color: "gray" }}>{product?.product_variants.find((variant) => variant.id === variantId)?.sku}</p> */}
-                                    {/* <p className='font-bold text-lg'>{formatMoney(product?.product_variants.find((variant) => variant.id === variantId)?.price || 0)}</p> */}
-                                    {/* <form > */}
+                
                                     <div className='flex flex-col gap-2'>
-                                        <p className='font-semibold'>Select option</p>
+                                        <p className='font-semibold'>Màu sắc</p>
                                         <Fragment>
-                                            <Select onChange={onChangeColor}>
-                                         
+                                            <div>
                                                 {
                                                     color && color.map((item, index) => {
                                                         return (
-                                                            <option key={item.id} value={item.id}>{item?.colorName}</option>
+                                                            
+                                                             <label style={{padding:"10px"}} className='col-6' key={item.id}><input type='radio' checked={colorIdSelected==item.id} onChange={()=>setColorIdSelected(item.id)} value={item.id}/> {item.colorName}</label>
+                                                            
                                                         )
                                                     })
-                                                }s
-                                            </Select>
+                                                }
+                                            </div>
                                         </Fragment>
                                     </div>
                                     {/* <p className='font-bold text-sm'>Available: {(product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0)}</p> */}
@@ -190,5 +185,11 @@ const ProductDetail = () => {
             </div>
         </React.Fragment>
     )
+
+
+
+
+
+
 }
 export default ProductDetail
