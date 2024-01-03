@@ -55,7 +55,7 @@ const CardProduct = ({ product, span }: CardProductProps) => {
          <Col span={span} className='!flex'>
             <Card
                className='flex-1'
-               cover={<img src={noImg} />}
+               cover={<img src={`http://localhost:8080/product/${product.id}/image-main`} alt='Không có ảnh' />}
                hoverable
             >
                <Link to={`/products/${product?.id}`} className='text-[#999] hover:text-primary transition duration-200 text-sm font-bold'>

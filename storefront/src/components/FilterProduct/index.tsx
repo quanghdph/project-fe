@@ -43,18 +43,19 @@ const FilterProduct = ({ setFilterCategories, setPrice, price, setColor, setSize
                 status: "active"
             }
         }).then((res) => {
-            const result = { ...res } as unknown as IAxiosResponse<Cateogry[]>
-            setCategories(result.response.data as unknown as CategoryList)
+            // const result = { ...res } as unknown as IAxiosResponse<Cateogry[]>
+            console.log(res.data.listCategories)
+            setCategories(res.data as unknown as CategoryList)
         })
-        axiosClient.get(`product/options`).then((res) => {
-            const result = { ...res } as unknown as IAxiosResponse<ProductOption[]>
-            setOptions(result.response.data as unknown as ProductOption[])
-        })
+        // axiosClient.get(`product/options`).then((res) => {
+        //     const result = { ...res } as unknown as IAxiosResponse<ProductOption[]>
+        //     setOptions(result.response.data as unknown as ProductOption[])
+        // })
     }, [skip, take])
 
     const optionsCategoriesToRender = () => {
-        if (categories) {
-            return categories.categories.map((category) => {
+        if (categories?.categories) {
+            return categories?.categories.map((category) => {
                 return {
                     label: category.category_name,
                     value: category.id
