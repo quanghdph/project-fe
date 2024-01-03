@@ -36,33 +36,33 @@ interface RatingCreate {
     content: string
 }
 
-export const getListRating = async ({ pagination, dispatch, axiosClient, toast, id }: GetRatingParams) => {
-    try {
-        const { skip, take } = pagination;
-        dispatch(getListRatingStart());
-        const res: IAxiosResponse<{}> = await axiosClient.get(`/rate/list/${id}`, {
-            params: {
-                take,
-                skip,
-            },
-        });
-        if (res?.response?.code === 200 && res?.response?.success) {
-            setTimeout(function () {
-                dispatch(getListRatingSuccess(res.response.data));
-            }, 1000)
-        } else {
-            dispatch(getListRatingFailed(null));
-        }
-    } catch (error: any) {
-        toast({
-            status: 'error',
-            title: 'Something went wrong!',
-            isClosable: true,
-            position: "top-right",
-            variant: 'left-accent',
-        })
-    }
-}
+// export const getListRating = async ({ pagination, dispatch, axiosClient, toast, id }: GetRatingParams) => {
+//     try {
+//         const { skip, take } = pagination;
+//         dispatch(getListRatingStart());
+//         const res: IAxiosResponse<{}> = await axiosClient.get(`/rate/list/${id}`, {
+//             params: {
+//                 take,
+//                 skip,
+//             },
+//         });
+//         if (res?.response?.code === 200 && res?.response?.success) {
+//             setTimeout(function () {
+//                 dispatch(getListRatingSuccess(res.response.data));
+//             }, 1000)
+//         } else {
+//             dispatch(getListRatingFailed(null));
+//         }
+//     } catch (error: any) {
+//         toast({
+//             status: 'error',
+//             title: 'Something went wrong!',
+//             isClosable: true,
+//             position: "top-right",
+//             variant: 'left-accent',
+//         })
+//     }
+// }
 
 export const createRating = async ({ axiosClientJwt, dispatch, navigate, rating, toast, refresh, setRefresh }: CreateRatingParams) => {
     try {

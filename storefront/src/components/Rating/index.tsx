@@ -5,7 +5,7 @@ import { createAxiosClient, createAxiosJwt } from 'src/axios/axiosInstance';
 import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import { Box, Flex, useToast } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createRating, getListRating } from 'src/features/rating/action';
+import { createRating } from 'src/features/rating/action';
 import { Row, Col, Form, Input, Divider, Button, Rate } from 'antd'
 import { Controller, useForm } from 'react-hook-form';
 import autoAnimate from "@formkit/auto-animate"
@@ -59,17 +59,17 @@ const Rating = () => {
 
     useEffect(() => {
         if (id) {
-            getListRating({
-                axiosClient,
-                dispatch,
-                navigate,
-                pagination: {
-                    skip,
-                    take
-                },
-                toast,
-                id: +id
-            })
+            // getListRating({
+            //     axiosClient,
+            //     dispatch,
+            //     navigate,
+            //     pagination: {
+            //         skip,
+            //         take
+            //     },
+            //     toast,
+            //     id: +id
+            // })
         }
     }, [refresh, id])
 

@@ -35,7 +35,7 @@ const ProductDetail = () => {
 
     // ** Effect
     React.useEffect(() => {
-        axiosClient.get(`/product-detail/${id}`).then((res) => {
+        axiosClient.get(`/product/${id}`).then((res) => {
             const result = { ...res } as unknown as IAxiosResponse<Product>
             setProduct(result.data)
         })
@@ -107,40 +107,33 @@ const ProductDetail = () => {
                                     product?.product_variants.find((variant) => variant.id === variantId)?.featured_asset?.url :
                                     "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/134557216-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
                                 } alt='' className='w-full object-cover rounded-md' /> */}
-                                <img src="https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/134557216-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6" alt='' className='w-full object-cover rounded-md'/>
+                                   {product&& <img src={`http://localhost:8080/product/${product?.id}/image-main`} alt='' className='w-full object-cover rounded-md'/>}
                             </Col>
                             <Col span={12}>
                                 <div className='flex flex-col gap-3'>
-                                    <p className='font-bold text-2xl'>{product?.product.productName}</p>
+                                    <p className='font-bold text-2xl'>{product?.name}</p>
                                     {/* <p className='font-bold text-sm' style={{ color: "gray" }}>{product?.product_variants.find((variant) => variant.id === variantId)?.sku}</p> */}
                                     {/* <p className='font-bold text-lg'>{formatMoney(product?.product_variants.find((variant) => variant.id === variantId)?.price || 0)}</p> */}
                                     {/* <form > */}
                                     <div className='flex flex-col gap-2'>
                                         <p className='font-semibold'>Select option</p>
                                         <Fragment>
-                                            <Select value={product?.color?.id} onChange={onChangeColor}>
-                                                {/* {
-                                                    product?.product_variants.map((item, index) => {
-                                                        const variantOption = renderVariantOption(item.product_options)
-                                                        return (
-                                                            <option value={item.id} key={item.id}>{`${product.name} ${variantOption}`}</option>
-                                                        )
-                                                    })
-                                                } */}
+                                            <Select onChange={onChangeColor}>
+                                         
                                                 {
                                                     color && color.map((item, index) => {
                                                         return (
-                                                            <option value={item.id}>{item?.colorName}</option>
+                                                            <option key={item.id} value={item.id}>{item?.colorName}</option>
                                                         )
                                                     })
-                                                }
+                                                }s
                                             </Select>
                                         </Fragment>
                                     </div>
                                     {/* <p className='font-bold text-sm'>Available: {(product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0)}</p> */}
                                     <div >
                                         <p className='font-semibold'>Kho: {product?.quantity}</p>
-                                        <p className='font-semibold'>Mã sản phẩm: {product?.product?.productCode}</p>
+                                        <p className='font-semibold'>Mã sản phẩm: {product?.id}</p>
                                     </div>
                                     <div className='flex flex-col gap-2'>
                                         <p className='font-semibold'>Quantity</p>
