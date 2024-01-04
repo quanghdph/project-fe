@@ -32,10 +32,10 @@ import AddressModal from "./AddressModal"
 
 export type FormValuesCustomer = {
     email: string
-    first_name: string
-    last_name: string
+    firstName: string
+    lastName: string
     password: string
-    phone: string
+    phoneNumber: string
 };
 
 const dateFormat = 'YYYY/MM/DD';
@@ -49,6 +49,7 @@ const CustomerCreateUpdate = () => {
     const [mode, setMode] = useState<boolean>(false)
     const [refresh, setRefresh] = useState<boolean>(false)
     const [updateAddress, setUpdateAddress] = useState<number>()
+    const [encryptedPassword, setEncryptedPassword] = useState(true)
 
     // ** Third party
     const navigate = useNavigate()
@@ -57,10 +58,10 @@ const CustomerCreateUpdate = () => {
     const {control, handleSubmit, setValue, setError, formState: {errors}} = useForm<FormValuesCustomer>({
         defaultValues: {
             email: '',
-            first_name: '',
+            firstName: '',
             password: '',
-            last_name: '',
-            phone: '',
+            lastName: '',
+            phoneNumber: '',
         }
     });
 
@@ -74,7 +75,7 @@ const CustomerCreateUpdate = () => {
     const lastNameErrorRef = useRef(null);
     const emailErrorRef = useRef(null);
     const passwordErrorRef = useRef(null);
-    const phoneErrorRef = useRef(null);
+    const phoneNumberErrorRef = useRef(null);
 
     // ** Effect
     useEffect(() => {
@@ -82,7 +83,7 @@ const CustomerCreateUpdate = () => {
         lastNameErrorRef.current && autoAnimate(lastNameErrorRef.current);
         emailErrorRef.current && autoAnimate(emailErrorRef.current);
         passwordErrorRef.current && autoAnimate(passwordErrorRef.current);
-        phoneErrorRef.current && autoAnimate(phoneErrorRef.current);
+        phoneNumberErrorRef.current && autoAnimate(phoneNumberErrorRef.current);
     }, [parent])
 
     useEffect(() => {
@@ -99,12 +100,13 @@ const CustomerCreateUpdate = () => {
     useEffect(() => {
         if (id && !customer.single.loading && customer.single.result) {
             setValue("email", customer.single.result.email)
-            setValue("first_name", customer.single.result.first_name)
-            setValue("last_name", customer.single.result.last_name)
-            setValue("phone", customer.single.result.phone)
-            setActive(customer.single.result.active)
-            setDateOfBirth(customer.single.result.date_of_birth)
+            setValue("firstName", customer.single.result.firstName)
+            setValue("lastName", customer.single.result.lastName)
+            setValue("phoneNumber", customer.single.result.phoneNumber)
+            setDateOfBirth(customer.single.result.dateOfBirth)
             setGender(customer.single.result.gender)
+            customer.single.result.encryptedPassword == "true" ? setEncryptedPassword(true) : setEncryptedPassword(false)
+
         }
     }, [id, customer.single.loading, customer.single.result])
 
@@ -118,16 +120,18 @@ const CustomerCreateUpdate = () => {
     };
 
     const onSubmit = async (data: FormValuesCustomer) => {
+        console.log(data);
         if (id) {
             await updateCustomer({
                 customer: {
-                    active,
                     email: data.email,
-                    first_name: data.first_name,
-                    last_name: data.last_name,
-                    date_of_birth: dateOfBirth,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    password: data.password,
+                    dateOfBirth: dateOfBirth,
                     gender,
-                    phone: data.phone,
+                    encryptedPassword: encryptedPassword,
+                    phoneNumber: data.phoneNumber
                 },
                 axiosClientJwt,
                 dispatch,
@@ -139,14 +143,14 @@ const CustomerCreateUpdate = () => {
         } else {
             await createCustomer({
                 customer: {
-                    active,
                     email: data.email,
-                    first_name: data.first_name,
-                    last_name: data.last_name,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
                     password: data.password,
-                    date_of_birth: dateOfBirth,
+                    dateOfBirth: dateOfBirth,
                     gender,
-                    phone: data.phone
+                    encryptedPassword: encryptedPassword,
+                    phoneNumber: data.phoneNumber
                 },
                 axiosClientJwt,
                 dispatch,
@@ -156,6 +160,10 @@ const CustomerCreateUpdate = () => {
             })
         }
     }
+
+    const onPasswordChange = (checked: boolean) => {
+        setEncryptedPassword(checked)
+    };
 
     return (
         <Fragment>
@@ -176,11 +184,11 @@ const CustomerCreateUpdate = () => {
                         <Card>
                             <Form onFinish={handleSubmit(onSubmit)} layout="vertical" autoComplete="off">
                                 <Col span={24}>
-                                    <Flex justifyContent="space-between" alignItems="center">
-                                        <Flex justifyContent="center" alignItems="center">
+                                    <Flex justifyContent="flex-end" alignItems="center">
+                                        {/* <Flex justifyContent="center" alignItems="center">
                                             <Switch checked={active} size='small' onChange={() => setActive(!active)}/>
                                             <Box as="span" ml={2} fontWeight="semibold">Hoạt động</Box>
-                                        </Flex>
+                                        </Flex> */}
                                         {
                                             id && customer.update.loading ?
                                                 <Button type="primary" loading>Đang cập nhật...</Button> :
@@ -193,33 +201,33 @@ const CustomerCreateUpdate = () => {
                                 </Col>
                                 <Divider/>
                                 <Col span={24}>
-                                    <Form.Item label="Tên">
+                                    <Form.Item label="Họ">
                                         <Controller
-                                            name="first_name"
+                                            name="firstName"
                                             control={control}
                                             rules={{required: true}}
                                             render={({field}) => {
                                                 return (
                                                     <div ref={firstNameErrorRef}>
-                                                        <Input {...field} placeholder="Ví dụ: Quan"/>
-                                                        {errors?.first_name ? <Box as="div" mt={1}
-                                                                                   textColor="red.600">{errors.first_name?.type === 'required' ? "Vui lòng điền tiền của bạn!" : errors.first_name.message}</Box> : null}
+                                                        <Input {...field} placeholder="Ví dụ: Quang"/>
+                                                        {errors?.firstName ? <Box as="div" mt={1}
+                                                                                   textColor="red.600">{errors.firstName?.type === 'required' ? "Vui lòng điền họ của bạn!" : errors.firstName.message}</Box> : null}
                                                     </div>
                                                 )
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Họ">
+                                    <Form.Item label="Tên">
                                         <Controller
-                                            name="last_name"
+                                            name="lastName"
                                             control={control}
                                             rules={{required: true}}
                                             render={({field}) => {
                                                 return (
                                                     <div ref={lastNameErrorRef}>
-                                                        <Input {...field} placeholder="Ví dụ: Duong"/>
-                                                        {errors?.last_name ? <Box as="div" mt={1}
-                                                                                  textColor="red.600">{errors.last_name?.type === 'required' ? "Vui lòng điền họ của bạn!" : errors.last_name.message}</Box> : null}
+                                                        <Input {...field} placeholder="Ví dụ: Duy"/>
+                                                        {errors?.lastName ? <Box as="div" mt={1}
+                                                                                  textColor="red.600">{errors.lastName?.type === 'required' ? "Vui lòng điền tên của bạn!" : errors.lastName.message}</Box> : null}
                                                     </div>
                                                 )
                                             }}
@@ -234,7 +242,7 @@ const CustomerCreateUpdate = () => {
                                                 return (
                                                     <div ref={lastNameErrorRef}>
                                                         <Input type="email" {...field}
-                                                               placeholder="Eg: qunduong2007@gmail.com"/>
+                                                               placeholder="Eg: qquang@gmail.com"/>
                                                         {errors?.email ? <Box as="div" mt={1}
                                                                               textColor="red.600">{errors.email?.type === 'required' ? "Vui lòng điền email!" : errors.email.message}</Box> : null}
                                                     </div>
@@ -242,7 +250,7 @@ const CustomerCreateUpdate = () => {
                                             }}
                                         />
                                     </Form.Item>
-                                    {
+                                    {/* {
                                         !id && (
                                             <Form.Item label="Mật khẩu">
                                                 <Controller
@@ -261,18 +269,18 @@ const CustomerCreateUpdate = () => {
                                                 />
                                             </Form.Item>
                                         )
-                                    }
+                                    } */}
                                     <Form.Item label="Số điện thoại">
                                         <Controller
-                                            name="phone"
+                                            name="phoneNumber"
                                             control={control}
-                                            rules={{maxLength: 10, minLength: 10}}
+                                            rules={{maxLength: 11, minLength: 10}}
                                             render={({field}) => {
                                                 return (
-                                                    <div ref={phoneErrorRef}>
+                                                    <div ref={phoneNumberErrorRef}>
                                                         <Input {...field} />
-                                                        {errors?.phone ?
-                                                            <Box as="div" mt={1} textColor="red.600">Sai định dạng số điện thoại</Box> : null}
+                                                        {errors?.phoneNumber ?
+                                                            <Box as="div" mt={1} textColor="red.600">Vui lòng nhập định dạng 10 số</Box> : null}
                                                     </div>
                                                 )
                                             }}
@@ -289,17 +297,20 @@ const CustomerCreateUpdate = () => {
                                             onChange={handleChangeGender}
                                             options={[
                                                 {
-                                                    value: true,
+                                                    value: 1,
                                                     label: "Nam giới",
                                                 },
                                                 {
-                                                    value: false,
+                                                    value: 0,
                                                     label: 'Nữ giới',
                                                 },
                                             ]}
                                         />
                                     </Form.Item>
-                                    {
+                                    <Form.Item label="Mật khẩu mã hóa">
+                                        <Switch defaultChecked checked={encryptedPassword} onChange={onPasswordChange} />
+                                    </Form.Item>
+                                    {/* {
                                         id && (
                                             <Form.Item>
                                                 <Button style={{textTransform: "uppercase"}} type="primary"
@@ -335,7 +346,7 @@ const CustomerCreateUpdate = () => {
                                                 </Row>
                                             </Form.Item>
                                         )
-                                    }
+                                    } */}
                                 </Col>
                             </Form>
                         </Card>

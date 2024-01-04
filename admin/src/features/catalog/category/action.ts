@@ -338,9 +338,7 @@ export const getListSearchCategory = async ({
       },
     );
     if (res?.status === 200 && res?.data && res?.data) {
-      setTimeout(function () {
-        dispatch(getListCategorySuccess(res.data));
-      }, 1000);
+      dispatch(getListCategorySuccess(res.data));
     } else {
       dispatch(getListCategoryFailed(null));
     }

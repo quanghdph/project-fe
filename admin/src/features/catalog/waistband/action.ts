@@ -34,7 +34,7 @@ export const getListWaistband = async ({ params, dispatch, axiosClientJwt, navig
         }
         );
         
-        if (res?.status === 200 && res?.data && res?.data.listWaistbands) {
+        if (res?.status === 200 && res?.data && res?.data) {
             setTimeout(function () {
                 dispatch(getListWaistbandSuccess(res.data));
             }, 1000)
@@ -274,6 +274,35 @@ export const updateWaistband = async ({ waistband, axiosClientJwt, dispatch, nav
         //         message: 'Something went wrong!'
         //     })
         // }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
+
+export const getListSearchWaistband = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
+    try {
+        const {value} = params
+        const accessToken = localStorage.getItem("accessToken")
+        dispatch(getListWaistbandStart());
+        const res: any = await axiosClientJwt.get(`/waistband/search?waistbandName=${value}`
+        , {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
+        );
+        
+        if (res?.status === 200 && res?.data && res?.data) {
+            setTimeout(function () {
+                dispatch(getListWaistbandSuccess(res.data));
+            }, 1000)
+        } else {
+            dispatch(getListWaistbandFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getListWaistbandFailed(null));
         Inotification({
             type: 'error',
             message: 'Something went wrong!'

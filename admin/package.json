@@ -11,7 +11,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@types/node": "^18.7.13",
     "antd-button-color": "^1.0.4",
-    "antd-img-crop": "^4.12.2",
+    "antd-img-crop": "^4.21.0",
     "axios": "^0.27.2",
     "copy-webpack-plugin": "^11.0.0",
     "javascript-time-ago": "2.5.9",

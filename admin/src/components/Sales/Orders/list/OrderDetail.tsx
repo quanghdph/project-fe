@@ -19,9 +19,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import ModalProduct from "./ModalProduct";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { getListSearchCustomer } from "src/features/customer/action";
+import { getListCustomer, getListSearchCustomer } from "src/features/customer/action";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import TextArea from "antd/lib/input/TextArea";
+import { useDebounce } from "use-debounce";
 
 interface DataType {
   key: string;
@@ -131,6 +132,8 @@ function OrderDetail(props: any) {
   const [open, setOpen] = useState(false);
   const [customerOption, setCustomerOption] = useState();
   const [currentCustomer, setCurrentCustomer] = useState();
+  const [search, setSearch] = useState<string>('')
+    const [value] = useDebounce(search, 1000);
 
   const customer = useAppSelector((state) => state.customer);
 
@@ -179,36 +182,54 @@ function OrderDetail(props: any) {
   };
 
   const onCustomerSearch = (value: string) => {
-    console.log("search:", value);
-    //  if(value ) {
-    //   getListSearchCustomer({
-    //     params: {
-    //       value,
-    //     },
-    //     navigate,
-    //     axiosClientJwt,
-    //     dispatch,
-    //   });
-    //  }
+    setSearch(value)
   };
 
-  const filterCustomerOption = (
-    input: string,
-    option?: { label: string; value: string },
-  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
 
   useEffect(() => {
-    if (!customer?.list.loading && customer.list.result?.listCustomer) {
-      const listOption = customer.list.result?.listCustomer.map((item) => {
-        const fullName = `${item.firstName} ${item.lastName}`;
-        return {
-          value: item.id,
-          label: fullName,
-        };
-      });
-      setCustomerOption(listOption);
+    const fetchData = async () => {
+      const fetchFunction = value ? getListSearchCustomer : getListCustomer;
+
+      try {
+        const params = value ? { value: value } : {};
+        await fetchFunction({
+          params,
+          navigate,
+          axiosClientJwt,
+          dispatch,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [value, search]);
+
+  useEffect(() => {
+    if (!customer.list.loading && customer.list.result) {
+      const listOption = customer.list.result.listCustomer
+        ? customer.list.result.listCustomer.map((item) => ({
+            value: item.id,
+            label: `${item.firstName} ${item.lastName}`,
+          }))
+        : customer.list.result.map((item) => ({
+            value: item.id,
+            label: `${item.firstName} ${item.lastName}`,
+          }));
+      if (!value) {
+        setCustomerOption(listOption);
+      } else {
+        listOption && setCustomerOption(listOption);
+      }
     }
-  }, [customer?.list.loading, customer.list.result]);
+  }, [customer.list.result, customer.list.loading, value]);
+
+
+  const filterCustomerOption = () => {
+    return customerOption;
+  };
 
   return (
     <Fragment>

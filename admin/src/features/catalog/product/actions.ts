@@ -47,7 +47,8 @@ export const createProduct = async ({
       category,
       waistband,
       brand,
-      status,images
+      status,
+      images
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");

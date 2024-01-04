@@ -33,8 +33,11 @@ import CreateOrder from "./CreateOrder";
 import BillList from "./BillList";
 import ProductList from "./ProductList";
 import ModalProductDetail from "./ModalProductDetail";
-import { getListProduct, getListSearchProduct } from "src/features/catalog/product/actions";
-import { getListCustomer } from "src/features/customer/action";
+import {
+  getListProduct,
+  getListSearchProduct,
+} from "src/features/catalog/product/actions";
+import { getListCustomer, getListSearchCustomer } from "src/features/customer/action";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -57,160 +60,6 @@ interface DataType {
   promotion: Promotion;
   payment: boolean;
 }
-
-const columns = (navigate: NavigateFunction): ColumnsType<DataType> => [
-  // {
-  //     title: 'Mã đơn hàng',
-  //     ellipsis: true,
-  //     dataIndex: 'code',
-  //     key: 'code',
-  //     width: '15%',
-  //     fixed: 'left'
-  // },
-  // {
-  //     title: 'Khách hàng',
-  //     dataIndex: 'customer_name',
-  //     ellipsis: true,
-  //     width: '15%',
-  //     key: 'customer_name',
-  //     render: (customer_name: string, record) => {
-  //         return (
-  //             <Flex alignItems={"center"}>
-  //                 <UserOutlined />
-  //                 <Link to={`/customers/update/${record.users_id}`} style={{ marginLeft: "5px" }}>{customer_name}</Link>
-  //             </Flex>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Trạng thái',
-  //     dataIndex: 'status',
-  //     ellipsis: true,
-  //     key: 'status',
-  //     width: '100px',
-  //     render: (status: string) => {
-  //         return (
-  //             <span>
-  //                 {(() => {
-  //                     switch (status) {
-  //                         case StatusOrder.Confirm:
-  //                             return <Tag color="cyan">Xác nhận</Tag>
-  //                         case StatusOrder.Shipped:
-  //                             return <Tag color="orange">Đang vận chuyển</Tag>
-  //                         case StatusOrder.Completed:
-  //                             return <Tag color="green">Hoàn thành</Tag>
-  //                         case StatusOrder.Cancel:
-  //                             return <Tag color="red">Hủy</Tag>
-  //                         case StatusOrder.Refund:
-  //                             return <Tag color="magenta">Hoàn trả</Tag>
-  //                         default:
-  //                             return <Tag color="blue">Mở</Tag>
-  //                     }
-  //                 })()}
-  //             </span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Giá gốc',
-  //     dataIndex: 'origin_price',
-  //     ellipsis: true,
-  //     key: 'origin_price',
-  //     width: '150px',
-  //     render: (origin_price: number) => {
-  //         return (
-  //             <span>{currency(origin_price)}</span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Giá bán',
-  //     dataIndex: 'price',
-  //     ellipsis: true,
-  //     key: 'price',
-  //     width: '100px',
-  //     render: (price: number) => {
-  //         return (
-  //             <span>{currency(price)}</span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Số lượng',
-  //     dataIndex: 'quantity',
-  //     ellipsis: true,
-  //     key: 'quantity',
-  //     width: '100px',
-  //     render: (quantity: number) => {
-  //         return (
-  //             <span>{quantity}</span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Tổng giá',
-  //     dataIndex: 'total_price',
-  //     ellipsis: true,
-  //     key: 'total_price',
-  //     width: '100px',
-  //     render: (total_price: number) => {
-  //         return (
-  //             <span>{currency(total_price)}</span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Lợi nhuận',
-  //     ellipsis: true,
-  //     key: 'profit',
-  //     width: '100px',
-  //     render: (_, record) => {
-  //         return (
-  //             <span style={{ color: record.payment ? 'green' : 'red' }}>+{currency((record.total_price - (record.origin_price * record.quantity)))}</span>
-  //         )
-  //     }
-  // },
-  // {
-  //     title: 'Phương thức thanh toán',
-  //     dataIndex: 'payment_method',
-  //     ellipsis: true,
-  //     key: 'payment_method',
-  //     width: '100px',
-  //     render: (payment_method: string) => {
-  //         return (
-  //             <span>
-  //                 <Tag>{payment_method === 'Standard' ? "Thanh toán thường" : "Paypal"}</Tag>
-  //             </span>
-  //         )
-  //     }
-  // },
-  {
-    title: "Mã đơn hàng",
-    ellipsis: true,
-    dataIndex: "code",
-    key: "code",
-    width: "15%",
-    fixed: "left",
-  },
-  {
-    title: "Hành động",
-    key: "action",
-    width: "100px",
-    fixed: "right",
-    render: (_, record) => {
-      return (
-        <Space size="middle">
-          <Button
-            icon={<ShoppingCartOutlined />}
-            onClick={() => navigate(`detail/${record.id}`)}
-          >
-            Xem chi tiết
-          </Button>
-        </Space>
-      );
-    },
-  },
-];
 
 const Orders = () => {
   // ** State
@@ -257,15 +106,6 @@ const Orders = () => {
     }
   }, [page, limit, value, refresh]);
 
-  useEffect(() => {
-    getListCustomer({
-      params: {},
-      navigate,
-      axiosClientJwt,
-      dispatch,
-  })
-  })
-
   // ** Function handle
   const handleOnChangePagination = (e: number) => {
     setPage(e);
@@ -274,7 +114,6 @@ const Orders = () => {
   const onChangeStatus = (value: string) => {
     setStatus(value);
   };
-
 
   const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
@@ -311,14 +150,13 @@ const Orders = () => {
                 <Title level={5}>Quản lý đơn hàng</Title>
               </Card>
             </Col>
-
           </Row>
         </Col>
         <Col span={12}>
           <Card>
             <Flex justifyContent={"space-between"} mb={5}>
               <Title level={5}>Sản phẩm</Title>
-              <Box  flexBasis={"40%"}>
+              <Box flexBasis={"40%"}>
                 <Input
                   type="text"
                   placeholder="Tìm kiếm sản phẩm theo tên"
@@ -328,7 +166,13 @@ const Orders = () => {
                 />
               </Box>
             </Flex>
-            <ProductList navigate={navigate} cart={cart} setCart={setCart} setPage={setPage} setLimit={setLimit}  />
+            <ProductList
+              navigate={navigate}
+              cart={cart}
+              setCart={setCart}
+              setPage={setPage}
+              setLimit={setLimit}
+            />
           </Card>
         </Col>
         <Col span={12}>

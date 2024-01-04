@@ -17,6 +17,7 @@ import {
   Select,
   Input,
   Grid,
+  UploadFile,
 } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -46,13 +47,15 @@ import {
 } from "src/features/catalog/category/action";
 import { getListBrand, getListSearchBrand } from "src/features/catalog/brand/action";
 import { getListMaterial, getListSearchMaterial } from "src/features/catalog/material/action";
-import { getListWaistband } from "src/features/catalog/waistband/action";
+import { getListSearchWaistband, getListWaistband } from "src/features/catalog/waistband/action";
 import ProductDetail from "../detail-update";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useDebounce } from "use-debounce";
 import { getListColor } from "src/features/catalog/color/action";
 import { getListSize } from "src/features/catalog/size/action";
+import ProductVariant from "./ProductVariant";
+import ImgCrop from "antd-img-crop";
 
 const ProductCreateUpdate: React.FC = () => {
   const [enabled, setEnabled] = useState<boolean>(true);
@@ -137,6 +140,9 @@ const ProductCreateUpdate: React.FC = () => {
   const color = useAppSelector((state) => state.color);
   const size = useAppSelector((state) => state.size);
 
+  //upload
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -153,7 +159,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -174,7 +179,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -195,7 +199,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -216,7 +219,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -237,7 +239,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -258,7 +259,6 @@ const ProductCreateUpdate: React.FC = () => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors if needed
       }
     };
 
@@ -410,7 +410,6 @@ const ProductCreateUpdate: React.FC = () => {
             value: item.id,
             label: item.waistbandName,
           }));
-
       if (!waistbandValue) {
         setWaistbandSelect(listOption);
       } else {
@@ -480,67 +479,24 @@ const ProductCreateUpdate: React.FC = () => {
     return sizeSelect;
   };
 
-  const variants = watch(['color', 'size']);
-  console.log("123", variants)
+  const onUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
 
-  const columns = [
-    {
-      title: '#',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Sản phẩm',
-      dataIndex: 'product',
-      key: 'product',
-    },
-    {
-      title: 'Số lượng',
-      dataIndex: 'quantity',
-      key: 'quantity',
-    },
-    {
-      title: 'Danh mục',
-      dataIndex: 'category',
-      key: 'category',
-    },
-    {
-      title: 'Thương hiệu',
-      dataIndex: 'brand',
-      key: 'brand',
-    },
-    {
-      title: '',
-      dataIndex: 'action',
-      key: 'action',
-    },
-    {
-      title: 'Ảnh',
-      dataIndex: 'image',
-      key: 'image',
-    },
-  ];
-
-  const sampleVariant = [
-    {
-      id: 1,
-      product: 'Sample Product',
-      quantity: 10,
-      category: 'Sample Category',
-      brand: 'Sample Brand',
-      action: 'Sample Action',
-      image: 'Sample Image URL',
-    },
-    {
-      id: 2,
-      product: 'Sample Product 2',
-      quantity: 10,
-      category: 'Sample Category 2',
-      brand: 'Sample Brand 2',
-      action: 'Sample Action 2',
-      image: 'Sample Image UR 2L',
-    },
-  ]
+  const onUploadPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as RcFile);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
 
   return (
     <Fragment>
@@ -634,7 +590,7 @@ const ProductCreateUpdate: React.FC = () => {
                 />
               </Box>
               <Flex wrap={"wrap"} gap={3}>
-                <Box mb={3} width={"45%"}>
+                <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -667,7 +623,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"45%"}>
+                <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -698,7 +654,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"45%"}>
+                <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -716,10 +672,12 @@ const ProductCreateUpdate: React.FC = () => {
                           <Select
                             value={value}
                             showSearch
+                            optionFilterProp="children"
                             onSearch={onWaistbandSearch}
                             onChange={(selectedOption) => {
-                              setValue("waistband", selectedOption); // Update 'category' field
+                              setValue("waistband", selectedOption); 
                             }}
+                            filterOption={filterWaistbandOption}
                             style={{ width: "100%" }}
                             options={waistbandSelect}
                           />
@@ -728,7 +686,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"45%"}>
+                <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -758,7 +716,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"45%"}>
+                {/* <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -792,7 +750,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"45%"}>
+                <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -825,11 +783,27 @@ const ProductCreateUpdate: React.FC = () => {
                       }}
                     />
                   </Flex>
-                </Box>
+                </Box> */}
               </Flex>
             </Form>
 
-            <Table dataSource={sampleVariant} columns={columns} />
+            {/* <Table dataSource={sampleVariant} columns={columns} /> */}
+            <ProductVariant sizes={sizeSelect} colors={colorSelect} />
+
+            <Box mt={5}>
+            <ImgCrop rotationSlider>
+              <Upload
+                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                listType="picture-card"
+                fileList={fileList}
+                onChange={onUploadChange}
+                onPreview={onUploadPreview}
+                multiple
+              >
+                {fileList.length < 5 && '+ Upload'}
+              </Upload>
+            </ImgCrop>
+            </Box>
           </Card>
         </Col>
       </Row>

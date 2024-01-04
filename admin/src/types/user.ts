@@ -2,17 +2,17 @@ import { Role } from "./role"
 
 export interface User {
     id: number
-    first_name: string
-    last_name: string
+    firstName: string
+    lastName: string
     gender: boolean
-    date_of_birth: string
+    dateOfBirth: string
     email: string
-    phone: string
-    active: boolean
-    created_date: string,
-    modified_date: string,
+    phoneNumber: string
+    createDate: string,
+    updateDate: string,
     users_role: Array<{ role_id: number, role: Role }>
     address: Array<UserAddress>
+    customerCode: string
 }
 
 export interface UserAddress {

@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Card, Col, Divider, Input, Modal, Row, Select, Space, Table, Tag, message } from 'antd';
+import { Breadcrumb, Button, Card, Col, Divider, Input, Modal, PaginationProps, Row, Select, Space, Table, Tag, message } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import {
@@ -10,7 +10,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { createAxiosJwt } from 'src/helper/axiosInstance';
 import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import type { ColumnsType } from 'antd/es/table';
-import { deleteCustomer, getListCustomer } from 'src/features/customer/action';
+import { deleteCustomer, getListCustomer, getListSearchCustomer } from 'src/features/customer/action';
 import { useDebounce } from 'use-debounce';
 
 interface DataType {
@@ -29,46 +29,60 @@ const columns = (
     setCustomerDelete: ({ id, email }: { id: number, email: string }) => void,
     navigate: NavigateFunction
 ): ColumnsType<DataType> => [
+    {
+        title: '#',
+        dataIndex: 'id',
+        key: 'id',
+        fixed: 'left',
+        width: '5%'
+    },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
-            fixed: 'left',
-            width: '20%'
-        },
-        {
-            title: 'Tên',
-            dataIndex: 'first_name',
-            key: 'first name',
-            width: '20%'
+            // fixed: 'left',
+            width: '12%'
         },
         {
             title: 'Họ',
-            dataIndex: 'last_name',
-            key: 'last name',
-            width: '20%'
+            dataIndex: 'firstName',
+            key: 'first name',
+            width: '8%'
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'lastName',
+            key: 'lastName',
+            width: '8%'
+        },
+        {
+            title: 'Mã khách hàng',
+            dataIndex: 'customerCode',
+            key: 'customerCode',
+            width: '8%'
+        },
+        {
+            title: 'Giới tính',
+            dataIndex: 'gender',
+            key: 'gender',
+            width: '8%'
+        },
+        {
+            title: 'Ngày sinh',
+            dataIndex: 'dateOfBirth',
+            key: 'dateOfBirth',
+            width: '8%'
         },
         {
             title: 'Số điện thoại',
-            dataIndex: 'phone',
-            key: 'phone',
-            width: '20%'
-        },
-        {
-            title: 'Hoạt động',
-            dataIndex: 'active',
-            key: 'active',
-            width: '100px',
-            render: (active: number) => {
-                return (
-                    <Tag color={active ? 'green' : 'gold'}>{active ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
-                )
-            }
+            dataIndex: 'phoneNumber',
+            key: 'phoneNumber',
+            width: '10%'
         },
         {
             title: 'Hành động',
             key: 'action',
-            width: '150px',
+            width: '8%',
             fixed: 'right',
             render: (_, record) => {
                 return (
@@ -111,33 +125,70 @@ const Customers = () => {
     const axiosClientJwt = createAxiosJwt();
 
     // ** Effect
-    useEffect(() => {
-        getListCustomer({
-            pagination: {
-                page,
-                limit,
-                filter
-            },
-            navigate,
-            axiosClientJwt,
-            dispatch,
-        })
-    }, [page, limit, refresh, value, status])
+        // getListSearchCustomer
+        // getListCustomer({
+        //   params: {
+        //     page: page,
+        //     limit: limit,
+        //     filter: filter
+        //   },
+        //   navigate,
+        //   axiosClientJwt,
+        //   dispatch,
+        // });
+        useEffect(() => {
+            const fetchData = async () => {
+              const fetchFunction = value ? getListSearchCustomer : getListCustomer;
+        
+              try {
+                const params = value ? { value: value } : {page: page, limit: limit, filter: filter};
+                await fetchFunction({
+                  params,
+                  navigate,
+                  axiosClientJwt,
+                  dispatch,
+                });
+              } catch (error) {
+                console.error("Error fetching data:", error);
+              }
+            };
+        
+            fetchData();
+          }, [search, page, limit, value]);
 
     // ** Function handle
     const dataRender = (): DataType[] => {
         if (!customer.list.loading && customer.list.result) {
-            return customer.list.result.customers.map((customer, index: number) => {
+         if(customer.list.result.listCustomer) {
+            return customer.list.result.listCustomer.map((customer, index: number) => {
                 return {
                     key: index,
                     id: customer.id,
                     email: customer.email,
-                    first_name: customer.first_name,
-                    last_name: customer.last_name,
-                    phone: customer.phone,
-                    active: customer.active
+                    firstName: customer.firstName,
+                    lastName: customer.lastName,
+                    phoneNumber: customer.phoneNumber,
+                    gender: customer.gender == 0 ? "Nữ" : "Nam",
+                    dateOfBirth: customer.dateOfBirth,
+                    customerCode: customer.customerCode
+                    // active: customer.active
                 }
             })
+         } else {
+            return customer.list.result.map((customer, index: number) => {
+                return {
+                    key: index,
+                    id: customer.id,
+                    email: customer.email,
+                    firstName: customer.firstName,
+                    lastName: customer.lastName,
+                    phoneNumber: customer.phoneNumber,
+                    gender: customer.gender == 0 ? "Nữ" : "Nam",
+                    dateOfBirth: customer.dateOfBirth,
+                    // active: customer.active
+                }
+            })
+         }
         }
         return []
     }
@@ -160,13 +211,20 @@ const Customers = () => {
     };
 
     const handleOnChangePagination = (e: number) => {
-        setSkip((e - 1) * take)
+       setPage(e)
     }
 
     const onChangeStatus = (value: string) => {
         setStatus(value)
     };
 
+    const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
+        current,
+        pageSize,
+      ) => {
+        setPage(current);
+        setLimit(pageSize);
+      };
 
     return (
         <Fragment>
@@ -229,9 +287,10 @@ const Customers = () => {
                                     pagination={{
                                         total: customer.list.result?.total,
                                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                                        defaultCurrent: skip + 1,
+                                        defaultCurrent: page,
                                         onChange: handleOnChangePagination,
-                                        defaultPageSize: take,
+                                        onShowSizeChange: handleOnShowSizeChange,
+                                        defaultPageSize: limit,
                                         responsive: true
                                     }}
                                 />

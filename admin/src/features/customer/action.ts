@@ -101,32 +101,31 @@ export const deleteCustomer = async ({ id, dispatch, axiosClientJwt, navigate, m
     }
 }
 
-export const createCustomer = async ({ customer, axiosClientJwt, dispatch, navigate, setError, message }: CreateCustomerParams) => {
+export const createCustomer = async ({ customer, axiosClientJwt, dispatch, navigate, setError, message }: any) => {
     try {
-        const { active, email, first_name, last_name, date_of_birth, gender, phone, password } = customer;
+        const { email, firstName, lastName, dateOfBirth, gender, phoneNumber, encryptedPassword } = customer;
         const accessToken = localStorage.getItem("accessToken")
         dispatch(createCustomerStart());
-        const res: IAxiosResponse<User> = await axiosClientJwt.post('/auth/customer/register', {
-            active,
+        const res: IAxiosResponse<User> = await axiosClientJwt.post('/customer', {
             email,
-            first_name,
-            last_name,
-            date_of_birth,
+            firstName,
+            lastName,
+            dateOfBirth,
             gender,
-            phone,
-            password
+            phoneNumber,
+            encryptedPassword
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(createCustomerSuccess(res.response.data));
+                dispatch(createCustomerSuccess(res.data));
                 message.success('Tạo khách hàng thành công!');
                 navigate("/customers")
             }, 1000)
-        } else if (res?.response?.code === 400 && !res?.response?.success) {
+        } else if (res?.status === 400 && !res?.data) {
             dispatch(createCustomerFailed(null));
             setError(res?.response?.fieldError as keyof FormValuesCustomer, { message: res?.response?.message })
         } else {
@@ -134,20 +133,10 @@ export const createCustomer = async ({ customer, axiosClientJwt, dispatch, navig
         }
     } catch (error: any) {
         dispatch(createCustomerFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
     }
 }
 
@@ -155,64 +144,54 @@ export const getCustomer = async ({ id, dispatch, axiosClientJwt, navigate }: Ge
     try {
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getCustomerStart());
-        const res: IAxiosResponse<User> = await axiosClientJwt.get(`/user/customer/${id}`, {
+        const res: IAxiosResponse<User> = await axiosClientJwt.get(`/customer/${id}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(getCustomerSuccess(res.response.data));
+                dispatch(getCustomerSuccess(res.data));
             }, 1000)
         } else {
             dispatch(getCustomerFailed(null));
         }
     } catch (error: any) {
         dispatch(getCustomerFailed(null));
-        if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
-            Inotification({
-                type: 'error',
-                message: 'Bạn không có quyền để thực hiện hành động này!'
-            })
-            setTimeout(function () {
-                navigate('/')
-            }, 1000);
-        } else {
-            Inotification({
-                type: 'error',
-                message: 'Something went wrong!'
-            })
-        }
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
     }
 }
 
-export const updateCustomer = async ({ customer, axiosClientJwt, dispatch, navigate, setError, message, id }: UpdateCustomerParams) => {
+export const updateCustomer = async ({ customer, axiosClientJwt, dispatch, navigate, setError, message, id }: any) => {
     try {
-        const { active, email, first_name, last_name, date_of_birth, gender, phone } = customer;
+        const { email, firstName, lastName, dateOfBirth, gender, phoneNumber, encryptedPassword } = customer;
         const accessToken = localStorage.getItem("accessToken")
         dispatch(updateCustomerStart());
         const [res]: [IAxiosResponse<User>] = await Promise.all([
-            await axiosClientJwt.put(`/user/customer/update/${id}`, {
-                active,
+            await axiosClientJwt.put(`customer/${id}`, {
                 email,
-                first_name,
-                last_name,
-                date_of_birth,
+                firstName,
+                lastName,
+                dateOfBirth,
                 gender,
-                phone,
+                phoneNumber,
+                encryptedPassword
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             }),
         ])
-        if (res?.response?.code === 200 && res?.response?.success) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(updateCustomerSuccess(res.response.data));
+                dispatch(updateCustomerSuccess(res.data));
                 message.success('Cập nhật khách hàng thành công!');
                 navigate("/customers")
             }, 1000)
-        } else if (res?.response?.code === 400 && !res?.response?.success) {
+        } else if (res?.status === 400 && !res?.data) {
             dispatch(updateCustomerFailed(null));
             setError(res?.response?.fieldError as keyof Omit<FormValuesCustomer, "password">, { message: res?.response?.message })
         } else {
