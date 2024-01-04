@@ -56,6 +56,7 @@ import { getListColor } from "src/features/catalog/color/action";
 import { getListSize } from "src/features/catalog/size/action";
 import ProductVariant from "./ProductVariant";
 import ImgCrop from "antd-img-crop";
+import { UploadOutlined } from "@ant-design/icons";
 
 const ProductCreateUpdate: React.FC = () => {
   const [enabled, setEnabled] = useState<boolean>(true);
@@ -498,6 +499,32 @@ const ProductCreateUpdate: React.FC = () => {
     imgWindow?.document.write(image.outerHTML);
   };
 
+  const uploadButton = (
+    <div>
+      <UploadOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const handleChange = ({ fileList }) => {
+    setFileList(fileList);
+  };
+
+  const customRequest = ({ file, onSuccess, onError }) => {
+    // You can handle the file upload logic here (e.g., using Axios)
+    // Make sure to call onSuccess() when the upload is successful
+
+    // For demo purposes, we'll just simulate a successful upload
+    setTimeout(() => {
+      onSuccess();
+    }, 1000);
+  };
+
+  const handleRemove = (file) => {
+    // Remove the file from the fileList
+    setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
+  };
+
   return (
     <Fragment>
       <Row gutter={[0, 16]}>
@@ -791,7 +818,7 @@ const ProductCreateUpdate: React.FC = () => {
             <ProductVariant sizes={sizeSelect} colors={colorSelect} />
 
             <Box mt={5}>
-            <ImgCrop rotationSlider>
+            {/* <ImgCrop rotationSlider>
               <Upload
                 action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                 listType="picture-card"
@@ -802,7 +829,22 @@ const ProductCreateUpdate: React.FC = () => {
               >
                 {fileList.length < 5 && '+ Upload'}
               </Upload>
-            </ImgCrop>
+            </ImgCrop> */}
+              <Upload
+        customRequest={customRequest}
+        fileList={fileList}
+        onChange={handleChange}
+        onRemove={handleRemove}
+        listType="picture-card"
+        onPreview={onUploadPreview}
+        showUploadList={{
+          showPreviewIcon: true,
+          showRemoveIcon: true,
+        }}
+        multiple={true}
+      >
+        {fileList.length >= 5 ? null : uploadButton}
+      </Upload>
             </Box>
           </Card>
         </Col>
