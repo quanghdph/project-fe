@@ -35,6 +35,7 @@ const ProductDetail = () => {
         }
     })
 
+
     // ** Effect
     React.useEffect(() => {
         axiosClient.get(`/product/${id}`).then((res) => {
@@ -42,6 +43,7 @@ const ProductDetail = () => {
             setProduct(result.data)
         })
     }, [])
+    
 
     React.useEffect(() => {
         axiosClient.get(`/color`).then((res) => {
@@ -80,6 +82,8 @@ const ProductDetail = () => {
         }
     }
 
+
+
     return (
         <React.Fragment>
             <div className='py-8 px-10 mt-16'>
@@ -111,6 +115,7 @@ const ProductDetail = () => {
                 
                                     <div className='flex flex-col gap-2'>
                                         <p className='font-semibold'>Màu sắc</p>
+
                                         <Fragment>
                                             <div>
                                                 {
@@ -124,6 +129,7 @@ const ProductDetail = () => {
                                                 }
                                             </div>
                                         </Fragment>
+
                                     </div>
                                     {/* <p className='font-bold text-sm'>Available: {(product?.product_variants.find((variant) => variant.id === variantId)?.stock || 0)}</p> */}
                                     <div >
@@ -185,11 +191,6 @@ const ProductDetail = () => {
             </div>
         </React.Fragment>
     )
-
-
-
-
-
 
 }
 export default ProductDetail
