@@ -78,7 +78,6 @@ function ModalProductDetail({
     }
   }, [id]);
 
-  console.log(product);
 
   return (
     <Fragment>
@@ -96,7 +95,7 @@ function ModalProductDetail({
         )}
       >
      {
-      !product.loading && product.result ? (
+      !product.loading && product.result && product.result.product ? (
         <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} md={8} lg={6} xl={4}>
           {/* Product Image */}
@@ -108,25 +107,25 @@ function ModalProductDetail({
         </Col>
         <Col xs={24} sm={12} md={16} lg={18} xl={20}>
           {/* Product Details */}
-          <Title level={3}>{product.result.product.productName}</Title>
-          <Text  as='b'>{product.result.product.brand.brandName}</Text>
+          <Title level={3}>{product.result?.product?.productName}</Title>
+          <Text  as='b'>{product.result?.product?.brand?.brandName}</Text>
           <Divider />
-          <div dangerouslySetInnerHTML={{ __html: product.result.product.description }} />
+          <div dangerouslySetInnerHTML={{ __html: product.result?.product?.description }} />
 
           <Divider />
 
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              <Text  as='b'>Giá:</Text> {product.result.price}
+              <Text  as='b'>Giá:</Text> {product.result?.price}
             </Col>
             <Col span={12}>
-              <Text  as='b'>Màu:</Text> {product.result.color.colorName}
+              <Text  as='b'>Màu:</Text> {product.result?.color?.colorName}
             </Col>
             {/* <Col span={12}>
               <Text  as='b'>Size:</Text> {product.result.size}
             </Col> */}
             <Col span={12}>
-              <Text  as='b'>Số lượng:</Text> {product.result.quantity}
+              <Text  as='b'>Số lượng:</Text> {product.result?.quantity}
             </Col>
           </Row>
         </Col>

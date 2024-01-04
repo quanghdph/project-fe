@@ -146,7 +146,7 @@ const CustomerCreateUpdate = () => {
                     email: data.email,
                     firstName: data.firstName,
                     lastName: data.lastName,
-                    password: data.password,
+                    // password: data.password,
                     dateOfBirth: dateOfBirth,
                     gender,
                     encryptedPassword: encryptedPassword,

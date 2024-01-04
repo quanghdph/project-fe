@@ -4,6 +4,7 @@ import {
   Avatar,
   Button,
   Card,
+  Form,
   Image,
   Input,
   InputNumber,
@@ -12,6 +13,7 @@ import {
   Space,
   Table,
   Tag,
+  message,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import Title from "antd/lib/typography/Title";
@@ -19,10 +21,18 @@ import React, { Fragment, useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import ModalProduct from "./ModalProduct";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { getListCustomer, getListSearchCustomer } from "src/features/customer/action";
+import {
+  getListCustomer,
+  getListSearchCustomer,
+} from "src/features/customer/action";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import TextArea from "antd/lib/input/TextArea";
 import { useDebounce } from "use-debounce";
+import { Controller, useForm } from "react-hook-form";
+import {
+  caculateSelloff,
+  createSelloff,
+} from "src/features/sale/saleoff/action";
 
 interface DataType {
   key: string;
@@ -33,6 +43,8 @@ interface DataType {
 }
 
 const columns = (
+  cart: any,
+  setCart: any,
   setIsModalOpen: (open: boolean) => void,
   productDelete: { id: number; name: string } | undefined,
   setProductDelete: ({ id, name }: { id: number; name: string }) => void,
@@ -69,23 +81,6 @@ const columns = (
       );
     },
   },
-  // {
-  //   title: "Số lượng",
-  //   dataIndex: "quantity",
-  //   key: "quantity",
-  //   width: "50px",
-  //   render: (_, record) => {
-  //     console.log("quantity", record);
-  //     return (
-  //       <InputNumber
-  //         min={1}
-  //         value={record.quantity}
-  //         defaultValue={1}
-  //         onChange={(value) => handleQuantityChange(value, record.key)}
-  //       />
-  //     );
-  //   },
-  // },
   {
     title: "Số lượng",
     dataIndex: "renderQuantity",
@@ -107,12 +102,10 @@ const columns = (
             shape="circle"
             icon={<DeleteOutlined />}
             onClick={() => {
-              setIsModalOpen(true);
-              setProductDelete({
-                ...productDelete,
-                id: record.id,
-                name: record.name,
-              });
+              console.log(record)
+              const updatedCartData = cart.filter((product) => product.id !== record.id);
+              // Update the cart data
+              setCart(updatedCartData);
             }}
           />
         </Space>
@@ -132,10 +125,26 @@ function OrderDetail(props: any) {
   const [open, setOpen] = useState(false);
   const [customerOption, setCustomerOption] = useState();
   const [currentCustomer, setCurrentCustomer] = useState();
-  const [search, setSearch] = useState<string>('')
-    const [value] = useDebounce(search, 1000);
+  const [search, setSearch] = useState<string>("");
+  const [value] = useDebounce(search, 1000);
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    setError,
+    register,
+    formState: { errors },
+    getValues,
+    watch,
+  } = useForm({
+    defaultValues: {
+      paymentMethod: 0,
+    },
+  });
 
   const customer = useAppSelector((state) => state.customer);
+  const selloff = useAppSelector((state) => state.selloff);
 
   // ** Third party
   const navigate = useNavigate();
@@ -177,15 +186,14 @@ function OrderDetail(props: any) {
       const currentCustomerSelect = customer.list.result?.listCustomer.filter(
         (e) => value == e.id,
       );
+      setValue("customer", currentCustomerSelect[0]);
       setCurrentCustomer(currentCustomerSelect[0]);
     }
   };
 
   const onCustomerSearch = (value: string) => {
-    setSearch(value)
+    setSearch(value);
   };
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -226,120 +234,213 @@ function OrderDetail(props: any) {
     }
   }, [customer.list.result, customer.list.loading, value]);
 
-
-  const filterCustomerOption = () => {
+  const filterCustomerOption = (): any => {
     return customerOption;
   };
 
+  const onSubmit = (data) => {
+    // Handle the form data here
+    const cartArr = cart.map((item) => {
+      return {
+        id: item.id,
+        quantity: item.quantity,
+      };
+    });
+
+    createSelloff({
+      params: {
+        idKhachHang: data.customer.id,
+        thanhToan: data.paymentMethod,
+        trangThaiTT: 1,
+        note: data.note,
+        sanPhams: cartArr ? cartArr : [],
+      },
+      dispatch,
+      axiosClientJwt,
+      navigate,
+      message,
+    });
+  };
+
+  const onNoteChange = (e) => {
+    const value = e.target.value;
+    setValue("note", value);
+  };
+
+  //  useEffect(() => {
+  //   const formData = watch(["note", "paymentMethod", "customer"]);
+  //   console.log(formData);
+  //  }, [watch])
+
+  // const formDataBefore = watch(["note", "paymentMethod", "customer"]);
+
+  // useEffect(() => {
+  //   const cartArr = cart.map((item) => {
+  //     return {
+  //       id: item.id,
+  //       quantity: item.quantity,
+  //     };
+  //   });
+
+  //   cartArr.length > 0 &&
+  //     formDataBefore[2] &&
+  //     formDataBefore[0] &&
+  //     formDataBefore[1] &&
+  //     caculateSelloff({
+  //       params: {
+  //         idKhachHang: formDataBefore[2]?.customer.id,
+  //         thanhToan: formDataBefore[1],
+  //         trangThaiTT: 1,
+  //         note: formDataBefore[0],
+  //         sanPhams: cartArr ? cartArr : [],
+  //       },
+  //       dispatch,
+  //       axiosClientJwt,
+  //       navigate,
+  //       message,
+  //     });
+  // }, [formDataBefore]);
+
+  // console.log(selloff);
+
   return (
     <Fragment>
-      <Flex justifyContent={"space-between"} mb={5}>
-        <Title level={5}>Đơn hàng {`#${orderCode}`}</Title>
-      </Flex>
-      <Flex direction={"column"} gap={3}>
-        <Table
-          title={() => "Giỏ hàng"}
-          bordered
-          columns={columns(
-            setIsModalOpen,
-            productDelete,
-            setProductDelete,
-            navigate,
-            handleQuantityChange,
-          )}
-          dataSource={dataRender()}
-          // loading={product.list.loading}
-          // pagination={{
-          //   total: product.list.result?.total,
-          //   showTotal: (total, range) =>
-          //     `${range[0]}-${range[1]} of ${total} items`,
-          //   onChange: handleOnChangePagination,
-          //   onShowSizeChange: handleOnShowSizeChange,
-          //   responsive: true,
-          // }}
-          pagination={false}
-          scroll={{ x: true }}
-        />
-        <Card>
-          <Flex justifyContent={"space-between"} mb={3}>
-            <Title level={5}>Thông tin khách hàng</Title>
-            <Flex gap={2} width={400}>
-              <Box flex={1}>
-                <Select
-                  showSearch
-                  placeholder="Tìm kiếm khách hàng"
-                  optionFilterProp="children"
-                  onChange={onCustomerChange}
-                  onSearch={onCustomerSearch}
-                  filterOption={filterCustomerOption}
-                  style={{ width: "100%" }}
-                  options={customerOption}
-                />
-              </Box>
-              <Button type="primary">Thêm mới khách hàng</Button>
+      <Form
+        onFinish={handleSubmit(onSubmit)}
+        layout="vertical"
+        autoComplete="off"
+      >
+        <Flex justifyContent={"space-between"} mb={5}>
+          <Title level={5}>Đơn hàng {`#${orderCode}`}</Title>
+        </Flex>
+        <Flex direction={"column"} gap={3}>
+          <Table
+            title={() => "Giỏ hàng"}
+            bordered
+            columns={columns(
+              cart,
+              setCart,
+              setIsModalOpen,
+              productDelete,
+              setProductDelete,
+              navigate,
+              handleQuantityChange,
+            )}
+            dataSource={dataRender()}
+            // loading={product.list.loading}
+            pagination={false}
+            scroll={{ x: true }}
+          />
+
+          <Card>
+            <Flex justifyContent={"space-between"} mb={3}>
+              <Title level={5}>Thông tin khách hàng</Title>
+              <Flex gap={2} width={400}>
+                <Box flex={1}>
+                  <Form.Item name="customer">
+                    <Controller
+                      name="customer"
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field }) => {
+                        return (
+                          <div>
+                            <Select
+                              showSearch
+                              placeholder="Tìm kiếm khách hàng"
+                              optionFilterProp="children"
+                              onChange={onCustomerChange}
+                              onSearch={onCustomerSearch}
+                              filterOption={filterCustomerOption}
+                              style={{ width: "100%" }}
+                              options={customerOption}
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                  </Form.Item>
+                </Box>
+                <Button type="primary">Thêm mới khách hàng</Button>
+              </Flex>
             </Flex>
-          </Flex>
-          {currentCustomer && (
-            <Box width={300}>
-              <Flex justifyContent={"space-between"}>
-                <Text>Tên khách hàng:</Text>
-                <Text>
-                  {" "}
-                  {`${currentCustomer?.firstName} ${currentCustomer?.lastName}`}
-                </Text>
-              </Flex>
-              <Flex justifyContent={"space-between"}>
-                <Text>Email:</Text>
-                <Text> {currentCustomer?.email}</Text>
-              </Flex>
-              <Flex justifyContent={"space-between"}>
-                <Text>Số điện thoaị:</Text>
-                <Text> {currentCustomer?.phoneNumber}</Text>
-              </Flex>
+            {currentCustomer && (
+              <Box width={300}>
+                <Flex justifyContent={"space-between"}>
+                  <Text>Tên khách hàng:</Text>
+                  <Text>
+                    {" "}
+                    {`${currentCustomer?.firstName} ${currentCustomer?.lastName}`}
+                  </Text>
+                </Flex>
+                <Flex justifyContent={"space-between"}>
+                  <Text>Email:</Text>
+                  <Text> {currentCustomer?.email}</Text>
+                </Flex>
+                <Flex justifyContent={"space-between"}>
+                  <Text>Số điện thoaị:</Text>
+                  <Text> {currentCustomer?.phoneNumber}</Text>
+                </Flex>
+              </Box>
+            )}
+          </Card>
+
+          <Card>
+            <Flex justifyContent={"space-between"}>
+              <Title level={5}>Thông tin thanh toán</Title>
+            </Flex>
+            <Flex justifyContent={"space-between"}>
+              <Text>Tạm tính:</Text>
+              <Text>500.000đ</Text>
+            </Flex>
+            <Flex justifyContent={"space-between"}>
+              <Text>Tổng tiền:</Text>
+              <Text>500.000đ</Text>
+            </Flex>
+            <Box mb={4}>
+              <Text>Tiền khách đưa:</Text>
+              <InputNumber prefix="VND" style={{ width: "100%" }} />
             </Box>
-          )}
-        </Card>
+            <Flex justifyContent={"space-between"}>
+              <Text>Tiền thừa:</Text>
+              <Text>500.000đ</Text>
+            </Flex>
+            <Flex justifyContent={"space-between"} alignItems={"center"}>
+              <Text>Chọn phương thức thanh toán</Text>
+              <Form.Item name="paymentMethod">
+                <Select
+                  defaultValue="0"
+                  style={{ width: 220 }}
+                  {...register("paymentMethod")}
+                  onChange={(value) => setValue("paymentMethod", value)}
+                  options={[
+                    { value: "0", label: "Thanh toán tiền mặt" },
+                    { value: "1", label: "Chuyển khoản" },
+                  ]}
+                />
+              </Form.Item>
+            </Flex>
+            <Box mb={2}>
+              <Form.Item
+                name="note"
+                label="Ghi chú"
+                rules={[{ required: true, message: "Điền ghi chú" }]}
+              >
+                <TextArea
+                  {...register("note")}
+                  onChange={onNoteChange}
+                  rows={4}
+                  placeholder="Ghi chú"
+                />
+              </Form.Item>
+            </Box>
 
-        <Card>
-          <Flex justifyContent={"space-between"}>
-            <Title level={5}>Thông tin thanh toán</Title>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>Tạm tính:</Text>
-            <Text>500.000đ</Text>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>Tổng tiền:</Text>
-            <Text>500.000đ</Text>
-          </Flex>
-          <Box mb={4}>
-            <Text>Tiền khách đưa:</Text>
-            <InputNumber prefix="VND" style={{ width: "100%" }} />
-          </Box>
-          <Flex justifyContent={"space-between"}>
-            <Text>Tiền thừa:</Text>
-            <Text>500.000đ</Text>
-          </Flex>
-          <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text>Chọn phương thức thanh toán</Text>
-            <Select
-              defaultValue="1"
-              style={{ width: 220 }}
-              onChange={() => {}}
-              options={[
-                { value: "1", label: "Thanh toán tiền mặt" },
-                { value: "2", label: "Chuyển khoản" },
-              ]}
-            />
-          </Flex>
-          <Box mb={2}>
-            <Text>Ghi chú: </Text>
-            <TextArea rows={4} placeholder="Ghi chú" maxLength={6} />
-          </Box>
-
-          <Button type="primary">Tạo hóa đơn</Button>
-        </Card>
-      </Flex>
+            <Button htmlType="submit" type="primary">
+              Tạo hóa đơn
+            </Button>
+          </Card>
+        </Flex>
+      </Form>
       <ModalProduct navigate={navigate} setOpen={setOpen} open={open} />
     </Fragment>
   );

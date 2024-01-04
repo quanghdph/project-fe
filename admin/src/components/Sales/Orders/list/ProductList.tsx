@@ -90,23 +90,6 @@ const columns = (
     render: (_, record) => {
       return (
         <Space size="middle">
-          {/* <Button
-            shape="circle"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`detail-update/${record.id}`)}
-          />
-          <Button
-            shape="circle"
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setIsModalOpen(true);
-              setProductDelete({
-                ...productDelete,
-                id: record.id,
-                name: record.name,
-              });
-            }}
-          /> */}
           <Button
             type="primary"
             onClick={() => {
@@ -232,14 +215,15 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
         scroll={{ x: true }}
         // style={{maxWidth: 600}}
       />
-      <ModalProductDetail
-        activeModalProductDetail={activeModalProductDetail}
-        setActiveModalProductDetail={setActiveModalProductDetail}
-        id={idProductDetail}
-        dispatch={dispatch}
-        navigate={navigate}
-        axiosClientJwt={axiosClientJwt}
-      />
+       <ModalProductDetail
+          activeModalProductDetail={activeModalProductDetail}
+          setActiveModalProductDetail={setActiveModalProductDetail}
+          id={idProductDetail}
+          dispatch={dispatch}
+          navigate={navigate}
+          axiosClientJwt={axiosClientJwt}
+        />
+     
     </Fragment>
   );
 }
