@@ -16,6 +16,8 @@ const root = ReactDOM.createRoot(
 
 let persistor = persistStore(store);
 
+
+
 root.render(
   <ChakraProvider>
     <Provider store={store}>
