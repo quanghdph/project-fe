@@ -42,10 +42,12 @@ const Cart = ({ isOpen, onClose, refresh, setRefresh }: CartProps) => {
     }, [localStorage.getItem("accessToken"), refresh, cart.addToCart.loading, checkout.createOrder.result])
 
     const dataCartToRender = () => {
-        if (!cart.listProductOnCart.loading && cart.listProductOnCart.result && cart.listProductOnCart.result.length) {
-            return cart.listProductOnCart.result.map((p, index) => {
+        if (!cart.listProductOnCart.loading && cart.listProductOnCart.result && cart.listProductOnCart.result.listCart.length) {
+            return cart.listProductOnCart.result.listCart.map((p, index) => {
+                console.log(p);
                 return (
-                    <CartItem cartItem={p} key={index} onClose={onClose} refresh={refresh} setRefresh={setRefresh} />
+                    <div>123</div>
+                    // <CartItem cartItem={p} key={index} onClose={onClose} refresh={refresh} setRefresh={setRefresh} />
                 )
             })
         }

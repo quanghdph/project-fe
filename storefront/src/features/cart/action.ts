@@ -78,14 +78,14 @@ export const getListProductOnCart = async ({ axiosClientJwt, dispatch, toast }: 
     try {
         const accessToken = localStorage.getItem("accessToken")
         dispatch(getListProductOnCartStart());
-        const res: IAxiosResponse<{}> = await axiosClientJwt.get(`product/cart`, {
+        const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/cart`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (res?.response?.code === 200 && res?.response?.success) {
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(getListProductOnCartSuccess(res.response.data));
+                dispatch(getListProductOnCartSuccess(res.data));
             }, 1000);
         } else {
             dispatch(getListProductOnCartFailed(null));

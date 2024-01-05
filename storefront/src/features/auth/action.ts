@@ -23,15 +23,16 @@ interface GetMeParams {
     toast: CreateToastFnReturn
 }
 
-export const loginUser = async (user: { email: string, password: string }, dispatch: AppDispatch, navigate: Function, setError: Function, axiosClient: Axios, toast: CreateToastFnReturn) => {
+export const loginUser = async (user: { username: string, password: string }, dispatch: AppDispatch, navigate: Function, setError: Function, axiosClient: Axios, toast: CreateToastFnReturn) => {
     try {
         dispatch(loginStart());
-        const res: IAxiosResponse<{}> = await axiosClient.post('auth/login', user);
-        if (res?.response?.code === 200 && res?.response?.success) {
+        const res: IAxiosResponse<{}> = await axiosClient.post('/api/auth/login', user);
+        console.log(res);
+        if (res?.status === 200 && res?.data) {
             setTimeout(function () {
-                dispatch(loginSuccess(res.response.data));
-                localStorage.setItem("accessToken", res.response.access_token as string)
-                localStorage.setItem("refreshToken", res.response.refresh_token as string)
+                dispatch(loginSuccess(res.data));
+                localStorage.setItem("accessToken", res.data.data.token as string)
+                // localStorage.setItem("refreshToken", res.response.refresh_token as string)
                 toast({
                     status: 'success',
                     title: "Logged in successfully!",
@@ -46,13 +47,16 @@ export const loginUser = async (user: { email: string, password: string }, dispa
                 setError(res.response.fieldError, { message: res.response.message })
             }, 1000);
         }
-    } catch (error) {
+    } catch (error: any) {
         dispatch(loginFailed(null));
+        console.log(error);
+       if(error.response.status == 400 ) {
         toast({
             status: 'error',
-            title: "Something went wrong!",
+            title: error.response.data.meta.message,
             isClosable: true,
         })
+       }
     }
 }
 

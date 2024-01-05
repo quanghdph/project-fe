@@ -10,7 +10,7 @@ import { createAxiosClient } from 'src/axios/axiosInstance';
 import { loginUser } from 'src/features/auth/action';
 
 type Inputs = {
-    email: string,
+    username: string,
     password: string,
 }
 
@@ -24,22 +24,22 @@ const LoginPage: React.FC = () => {
 
     const { control, handleSubmit, setError, formState: { errors } } = useForm<Inputs>({
         defaultValues: {
-            email: '',
+            username: '',
             password: ''
         }
     });
 
     const toast = useToast()
-    const emailErrorRef = React.useRef(null);
+    const usernameErrorRef = React.useRef(null);
     const passwordErrorRef = React.useRef(null);
 
     React.useEffect(() => {
-        emailErrorRef.current && autoAnimate(emailErrorRef.current);
+        usernameErrorRef.current && autoAnimate(usernameErrorRef.current);
         passwordErrorRef.current && autoAnimate(passwordErrorRef.current)
     }, [parent])
 
-    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-        loginUser({ email, password }, dispatch, navigate, setError, axiosClient, toast);
+    const onSubmit: SubmitHandler<Inputs> = async ({ username, password }) => {
+        loginUser({ username, password }, dispatch, navigate, setError, axiosClient, toast);
     };
 
     return (
@@ -58,16 +58,16 @@ const LoginPage: React.FC = () => {
                                 layout='vertical'
                                 autoComplete="off"
                             >
-                                <Form.Item label="Email">
+                                <Form.Item label="Username">
                                     <Controller
-                                        name="email"
+                                        name="username"
                                         control={control}
                                         rules={{ required: true }}
                                         render={({ field }) => {
                                             return (
-                                                <div ref={emailErrorRef}>
+                                                <div ref={usernameErrorRef}>
                                                     <Input placeholder='superadmin@gmail.com' {...field} />
-                                                    {errors?.email ? <Box as="div" mt={1} textColor="red.600">{errors.email?.type === 'required' ? "Please input your email!" : errors.email.message}</Box> : null}
+                                                    {errors?.username ? <Box as="div" mt={1} textColor="red.600">{errors.username?.type === 'required' ? "Please input your username!" : errors.username.message}</Box> : null}
                                                 </div>
                                             )
                                         }}
