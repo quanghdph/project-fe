@@ -13,7 +13,10 @@ import {
     createCustomerFailed,
     updateCustomerStart,
     updateCustomerSuccess,
-    updateCustomerFailed
+    updateCustomerFailed,
+    getAddressCustomerStart,
+    getAddressCustomerSuccess,
+    getAddressCustomerFailed
 } from "./customerSlice";
 import { Inotification } from 'src/common';
 import { IAxiosResponse } from "src/types/axiosResponse";
@@ -249,3 +252,78 @@ export const getListSearchCustomer = async ({
       });
     }
   };
+
+export const getListSearchPhoneNumberCustomer = async ({
+    params,
+    dispatch,
+    axiosClientJwt,
+    navigate,
+  }: any) => {
+    try {
+      const { value } = params;
+      const accessToken = localStorage.getItem("accessToken");
+      dispatch(getListCustomerStart());
+      const res: any = await axiosClientJwt.get(
+        `/customer/phone-number?phoneNumber=${value}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (res?.status === 200 && res?.data) {
+        setTimeout(function () {
+          dispatch(getListCustomerSuccess(res.data));
+        }, 1000);
+      } else {
+        dispatch(getListCustomerFailed(null));
+      }
+    } catch (error: any) {
+      dispatch(getListCustomerFailed(null));
+      Inotification({
+        type: "error",
+        message: "Something went wrong!",
+      });
+    }
+};
+
+export const getListAddressCustomer = async ({ params, dispatch, axiosClientJwt, navigate }: any) => {
+    try {
+        const { page, limit, filter } = params;
+        const accessToken = localStorage.getItem("accessToken")
+        dispatch(getAddressCustomerStart());
+        const url = page || limit || filter ? `/address?page=${page}&limit=${limit}&filter=${filter}` : '/address'
+        const res: IAxiosResponse<User> = await axiosClientJwt.get(url, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        if (res?.status === 200 && res?.data) {
+            setTimeout(function () {
+                dispatch(getAddressCustomerSuccess(res.data));
+            }, 1000)
+        } else {
+            dispatch(getAddressCustomerFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getAddressCustomerFailed(null));
+        // if (error?.response?.status === 403 && error?.response?.statusText === "Forbidden") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Bạn không có quyền để thực hiện hành động này!'
+        //     })
+        //     setTimeout(function () {
+        //         navigate('/')
+        //     }, 1000);
+        // } else {
+        //     Inotification({
+        //         type: 'error',
+        //         message: 'Something went wrong!'
+        //     })
+        // }
+        Inotification({
+            type: "error",
+            message: error.response.data,
+          });
+    }
+}

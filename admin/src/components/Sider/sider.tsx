@@ -166,6 +166,15 @@ const SiderBar = () => {
                             navigate('/customers')
                         }
                     },
+                    {
+                        key: "customers-address",
+                        icon: <UserOutlined />,
+                        label: "Địa chỉ",
+                        className: location.pathname === "/customers/address" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('/customers/address')
+                        }
+                    },
                 ]
             },
             {

@@ -10,7 +10,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { createAxiosJwt } from 'src/helper/axiosInstance';
 import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import type { ColumnsType } from 'antd/es/table';
-import { deleteCustomer, getListCustomer, getListSearchCustomer } from 'src/features/customer/action';
+import { deleteCustomer, getListCustomer, getListSearchCustomer, getListSearchPhoneNumberCustomer } from 'src/features/customer/action';
 import { useDebounce } from 'use-debounce';
 
 interface DataType {
@@ -138,7 +138,7 @@ const Customers = () => {
         // });
         useEffect(() => {
             const fetchData = async () => {
-              const fetchFunction = value ? getListSearchCustomer : getListCustomer;
+              const fetchFunction = value ? getListSearchPhoneNumberCustomer : getListCustomer;
         
               try {
                 const params = value ? { value: value } : {page: page, limit: limit, filter: filter};
@@ -242,7 +242,7 @@ const Customers = () => {
                         <Col span={24}>
                             <Flex justifyContent={"flex-end"} alignItems={"center"}>
                                 <Box mr={3} flex={1}>
-                                    <Input type='text' placeholder='Tìm kiếm...' onChange={(e) => { setSearch(e.target.value); }} />
+                                    <Input type='text' placeholder='Tìm kiếm theo số điện thoại' onChange={(e) => { setSearch(e.target.value); }} />
                                 </Box>
                                 <Box mr={3} flex={1}>
                                     <Select
@@ -282,10 +282,10 @@ const Customers = () => {
                                     bordered
                                     columns={columns(setIsModalOpen, customerDelete, setCustomerDelete, navigate)}
                                     dataSource={dataRender()}
-                                    loading={customer.list.loading}
+                                    loading={customer.listAddress.loading}
                                     scroll={{x: '100vw'}}
                                     pagination={{
-                                        total: customer.list.result?.total,
+                                        total: customer.listAddress.result?.total,
                                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                                         defaultCurrent: page,
                                         onChange: handleOnChangePagination,

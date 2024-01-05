@@ -435,7 +435,7 @@ function OrderDetail(props: any) {
               </Form.Item>
             </Box>
 
-            <Button htmlType="submit" type="primary">
+            <Button htmlType="submit" type="primary" loading={selloff?.create?.loading}>
               Tạo hóa đơn
             </Button>
           </Card>
