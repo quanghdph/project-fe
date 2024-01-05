@@ -300,7 +300,7 @@ const ProductCreateUpdate: React.FC = () => {
         category: {
           id: data.category,
         },
-        images: files,
+        images: fileList,
       },
     });
   };
