@@ -70,7 +70,7 @@ export const createProduct = async ({
     }
 
     const res: any = await axiosClientJwt.post(
-      `/product`,
+      `/product/add`,
         formData,
       {
           headers: {

@@ -1,98 +1,140 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, InputNumber, Select, Table } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { Flex } from "@chakra-ui/react";
+import { set } from "lodash";
 
 const { Option } = Select;
 
-const columns: any = (onDeleteVariant) => [
-  {
-    title: "Màu sắc",
-    dataIndex: "color",
-    key: "color",
-    render: (text, record) => (
-      <div>{record.color.label}</div>
-    ),
-  },
-  {
-    title: "Kích thước",
-    dataIndex: "size",
-    key: "size",
-    render: (text, record) => (
-      <div>{record.size.label}</div>
-    ),
-  },
-  {
-    title: "Số lượng",
-    dataIndex: "quantity",
-    key: "quantity",
-    render: (text, record) => (
-      //   <Form.Item
-      //     name={`quantity-${record.size}-${record.color}`}
-      //     initialValue={0}
-      //   >
-
-      //   </Form.Item>
-      <InputNumber min={0} />
-    ),
-  },
-  {
-    title: "Giá",
-    dataIndex: "price",
-    key: "price",
-    render: (text, record) => (
-      //   <Form.Item name={`price-${record.size}-${record.color}`} initialValue={0}>
-      //     <InputNumber min={0} />
-      //   </Form.Item>
-      <InputNumber min={0} />
-    ),
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    key: "status",
-    render: (text, record) => (
-      <Select
-        defaultValue={{ value: 1, label: "Hoạt động" }}
-        options={[
-          { value: 0, label: "Vô hiệu hóa" },
-          { value: 1, label: "Hoạt động" },
-        ]}
-      />
-    ),
-  }
-];
-
 const ProductVariant = (props: any) => {
   const { sizes, colors } = props;
-  const { control, handleSubmit, setValue, watch } = useForm();
+  const { control, setValue, watch } = useForm();
+  const [tableData, setTableData] = useState([]);
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    // Add your logic to handle the form submission here
+  const handleQuantityChange = (key, value) => {
+    const updatedData = tableData.map((item) =>
+      item.key === key ? { ...item, quantity: value } : item
+    );
+    setTableData(updatedData);
+  };
+
+  const handlePriceChange = (key, value) => {
+    const updatedData = tableData.map((item) =>
+      item.key === key ? { ...item, price: value } : item
+    );
+    setTableData(updatedData);
+  };
+
+  const handleStatusChange = (key, value) => {
+    const updatedData = tableData.map((item) =>
+      item.key === key ? { ...item, status: value } : item
+    );
+    setTableData(updatedData);
   };
 
   const renderVariations = () => {
+ 
     const selectedSizes = watch("sizes");
     const selectedColors = watch("colors");
 
-    if (!selectedSizes || !selectedColors) return null;
+    if (!selectedSizes || !selectedColors) return [];
 
-    const data = selectedSizes.flatMap((size) =>
-      selectedColors.map((color) => ({
-        key: `${size.label}-${color.label}`,
-        size,
-        color,
-      })),
+    let data = selectedSizes.flatMap((size) =>
+      selectedColors.map((color) => {
+        const existingItem = tableData.find(
+          (item) => item.key === `${size.label}-${color.label}`
+        );
+
+        if (existingItem) {
+          return existingItem;
+        } else {
+          return {
+            key: `${size.label}-${color.label}`,
+            size,
+            color,
+            quantity: 0,
+            price: 0,
+            status: 1,
+          };
+        }
+      })
     );
-
-    const onDeleteVariant = (keyToDelete) => {
-      // Add your logic to handle the deletion of the variant with the given key
-      console.log(`Deleting variant with key: ${keyToDelete}`);
-    };
-
-    return <Table columns={columns(onDeleteVariant)} dataSource={data} pagination={false} />;
+    setTableData(data)
   };
+  function getData(){
+    console.log(tableData)
+  }
+
+  const onDeleteVariant = (keyToDelete) => {
+    setTableData((prevData) =>
+      prevData.filter((item) => item.key !== keyToDelete)
+    );
+  };
+
+  const columns = [
+    {
+      title: "Màu sắc",
+      dataIndex: "color",
+      key: "color",
+      render: (text, record) => <div>{record.color.label}</div>,
+    },
+    {
+      title: "Kích thước",
+      dataIndex: "size",
+      key: "size",
+      render: (text, record) => <div>{record.size.label}</div>,
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text, record) => (
+        <InputNumber
+          min={0}
+          value={record.quantity}
+          onChange={(value) => handleQuantityChange(record.key, value)}
+        />
+      ),
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (text, record) => (
+        <InputNumber
+          min={0}
+          value={record.price}
+          onChange={(value) => handlePriceChange(record.key, value)}
+        />
+      ),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => (
+        <Select
+          name="status"
+          defaultValue={{ value: 1, label: "Hoạt động" }}
+          onChange={(value) => handleStatusChange(record.key, value)}
+          options={[
+            { value: 0, label: "Vô hiệu hóa" },
+            { value: 1, label: "Hoạt động" },
+          ]}
+        />
+      ),
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (text, record) => (
+        <Button onClick={() => onDeleteVariant(record.key)} danger>
+          Xóa
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <Form layout="vertical">
@@ -100,7 +142,7 @@ const ProductVariant = (props: any) => {
         <Form.Item
           label={<div style={{ fontWeight: 600 }}>Kích thước</div>}
           name="sizes"
-          style={{width: "49%"}}
+          style={{ width: "49%" }}
         >
           <Controller
             control={control}
@@ -111,7 +153,8 @@ const ProductVariant = (props: any) => {
                 labelInValue
                 placeholder="Chọn kích thước"
                 onChange={(value) => {
-                  return setValue("sizes", value);
+                  setValue("sizes",value);
+                  renderVariations();
                 }}
               >
                 {sizes.map((size: any) => (
@@ -126,7 +169,7 @@ const ProductVariant = (props: any) => {
         <Form.Item
           label={<div style={{ fontWeight: 600 }}>Màu sắc</div>}
           name="colors"
-          style={{width: "49%"}}
+          style={{ width: "49%" }}
         >
           <Controller
             control={control}
@@ -136,7 +179,7 @@ const ProductVariant = (props: any) => {
                 mode="multiple"
                 labelInValue
                 placeholder="Chọn màu sắc"
-                onChange={(value) => setValue("colors", value)}
+                onChange={(value) => {setValue("colors",value);renderVariations()}}
               >
                 {colors.map((color: any) => (
                   <Option key={color.value} value={color.value}>
@@ -149,7 +192,10 @@ const ProductVariant = (props: any) => {
         </Form.Item>
       </Flex>
 
-      {renderVariations()}
+      <Table columns={columns} dataSource={tableData} pagination={false} />
+      <Button type="primary" onClick={getData}>
+        Lấy dữ liệu từ bảng
+      </Button>
     </Form>
   );
 };
