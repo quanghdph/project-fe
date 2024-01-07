@@ -22,6 +22,7 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import ModalProduct from "./ModalProduct";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import {
+  createCustomerFast,
   getListCustomer,
   getListSearchCustomer,
 } from "src/features/customer/action";
@@ -33,6 +34,8 @@ import {
   caculateSelloff,
   createSelloff,
 } from "src/features/sale/saleoff/action";
+import { Inotification } from "src/common";
+import ModalCreateCustomer from "./ModalCreateCustomer";
 
 interface DataType {
   key: string;
@@ -91,6 +94,9 @@ const columns = (
     title: "Tổng tiền",
     dataIndex: "price",
     key: "price",
+    render: (price, record) => {
+      return <Box>{price}</Box>;
+    },
   },
   {
     title: "Hành động",
@@ -102,10 +108,15 @@ const columns = (
             shape="circle"
             icon={<DeleteOutlined />}
             onClick={() => {
-              console.log(record)
-              const updatedCartData = cart.filter((product) => product.id !== record.id);
+              const updatedCartData = cart.filter(
+                (product) => product.id !== record.id,
+              );
               // Update the cart data
               setCart(updatedCartData);
+              Inotification({
+                type: "success",
+                message: "Xóa khỏi giỏ thành công!",
+              });
             }}
           />
         </Space>
@@ -127,6 +138,8 @@ function OrderDetail(props: any) {
   const [currentCustomer, setCurrentCustomer] = useState();
   const [search, setSearch] = useState<string>("");
   const [value] = useDebounce(search, 1000);
+  const [totalAmount, setTotalAmount] = useState();
+  const [visible, setVisible] = useState(false);
 
   const {
     control,
@@ -152,16 +165,17 @@ function OrderDetail(props: any) {
   const axiosClientJwt = createAxiosJwt();
 
   const dataRender = (): any => {
-    return cart.map((product, index) => {
+    return cart.map((product: any, index: any) => {
       return {
         key: index,
         id: product.id,
         product: {
-          productName: product.product.productName,
-          productCode: product.product.productCode,
-          brand: product.product.brand,
+          productName: product.product.product.productName,
+          productCode: product.product.product.productCode,
+          brand: product.product.product.brand,
         },
         quantity: product.quantity,
+        price: product.product.price * product.quantity,
         renderQuantity: (
           <InputNumber
             min={1}
@@ -259,6 +273,13 @@ function OrderDetail(props: any) {
       axiosClientJwt,
       navigate,
       message,
+    }).then((data) => {
+      setTimeout(() => {
+        setValue("note", null);
+        setTotalAmount(0);
+        setValue("customer", null);
+        setCart([]);
+      }, 1000);
     });
   };
 
@@ -301,7 +322,44 @@ function OrderDetail(props: any) {
   //     });
   // }, [formDataBefore]);
 
-  // console.log(selloff);
+  const updateTotalAmount = (updatedCart) => {
+    const newTotalAmount = updatedCart.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0,
+    );
+    setTotalAmount(newTotalAmount);
+  };
+
+  useEffect(() => {
+    updateTotalAmount(cart);
+  }, [cart, setCart]);
+
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const handleCreate = (values) => {
+    // Handle the creation of the customer with the form values
+    const { email, firstName, lastName, gender, phoneNumber } = values;
+    createCustomerFast({
+      customer: {
+        email,
+        firstName,
+        lastName,
+        gender,
+        phoneNumber,
+      },
+      dispatch,
+      axiosClientJwt,
+      navigate,
+      message,
+    });
+    setVisible(false);
+  };
 
   return (
     <Fragment>
@@ -361,7 +419,9 @@ function OrderDetail(props: any) {
                     />
                   </Form.Item>
                 </Box>
-                <Button type="primary">Thêm mới khách hàng</Button>
+                <Button type="primary" onClick={showModal}>
+                  Thêm mới khách hàng
+                </Button>
               </Flex>
             </Flex>
             {currentCustomer && (
@@ -385,63 +445,74 @@ function OrderDetail(props: any) {
             )}
           </Card>
 
-          <Card>
-            <Flex justifyContent={"space-between"}>
-              <Title level={5}>Thông tin thanh toán</Title>
-            </Flex>
-            <Flex justifyContent={"space-between"}>
-              <Text>Tạm tính:</Text>
-              <Text>500.000đ</Text>
-            </Flex>
-            <Flex justifyContent={"space-between"}>
-              <Text>Tổng tiền:</Text>
-              <Text>500.000đ</Text>
-            </Flex>
-            <Box mb={4}>
-              <Text>Tiền khách đưa:</Text>
-              <InputNumber prefix="VND" style={{ width: "100%" }} />
-            </Box>
-            <Flex justifyContent={"space-between"}>
-              <Text>Tiền thừa:</Text>
-              <Text>500.000đ</Text>
-            </Flex>
-            <Flex justifyContent={"space-between"} alignItems={"center"}>
-              <Text>Chọn phương thức thanh toán</Text>
-              <Form.Item name="paymentMethod">
-                <Select
-                  defaultValue="0"
-                  style={{ width: 220 }}
-                  {...register("paymentMethod")}
-                  onChange={(value) => setValue("paymentMethod", value)}
-                  options={[
-                    { value: "0", label: "Thanh toán tiền mặt" },
-                    { value: "1", label: "Chuyển khoản" },
-                  ]}
-                />
-              </Form.Item>
-            </Flex>
-            <Box mb={2}>
-              <Form.Item
-                name="note"
-                label="Ghi chú"
-                rules={[{ required: true, message: "Điền ghi chú" }]}
-              >
-                <TextArea
-                  {...register("note")}
-                  onChange={onNoteChange}
-                  rows={4}
-                  placeholder="Ghi chú"
-                />
-              </Form.Item>
-            </Box>
+          {cart.length > 0 && (
+            <Card>
+              <Flex justifyContent={"space-between"}>
+                <Title level={5}>Thông tin thanh toán</Title>
+              </Flex>
+              {/* <Flex justifyContent={"space-between"}>
+                <Text>Tạm tính:</Text>
+                <Text>500.000đ</Text>
+              </Flex> */}
+              <Flex justifyContent={"space-between"}>
+                <Text>Tổng tiền:</Text>
+                <Text>{totalAmount}đ</Text>
+              </Flex>
+              {/* <Box mb={4}>
+                <Text>Tiền khách đưa:</Text>
+                <InputNumber prefix="VND" style={{ width: "100%" }} />
+              </Box>
+              <Flex justifyContent={"space-between"}>
+                <Text>Tiền thừa:</Text>
+                <Text>500.000đ</Text>
+              </Flex> */}
+              <Flex justifyContent={"space-between"} alignItems={"center"}>
+                <Text>Chọn phương thức thanh toán</Text>
+                <Form.Item name="paymentMethod">
+                  <Select
+                    defaultValue="0"
+                    style={{ width: 220 }}
+                    {...register("paymentMethod")}
+                    onChange={(value) => setValue("paymentMethod", value)}
+                    options={[
+                      { value: "0", label: "Thanh toán tiền mặt" },
+                      { value: "1", label: "Chuyển khoản" },
+                    ]}
+                  />
+                </Form.Item>
+              </Flex>
+              <Box mb={2}>
+                <Form.Item
+                  name="note"
+                  label="Ghi chú"
+                  rules={[{ required: true, message: "Điền ghi chú" }]}
+                >
+                  <TextArea
+                    {...register("note")}
+                    onChange={onNoteChange}
+                    rows={4}
+                    placeholder="Ghi chú"
+                  />
+                </Form.Item>
+              </Box>
 
-            <Button htmlType="submit" type="primary" loading={selloff?.create?.loading}>
-              Tạo hóa đơn
-            </Button>
-          </Card>
+              <Button
+                htmlType="submit"
+                type="primary"
+                loading={selloff?.create?.loading}
+              >
+                Tạo hóa đơn
+              </Button>
+            </Card>
+          )}
         </Flex>
       </Form>
       <ModalProduct navigate={navigate} setOpen={setOpen} open={open} />
+      <ModalCreateCustomer
+        visible={visible}
+        onCreate={handleCreate}
+        onCancel={handleCancel}
+      />
     </Fragment>
   );
 }

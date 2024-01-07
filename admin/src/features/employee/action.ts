@@ -28,8 +28,8 @@ export const getListEmployee = async ({
     const { page, limit, filter } = params;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getListEmployeeStart());
-    const res: any = await axiosClientJwt.get(
-      `/employee?page=${page}&limit=${limit}&filter=${filter}`,
+    const url = page || limit || filter ? `/employee?page=${page}&limit=${limit}&filter=${filter}` : '/employee'
+    const res: any = await axiosClientJwt.get(url,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

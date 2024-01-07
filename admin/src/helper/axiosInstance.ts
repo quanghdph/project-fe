@@ -9,7 +9,7 @@ export const createAxiosJwt = () => {
     const newInstance = axios.create({
         baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: {
-            // "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
         paramsSerializer: (params) => queryString.stringify(params),
     });
@@ -55,28 +55,11 @@ export const createAxiosClient = () => {
     const newInstance = axios.create({
         baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "*"
         },
         paramsSerializer: (params) => queryString.stringify(params),
     });
-    // newInstance.interceptors.request.use(
-    //     (config) => {
-    //         return config;
-    //     },
-    //     (error) => {
-    //         return Promise.reject(error);
-    //     }
-    // );
-    // newInstance.interceptors.response.use(
-    //     (response) => {
-    //         if (response && response.data) {
-    //             return response.data;
-    //         }
-    //         return response;
-    //     },
-    //     (error) => {
-    //         throw error;
-    //     }
-    // );
+   
     return newInstance;
 }

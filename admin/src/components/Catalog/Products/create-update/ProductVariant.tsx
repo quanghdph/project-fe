@@ -60,6 +60,14 @@ const columns: any = (onDeleteVariant) => [
         ]}
       />
     ),
+  },
+  {
+    title: "Hành động",
+    dataIndex: "action",
+    key: "action",
+    render: (text, record) => (
+      <Button type="primary" danger>Xóa</Button>
+    ),
   }
 ];
 

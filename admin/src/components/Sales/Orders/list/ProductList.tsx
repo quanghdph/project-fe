@@ -67,10 +67,6 @@ const columns = (
 
           <Flex direction={"column"} gap={1}>
             <Box
-              onClick={() => {
-                setActiveModalProductDetail(true);
-                setIdProductDetail(record.id);
-              }}
               style={{ fontWeight: "bold" }}
             >
               {product.productName}
@@ -93,24 +89,8 @@ const columns = (
           <Button
             type="primary"
             onClick={() => {
-              const existingProductIndex = cart.findIndex(
-                (e) => e.id == record.id,
-              );
-
-              if (existingProductIndex !== -1) {
-                const updatedCart = [...cart];
-                updatedCart[existingProductIndex].quantity += 1;
-                return setCart(updatedCart);
-              } else {
-                return setCart([
-                  ...cart,
-                  {
-                    id: record.id,
-                    product: record.product,
-                    quantity: 1,
-                  },
-                ]);
-              }
+              setActiveModalProductDetail(true);
+              setIdProductDetail(record.id);
             }}
           >
             Chọn
@@ -124,8 +104,7 @@ const columns = (
 function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
   const [filter, setFilter] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
-  const [activeModalProductDetail, setActiveModalProductDetail] =
-    useState(false);
+  const [activeModalProductDetail, setActiveModalProductDetail] = useState(false);
   const [idProductDetail, setIdProductDetail] = useState(false);
 
   const product = useAppSelector((state) => state.product);
@@ -219,9 +198,8 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
           activeModalProductDetail={activeModalProductDetail}
           setActiveModalProductDetail={setActiveModalProductDetail}
           id={idProductDetail}
-          dispatch={dispatch}
-          navigate={navigate}
-          axiosClientJwt={axiosClientJwt}
+          cart={cart}
+          setCart={setCart}
         />
      
     </Fragment>
