@@ -500,15 +500,10 @@ const ProductCreateUpdate: React.FC = () => {
     return sizeSelect;
   };
 
-<<<<<<< HEAD
+
   const onUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
     setFileList(Array.from(newFileList));
-=======
-  const onUploadChange: UploadProps["onChange"] = ({
-    fileList: newFileList,
-  }) => {
-    setFileList(newFileList);
->>>>>>> c8d114ef9be0fc011e08ca23d0b5703b9329d856
+
   };
 
   const onUploadPreview = async (file: UploadFile) => {
