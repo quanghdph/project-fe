@@ -33,6 +33,7 @@ import {
 } from "src/features/catalog/product/actions";
 import { Box } from "@chakra-ui/react";
 import { useDebounce } from "use-debounce";
+import ModalProductDetail from "src/components/Sales/Orders/list/ModalProductDetail";
 
 interface DataType {
   key: number;
@@ -47,6 +48,8 @@ const columns = (
   productDelete: { id: number; name: string } | undefined,
   setProductDelete: ({ id, name }: { id: number; name: string }) => void,
   navigate: NavigateFunction,
+  setActiveModalProductDetail: any,
+  setIdProductDetail: any,
 ): ColumnsType<DataType> => [
   {
     title: "#",
@@ -63,7 +66,16 @@ const columns = (
       return (
         <Flex alignItems={"center"}>
           {/* <Avatar src={<img src={record.url} style={{ width: 40 }} />} /> */}
-          <Box ml={2}>{name}</Box>
+          <Box
+            onClick={() => {
+              setActiveModalProductDetail(true);
+              setIdProductDetail(record.id);
+            }}
+            ml={2}
+            cursor={"pointer"}
+          >
+            {name}
+          </Box>
         </Flex>
       );
     },
@@ -136,6 +148,10 @@ const Products: React.FC = () => {
   const [value] = useDebounce(search, 1000);
   const [status, setStatus] = useState<string>("all");
 
+  const [activeModalProductDetail, setActiveModalProductDetail] =
+    useState(false);
+  const [idProductDetail, setIdProductDetail] = useState(false);
+
   // ** Third party
   const navigate = useNavigate();
 
@@ -183,18 +199,18 @@ const Products: React.FC = () => {
           active: product.status,
         };
       });
-    } else if(!product.list.loading &&product.list.result) {
-        return product.list?.result.map((product, index: number) => {
-            return {
-              key: index,
-              id: product.id,
-              name: product.productName,
-              // url: product?.featured_asset?.url,
-              active: product.status,
-            };
-          });
+    } else if (!product.list.loading && product.list.result) {
+      return product.list?.result.map((product, index: number) => {
+        return {
+          key: index,
+          id: product.id,
+          name: product.productName,
+          // url: product?.featured_asset?.url,
+          active: product.status,
+        };
+      });
     } else {
-        return []
+      return [];
     }
   };
 
@@ -297,6 +313,8 @@ const Products: React.FC = () => {
                     productDelete,
                     setProductDelete,
                     navigate,
+                    setActiveModalProductDetail,
+                    setIdProductDetail,
                   )}
                   dataSource={dataRender()}
                   loading={product.list.loading}
@@ -327,6 +345,12 @@ const Products: React.FC = () => {
           <span style={{ fontWeight: "bold" }}>{productDelete?.name}</span>) ?
         </p>
       </Modal>
+
+      <ModalProductDetail
+          activeModalProductDetail={activeModalProductDetail}
+          setActiveModalProductDetail={setActiveModalProductDetail}
+          id={idProductDetail}
+        />
     </Fragment>
   );
 };

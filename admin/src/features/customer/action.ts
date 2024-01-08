@@ -327,3 +327,40 @@ export const getListAddressCustomer = async ({ params, dispatch, axiosClientJwt,
           });
     }
 }
+
+
+export const createCustomerFast = async ({ customer, axiosClientJwt, dispatch, navigate, setError, message }: any) => {
+    try {
+        const { email, firstName, lastName, gender, phoneNumber } = customer;
+        const accessToken = localStorage.getItem("accessToken")
+        dispatch(createCustomerStart());
+        const res: IAxiosResponse<User> = await axiosClientJwt.post('/customer/fast', {
+            email,
+            firstName,
+            lastName,
+            gender,
+            phoneNumber,
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        if (res?.status === 200 && res?.data) {
+            setTimeout(function () {
+                dispatch(createCustomerSuccess(res.data));
+                message.success('Tạo khách hàng thành công!');
+            }, 1000)
+        } else if (res?.status === 400 && !res?.data) {
+            dispatch(createCustomerFailed(null));
+            setError(res?.response?.fieldError as keyof FormValuesCustomer, { message: res?.response?.message })
+        } else {
+            dispatch(createCustomerFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(createCustomerFailed(null));
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}

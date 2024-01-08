@@ -66,12 +66,12 @@ const AddressPage: React.FC = () => {
       key: "name",
     },
     {
-      title: "Phường",
+      title: "Phường/Xã",
       dataIndex: "ward",
       key: "ward",
     },
     {
-      title: "Quận",
+      title: "Quận/Huyện",
       dataIndex: "district",
       key: "district",
     },
@@ -282,7 +282,7 @@ const AddressPage: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Phường"
+                label="Phường/Xã"
                 name="ward"
                 rules={[
                   {
@@ -295,7 +295,7 @@ const AddressPage: React.FC = () => {
               </Form.Item>
 
               <Form.Item
-                label="Quận"
+                label="Quận/Huyện"
                 name="district"
                 rules={[
                   { required: true, message: "Please enter the district!" },

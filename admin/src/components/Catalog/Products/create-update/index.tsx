@@ -46,9 +46,18 @@ import {
   getListCategory,
   getListSearchCategory,
 } from "src/features/catalog/category/action";
-import { getListBrand, getListSearchBrand } from "src/features/catalog/brand/action";
-import { getListMaterial, getListSearchMaterial } from "src/features/catalog/material/action";
-import { getListSearchWaistband, getListWaistband } from "src/features/catalog/waistband/action";
+import {
+  getListBrand,
+  getListSearchBrand,
+} from "src/features/catalog/brand/action";
+import {
+  getListMaterial,
+  getListSearchMaterial,
+} from "src/features/catalog/material/action";
+import {
+  getListSearchWaistband,
+  getListWaistband,
+} from "src/features/catalog/waistband/action";
 import ProductDetail from "../detail-update";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -122,12 +131,12 @@ const ProductCreateUpdate: React.FC = () => {
       },
       color: {
         value: 0,
-        label: "Chọn màu sắc"
+        label: "Chọn màu sắc",
       },
       size: {
         value: 0,
-        label: "Chọn kích thước"
-      }
+        label: "Chọn kích thước",
+      },
     },
   });
 
@@ -194,7 +203,9 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchFunction = materialValue ? getListSearchMaterial : getListMaterial;
+      const fetchFunction = materialValue
+        ? getListSearchMaterial
+        : getListMaterial;
 
       try {
         const params = materialValue ? { value: materialValue } : {};
@@ -214,7 +225,9 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchFunction = waistbandValue ? getListSearchWaistband : getListWaistband;
+      const fetchFunction = waistbandValue
+        ? getListSearchWaistband
+        : getListWaistband;
 
       try {
         const params = waistbandValue ? { value: waistbandValue } : {};
@@ -487,8 +500,15 @@ const ProductCreateUpdate: React.FC = () => {
     return sizeSelect;
   };
 
+<<<<<<< HEAD
   const onUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
     setFileList(Array.from(newFileList));
+=======
+  const onUploadChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+  }) => {
+    setFileList(newFileList);
+>>>>>>> c8d114ef9be0fc011e08ca23d0b5703b9329d856
   };
 
   const onUploadPreview = async (file: UploadFile) => {
@@ -709,7 +729,7 @@ const ProductCreateUpdate: React.FC = () => {
                             optionFilterProp="children"
                             onSearch={onWaistbandSearch}
                             onChange={(selectedOption) => {
-                              setValue("waistband", selectedOption); 
+                              setValue("waistband", selectedOption);
                             }}
                             filterOption={filterWaistbandOption}
                             style={{ width: "100%" }}
@@ -825,7 +845,7 @@ const ProductCreateUpdate: React.FC = () => {
             <ProductVariant tableData={tableData} setTableData={setTableData} sizes={sizeSelect} colors={colorSelect} />
 
             <Box mt={5}>
-            {/* <ImgCrop rotationSlider>
+              {/* <ImgCrop rotationSlider>
               <Upload
                 action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                 listType="picture-card"
@@ -838,20 +858,20 @@ const ProductCreateUpdate: React.FC = () => {
               </Upload>
             </ImgCrop> */}
               <Upload
-        customRequest={customRequest}
-        fileList={fileList}
-        onChange={handleChange}
-        onRemove={handleRemove}
-        listType="picture-card"
-        onPreview={onUploadPreview}
-        showUploadList={{
-          showPreviewIcon: true,
-          showRemoveIcon: true,
-        }}
-        multiple={true}
-      >
-        {fileList.length >= 5 ? null : uploadButton}
-      </Upload>
+                customRequest={customRequest}
+                fileList={fileList}
+                onChange={handleChange}
+                onRemove={handleRemove}
+                listType="picture-card"
+                onPreview={onUploadPreview}
+                showUploadList={{
+                  showPreviewIcon: true,
+                  showRemoveIcon: true,
+                }}
+                multiple={true}
+              >
+                {fileList.length >= 5 ? null : uploadButton}
+              </Upload>
             </Box>
           </Card>
         </Col>

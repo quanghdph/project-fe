@@ -18,6 +18,7 @@ import Title from "antd/lib/typography/Title";
 import React, { Fragment, useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { Inotification } from "src/common";
 import {
   getListProduct,
   getProduct,
@@ -30,6 +31,8 @@ function ModalProductDetail({
   activeModalProductDetail,
   setActiveModalProductDetail,
   id,
+  cart,
+  setCart,
 }) {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -52,7 +55,7 @@ function ModalProductDetail({
   };
 
   useEffect(() => {
-    // getListProduct({
+    //getListProduct({
     //   params: {
     //     page,
     //     limit,
@@ -78,7 +81,6 @@ function ModalProductDetail({
     }
   }, [id]);
 
-
   return (
     <Fragment>
       <Modal
@@ -94,45 +96,84 @@ function ModalProductDetail({
           </>
         )}
       >
-     {
-      !product.loading && product.result && product.result.product ? (
-        <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-          {/* Product Image */}
-          <img
-            src="https://via.placeholder.com/200x200"
-            alt={product.result.product.productName}
-            style={{ width: '100%', maxWidth: '200px' }}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={16} lg={18} xl={20}>
-          {/* Product Details */}
-          <Title level={3}>{product.result?.product?.productName}</Title>
-          <Text  as='b'>{product.result?.product?.brand?.brandName}</Text>
-          <Divider />
-          <div dangerouslySetInnerHTML={{ __html: product.result?.product?.description }} />
-
-          <Divider />
-
+        {!product.loading && product.result && product.result.product ? (
           <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <Text  as='b'>Giá:</Text> {product.result?.price}
+            <Col xs={24} sm={12} md={8} lg={6} xl={4}>
+              {/* Product Image */}
+              <img
+                src="https://via.placeholder.com/200x200"
+                alt={product.result.product.productName}
+                style={{ width: "100%", maxWidth: "200px" }}
+              />
             </Col>
-            <Col span={12}>
-              <Text  as='b'>Màu:</Text> {product.result?.color?.colorName}
-            </Col>
-            {/* <Col span={12}>
-              <Text  as='b'>Size:</Text> {product.result.size}
-            </Col> */}
-            <Col span={12}>
-              <Text  as='b'>Số lượng:</Text> {product.result?.quantity}
+            <Col xs={24} sm={12} md={16} lg={18} xl={20}>
+              {/* Product Details */}
+              <Title level={3}>{product.result?.product?.productName}</Title>
+              <Text as="b">{product.result?.product?.brand?.brandName}</Text>
+              <Divider />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: product.result?.product?.description,
+                }}
+              />
+
+              <Divider />
+
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Text as="b">Giá:</Text> {product.result?.price}
+                </Col>
+                <Col span={12}>
+                  <Text as="b">Màu:</Text> {product.result?.color?.colorName}
+                </Col>
+                <Col span={12}>
+                  <Text as="b">Size:</Text> {product.result.size.sizeName}
+                </Col>
+                <Col span={12}>
+                  <Text as="b">Số lượng:</Text> {product.result?.quantity}
+                </Col>
+              </Row>
+
+              <Divider />
+
+              <Button
+                type="primary"
+                onClick={() => {
+                  const existingProductIndex = cart.findIndex(
+                    (e: any) => e.id == id,
+                  );
+
+                  setTimeout(() => {
+                    setActiveModalProductDetail(false)
+                    Inotification({
+                      type: 'success',
+                      message: 'Thêm vào giỏ hàng thành công!'
+                  })
+                  }, 200);
+               
+                  if (existingProductIndex !== -1) {
+                    const updatedCart = [...cart];
+                    updatedCart[existingProductIndex].quantity += 1;
+                    return setCart(updatedCart);
+                  } else {
+                    return setCart([
+                      ...cart,
+                      {
+                        id: id,
+                        product: product?.result,
+                        quantity: 1,
+                      },
+                    ]);
+                  }
+                }}
+              >
+                Thêm vào giỏ hàng
+              </Button>
             </Col>
           </Row>
-        </Col>
-      </Row>
-      ) : <Spin />
-     }
-
+        ) : (
+          <Spin />
+        )}
       </Modal>
     </Fragment>
   );

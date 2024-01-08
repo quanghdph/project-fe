@@ -178,6 +178,22 @@ const SiderBar = () => {
                 ]
             },
             {
+                key: "bill",
+                icon: "",
+                label: "Hóa đơn",
+                children: [
+                    {
+                        key: "bills",
+                        icon: <UserAddOutlined />,
+                        label: "Danh sách hóa đơn",
+                        className: location.pathname === "/bills" ? "ant-menu-item-selected" : "",
+                        onClick: () => {
+                            navigate('/bills')
+                        }
+                    },
+                ]
+            },
+            {
                 key: "settings",
                 icon: "",
                 label: "Cài đặt",

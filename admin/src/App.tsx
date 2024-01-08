@@ -36,9 +36,9 @@ import EmployeeListPage from './pages/Employee/list';
 import EmployeeCreateUpdatePage from './pages/Employee/create-update';
 import BrandListPage from './pages/Catalog/Brand/list';
 import BrandCreateUpdatePage from './pages/Catalog/Brand/create-update';
-import BillListPage from './pages/Sales/Bills/list';
-import BillDetailPage from './pages/Sales/Bills/detail';
-import BillCreateUpdatePage from './pages/Sales/Bills/create-update';
+import BillListPage from './pages/Bills/list';
+import BillDetailPage from './pages/Bills/detail';
+import BillCreateUpdatePage from './pages/Bills/create-update';
 import ProductCreateUpdatePage from './pages/Catalog/Products/create-update';
 import AddressListPage from './pages/Customer/address';
 
@@ -127,6 +127,7 @@ const App = () => {
               <Route path='bills'>
                 <Route index element={<BillListPage />} />
                 <Route path='create' element={<BillCreateUpdatePage />} />
+                <Route path='update/:id' element={<BillCreateUpdatePage />} />
                 <Route path='detail/:id' element={<BillDetailPage />} />
               </Route>
             </Route>
@@ -144,6 +145,11 @@ const App = () => {
               <Route index element={<EmployeeListPage />} />
               <Route path='create' element={<EmployeeCreateUpdatePage />} />
               <Route path='update/:id' element={<EmployeeCreateUpdatePage />} />
+            </Route>
+            <Route path='bills'>
+              <Route index element={<BillListPage />} />
+              <Route path='create' element={<BillCreateUpdatePage />} />
+              <Route path='update/:id' element={<BillCreateUpdatePage />} />
             </Route>
             <Route path='settings'>
               <Route path='administrators'>

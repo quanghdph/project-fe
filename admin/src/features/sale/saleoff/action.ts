@@ -83,7 +83,7 @@ export const caculateSelloff = async ({
         },
       },
     );
-      console.log(res);
+    
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(caculateSelloffSuccess(res.data));
