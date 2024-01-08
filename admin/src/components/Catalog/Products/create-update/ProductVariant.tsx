@@ -7,9 +7,9 @@ import { set } from "lodash";
 const { Option } = Select;
 
 const ProductVariant = (props: any) => {
-  const { sizes, colors } = props;
+  const { sizes, colors ,setTableData,tableData} = props;
   const { control, setValue, watch } = useForm();
-  const [tableData, setTableData] = useState([]);
+
 
   const handleQuantityChange = (key, value) => {
     const updatedData = tableData.map((item) =>
@@ -61,9 +61,7 @@ const ProductVariant = (props: any) => {
     );
     setTableData(data)
   };
-  function getData(){
-    console.log(tableData)
-  }
+
 
   const onDeleteVariant = (keyToDelete) => {
     setTableData((prevData) =>
@@ -193,9 +191,6 @@ const ProductVariant = (props: any) => {
       </Flex>
 
       <Table columns={columns} dataSource={tableData} pagination={false} />
-      <Button type="primary" onClick={getData}>
-        Lấy dữ liệu từ bảng
-      </Button>
     </Form>
   );
 };
