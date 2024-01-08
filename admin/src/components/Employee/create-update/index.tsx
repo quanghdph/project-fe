@@ -188,6 +188,40 @@ const EmployeeCreateUpdate = () => {
     }
   };
 
+/// validate 
+  const validateNoWhiteSpace = (value) => {
+    const regexLeadingWhitespace = /^\s/;
+    const regexTrailingWhitespace = /\s$/;
+    if (regexLeadingWhitespace.test(value)) {
+      return "Không được chứa khoảng trắng ở đầu!";
+    } else if (regexTrailingWhitespace.test(value)) {
+      return "Không được chứa khoảng trắng ở cuối!";
+    }
+    return true;
+  };
+
+  // validate số điện thoại
+ const validatePhoneNumber = (value) => {
+    const regex = /^0[0-9]{9}$/;
+
+    if (!regex.test(value)) {
+      return "Số điện thoại không hợp lệ";
+    }
+  }
+
+  // validate email 
+   const validateEmail = (value) => {
+    // Biểu thức chính quy để kiểm tra địa chỉ email
+    const regex = /^[^\s@]+@[^\s@]+\.com[^\s@]+$/;
+
+    if (!regex.test(value)) {
+      return "Địa chỉ email không hợp lệ";
+    }
+
+    return true;
+  };
+
+
   return (
     <Fragment>
       <Row gutter={[0, 16]}>
@@ -237,7 +271,10 @@ const EmployeeCreateUpdate = () => {
                     <Controller
                       name="employee_firstname"
                       control={control}
-                      rules={{ required: true }}
+                       rules={{
+                        required: "Vui lòng điền vào trường này!",
+                        validate: validateNoWhiteSpace,
+                      }}
                       render={({ field }) => {
                         return (
                           <div ref={employeeNameErrorRef}>
@@ -247,6 +284,7 @@ const EmployeeCreateUpdate = () => {
                                 {errors.employee_firstname?.type === "required"
                                   ? "Vui lòng điền vào trường này!"
                                   : errors.employee_firstname.message}
+                                     {errors.employee_firstname?.type === "validate"}
                               </Box>
                             ) : null}
                           </div>
@@ -258,7 +296,10 @@ const EmployeeCreateUpdate = () => {
                     <Controller
                       name="employee_lastname"
                       control={control}
-                      rules={{ required: true }}
+                      rules={{
+                        required: "Vui lòng điền vào trường này!",
+                        validate: validateNoWhiteSpace,
+                      }}
                       render={({ field }) => {
                         return (
                           <div ref={employeeNameErrorRef}>
@@ -268,6 +309,7 @@ const EmployeeCreateUpdate = () => {
                                 {errors.employee_lastname?.type === "required"
                                   ? "Vui lòng điền vào trường này!"
                                   : errors.employee_lastname.message}
+                                   {errors.employee_lastname?.type === "validate"}
                               </Box>
                             ) : null}
                           </div>
@@ -281,7 +323,10 @@ const EmployeeCreateUpdate = () => {
                     <Controller
                       name="employee_code"
                       control={control}
-                      rules={{ required: true }}
+                      rules={{
+                        required: "Vui lòng điền vào trường này!",
+                        validate: validateNoWhiteSpace,
+                      }}
                       render={({ field }) => {
                         return (
                           <div ref={employeeCodeErrorRef}>
@@ -291,6 +336,7 @@ const EmployeeCreateUpdate = () => {
                                 {errors.employee_code?.type === "required"
                                   ? "Vui lòng điền mã nhân viên!"
                                   : errors.employee_code.message}
+                                    {errors.employee_code?.type === "validate"}
                               </Box>
                             ) : null}
                           </div>
@@ -348,7 +394,10 @@ const EmployeeCreateUpdate = () => {
                     <Controller
                       name="employee_email"
                       control={control}
-                      rules={{ required: true }}
+                        rules={{
+                        required: "Vui lòng điền vào trường này!",
+                        validate: validateEmail,
+                      }}
                       render={({ field }) => {
                         return (
                           <div ref={employeeCodeErrorRef}>
@@ -361,6 +410,7 @@ const EmployeeCreateUpdate = () => {
                                 {errors.employee_email?.type === "required"
                                   ? "Vui lòng điền email!"
                                   : errors.employee_email.message}
+                                   {errors.employee_code?.type === "validate"}
                               </Box>
                             ) : null}
                           </div>
@@ -372,7 +422,10 @@ const EmployeeCreateUpdate = () => {
                     <Controller
                       name="employee_phone"
                       control={control}
-                      rules={{ required: true }}
+                       rules={{
+                        required: "Vui lòng điền vào trường này!",
+                        validate: validatePhoneNumber,
+                      }}
                       render={({ field }) => {
                         return (
                           <div ref={employeeCodeErrorRef}>
@@ -382,6 +435,7 @@ const EmployeeCreateUpdate = () => {
                                 {errors.employee_phone?.type === "required"
                                   ? "Vui lòng điền số điện thoại!"
                                   : errors.employee_phone.message}
+                                   {errors.employee_code?.type === "validate"}
                               </Box>
                             ) : null}
                           </div>
