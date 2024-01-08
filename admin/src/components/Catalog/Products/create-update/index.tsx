@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import axios from 'axios';
 import { Inotification } from "src/common";
 import React, { Fragment, useEffect, useState } from "react";
 import {
@@ -95,7 +96,7 @@ const ProductCreateUpdate: React.FC = () => {
   const [waistbandSelect, setWaistbandSelect] = useState([]);
   const [colorSelect, setColorSelect] = useState([]);
   const [sizeSelect, setSizeSelect] = useState([]);
-
+  const [tableData, setTableData] = useState([]);
   //** Third party
   const navigate = useNavigate();
   let { id } = useParams();
@@ -141,7 +142,12 @@ const ProductCreateUpdate: React.FC = () => {
 
   //** Variables
   const dispatch = useAppDispatch();
-  const axiosClientJwt = createAxiosJwt();
+  const axiosClientJwt =  axios.create({
+        baseURL: import.meta.env.VITE_BACKEND_URL,
+        headers: {
+            // "Content-Type": "application/json",
+        },
+    });;
   const product = useAppSelector((state) => state.product);
   const category = useAppSelector((state) => state.category);
   const brand = useAppSelector((state) => state.brand);
@@ -314,6 +320,7 @@ const ProductCreateUpdate: React.FC = () => {
           id: data.category,
         },
         images: fileList,
+        productDetails:tableData
       },
     });
   };
@@ -493,10 +500,10 @@ const ProductCreateUpdate: React.FC = () => {
     return sizeSelect;
   };
 
-  const onUploadChange: UploadProps["onChange"] = ({
-    fileList: newFileList,
-  }) => {
-    setFileList(newFileList);
+
+  const onUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+    setFileList(Array.from(newFileList));
+
   };
 
   const onUploadPreview = async (file: UploadFile) => {
@@ -522,7 +529,7 @@ const ProductCreateUpdate: React.FC = () => {
   );
 
   const handleChange = ({ fileList }) => {
-    setFileList(fileList);
+    setFileList(Array.from(fileList));
   };
 
   const customRequest = ({ file, onSuccess, onError }) => {
@@ -537,7 +544,7 @@ const ProductCreateUpdate: React.FC = () => {
 
   const handleRemove = (file) => {
     // Remove the file from the fileList
-    setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
+    setFileList((prevList) =>Array.from(prevList) .filter((item) => item.uid !== file.uid));
   };
 
   return (
@@ -571,7 +578,7 @@ const ProductCreateUpdate: React.FC = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  loading={product.createProduct.loading}
+                  loading={false}
                 >
                   {!id ? "Tạo" : "Cập nhật"}
                 </Button>
@@ -830,7 +837,7 @@ const ProductCreateUpdate: React.FC = () => {
             </Form>
 
             {/* <Table dataSource={sampleVariant} columns={columns} /> */}
-            <ProductVariant sizes={sizeSelect} colors={colorSelect} />
+            <ProductVariant tableData={tableData} setTableData={setTableData} sizes={sizeSelect} colors={colorSelect} />
 
             <Box mt={5}>
               {/* <ImgCrop rotationSlider>

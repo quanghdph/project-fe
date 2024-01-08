@@ -48,11 +48,12 @@ export const createProduct = async ({
       waistband,
       brand,
       status,
-      images
+      images,
+      productDetails
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
-
+    console.log(images);
     const formData = new FormData();
     formData.append('productName', productName);
     formData.append('description', description);
@@ -65,16 +66,36 @@ export const createProduct = async ({
     // Append each image file to FormData
     if (images) {
       for (let i = 0; i < images.length; i++) {
-        formData.append('images', images[i]);
+        formData.append('imgs['+i+']', images[i].originFileObj);
       }
     }
+    console.log(productDetails);
+     for (let i = 0; i < productDetails.length; i++) {
+      let detail = productDetails[i];
+        console.log(detail);
+        for (var key in detail) {
+          if (detail.hasOwnProperty(key)) {
+            if(key=="size"||key=="color"){
+              let fieldName = "productDetails[" + i + "]." + key;
+              formData.append(fieldName+"Id", detail[key].key);
+            }else{
+             let fieldName = "productDetails[" + i + "]." + key;
+             formData.append(fieldName, detail[key]);
+            }
+           
+          }
+        }
+    }
+
+ 
 
     const res: any = await axiosClientJwt.post(
       `/product/add`,
         formData,
       {
           headers: {
-              Authorization: `Bearer ${accessToken}`
+              "Authorization": `Bearer ${accessToken}`,
+              'Content-Type': 'multipart/form-data'
           },
       },
     );
