@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Box, Flex } from "@chakra-ui/react";
-import { Button, Image, InputNumber, Modal, Space, Table } from "antd";
+import { Button, Image, InputNumber, Modal, Space, Table, Tag } from "antd";
 import { PaginationProps } from "antd/es/pagination";
 import { ColumnsType } from "antd/lib/table";
 import Title from "antd/lib/typography/Title";
@@ -79,6 +79,12 @@ const columns = (
     },
   },
   {
+    title: "Trạng thái",
+    dataIndex: "status",
+    ellipsis: true,
+    key: "status",
+  },
+  {
     title: "Hành động",
     key: "action",
     width: "150px",
@@ -130,6 +136,7 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
             waistband: product.waistband,
             mainImage: product.mainImage,
           },
+          status: <Tag color={product.status ? 'green' : 'gold'}>{product.status == 1 ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
         };
       });
     } else if(!product.list.loading &&product.list.result) {

@@ -23,10 +23,20 @@ export const loginUser = async (user: { username: string, password: string }, di
         }
     } catch (error) {
         dispatch(loginFailed(null));
-        Inotification({
-            type: 'error',
-            message: 'Something went wrong!'
-        })
+        console.log(error);
+        if(error.response.status == 400) {
+                 Inotification({
+                type: 'error',
+                message: error.response.data.meta.message
+            })
+        }
+        // if(error.meta.code == "400 BAD_REQUEST") {
+        //     Inotification({
+        //         type: 'error',
+        //         message: error.meta.message
+        //     })
+        // }
+       
     }
 }
 

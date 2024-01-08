@@ -426,3 +426,34 @@ export const getProductDetail = async ({
     });
   }
 };
+
+export const getVariantProductDetail = async ({
+  id,
+  dispatch,
+  axiosClientJwt,
+  navigate,
+}: any) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(getProductDetailStart());
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product-detail?idProduct=${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log(res);
+    if (res?.status === 200 && res?.data) {
+      setTimeout(function () {
+        dispatch(getProductDetailSuccess(res.data));
+      }, 1000);
+    } else {
+      dispatch(getProductDetailFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(getProductDetailFailed(null));
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
+  }
+};

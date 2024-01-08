@@ -282,10 +282,10 @@ const Customers = () => {
                                     bordered
                                     columns={columns(setIsModalOpen, customerDelete, setCustomerDelete, navigate)}
                                     dataSource={dataRender()}
-                                    loading={customer.listAddress.loading}
+                                    loading={customer.list.loading}
                                     scroll={{x: '100vw'}}
                                     pagination={{
-                                        total: customer.listAddress.result?.total,
+                                        total: customer.list.result?.total,
                                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                                         defaultCurrent: page,
                                         onChange: handleOnChangePagination,

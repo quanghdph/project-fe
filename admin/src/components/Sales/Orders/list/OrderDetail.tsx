@@ -179,8 +179,11 @@ function OrderDetail(props: any) {
         renderQuantity: (
           <InputNumber
             min={1}
+            formatter={(value) => (value ? String(value).replace(/\D/g, '') : '')}
+            parser={(value) => (value ? parseInt(value, 10) : undefined)}
             value={product.quantity}
             onChange={(value) => handleQuantityChange(value, product)}
+            precision={0} // Set precision to 0 for integers
           />
         ),
       };
