@@ -88,15 +88,6 @@ function ModalProductDetail({
     setSelectedColor(e.target.value);
   };
 
-  const filteredProducts =
-    !variant.loading &&
-    variant.result &&
-    variant.result.listProductDetail.filter(
-      (product) =>
-        (!selectedSize || product.size.id === selectedSize) &&
-        (!selectedColor || product.color.id === selectedColor),
-    );
-
   useEffect(() => {
     const sizes = [
       ...new Set(
@@ -183,7 +174,7 @@ function ModalProductDetail({
                   <Text as="b">Số lượng:</Text> {product.result?.quantity}
                 </Col> */}
                 {
-                  !variant.loading && variant.result?.listProductDetail.length > 0 && (
+                  variant.result?.listProductDetail.length > 0 && (
                     <Box>
                     <Box>
                       <Text>Kích thước: </Text>

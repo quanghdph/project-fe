@@ -223,7 +223,7 @@ function OrderDetail(props: any) {
   };
 
   const onCustomerChange = (value: string) => {
-    if (!customer?.list.loading && customer.list.result?.listCustomer) {
+    if (!customer?.list?.loading && customer.list.result?.listCustomer) {
       const currentCustomerSelect = customer.list.result?.listCustomer.filter(
         (e) => value == e.id,
       );
@@ -257,7 +257,7 @@ function OrderDetail(props: any) {
   }, [value, search]);
 
   useEffect(() => {
-    if (!customer.list.loading && customer.list.result) {
+    if (!customer?.list?.loading && customer?.list?.result) {
       const listOption = customer.list.result.listCustomer
         ? customer.list.result.listCustomer.map((item) => ({
             value: item.id,
