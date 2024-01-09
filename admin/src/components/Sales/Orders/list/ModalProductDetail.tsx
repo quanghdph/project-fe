@@ -89,37 +89,46 @@ function ModalProductDetail({
   };
 
   useEffect(() => {
-    const sizes = [
+    const sizes = variant.result && [
       ...new Set(
         variant.result.listProductDetail.map((product) => product.size),
       ),
     ];
-    const colors = [
+    const colors = variant.result && [
       ...new Set(
         variant.result.listProductDetail.map((product) => product.color),
       ),
     ];
 
-    const sizeIds = sizes.map(({ id }) => id);
-    const sizeFiltered = sizes.filter(
+    const sizeIds = sizes && sizes.map(({ id }) => id);
+    const sizeFiltered = sizes  && sizes.filter(
       ({ id }, index) => !sizeIds.includes(id, index + 1),
     );
 
-    const colorsIds = colors.map(({ id }) => id);
-    const colorsFiltered = colors.filter(
+    const colorsIds = colors && colors.map(({ id }) => id);
+    const colorsFiltered = colors && colors.filter(
       ({ id }, index) => !colorsIds.includes(id, index + 1),
     );
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
-  }, [variant.result]);
+  }, [variant.result, variant.loading]);
 
   const selectedProduct =
-    variant.result &&
-    variant.result.listProductDetail.find(
-      (product) =>
-        product.size.id === selectedSize && product.color.id === selectedColor,
+    !variant.loading && variant.result &&   variant.result?.listProductDetail.length > 0 &&
+    variant.result?.listProductDetail.find(
+      (product) => {
+        console.log(product)
+        return  product.size.id === selectedSize && product.color.id === selectedColor
+      }
+       
     );
+
+    
+
+    console.log("selectedProduct", selectedProduct)
+    console.log("variant",  variant.result?.listProductDetail)
+    console.log("variant", selectedSize)
 
   return (
     <Fragment>
@@ -160,18 +169,6 @@ function ModalProductDetail({
               <Divider />
 
               <Row gutter={[16, 16]}>
-                {/* <Col Text={12}>
-                  <Text as="b">Giá:</Text> {product.result?.price}
-                </Col>
-                <Col Text={12}>
-                  <Text as="b">Màu:</Text> {product.result?.color?.colorName}
-                </Col>
-                <Col Text={12}>
-                  <Text as="b">Size:</Text> {product.result.size.sizeName}
-                </Col>
-                <Col Text={12}>
-                  <Text as="b">Số lượng:</Text> {product.result?.quantity}
-                </Col> */}
                 {
                   variant.result?.listProductDetail.length > 0 && (
                     <Box>
@@ -242,7 +239,7 @@ function ModalProductDetail({
                     (e: any) => e.id == id,
                   );
 
-                  if (existingProductIndex !== -1) {
+                  if (existingProductIndex !== -1 ) {
                     if (
                       cart[existingProductIndex].product.size.id === selectedProduct.size.id &&
                       cart[existingProductIndex].product.color.id === selectedProduct.color.id
@@ -273,13 +270,10 @@ function ModalProductDetail({
                         },
                       ]);
                     }
-                  
-                    // const updatedCart = [...cart];
-                    // updatedCart[existingProductIndex].quantity += 1;
-                    // return setCart(updatedCart);
+                
                     
                   } else {
-                    if (selectedProduct.quantity == 0) {
+                    if (selectedProduct && selectedProduct.quantity == 0) {
                       Inotification({
                         type: "error",
                         message: "Mặt hàng này hiện đã hết !",
