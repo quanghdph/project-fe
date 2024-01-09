@@ -18,20 +18,22 @@ import React, { Fragment, useEffect, useState, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { getListCustomer, getListSearchCustomer } from "src/features/customer/action";
-import { getListEmployee, getListSearchEmployee } from "src/features/employee/action";
 import {
-  createBill,
-  getBill,
-  updateBill,
-} from "src/features/sale/bill/action";
+  getListCustomer,
+  getListSearchCustomer,
+} from "src/features/customer/action";
+import {
+  getListEmployee,
+  getListSearchEmployee,
+} from "src/features/employee/action";
+import { createBill, getBill, updateBill } from "src/features/sale/bill/action";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import { useDebounce } from "use-debounce";
 
 export type FormValuesBill = {
   bill_name: string;
   bill_code: string;
-  bill_status: {
+  status: {
     label: string;
     value: number;
   };
@@ -67,7 +69,7 @@ const BillCreateUpdate = () => {
       phoneNumber: "",
       transportFee: "",
       note: "",
-      bill_status: { label: "Hoạt động", value: 1 },
+      status: { label: "Hoạt động", value: 1 },
     },
   });
 
@@ -92,58 +94,68 @@ const BillCreateUpdate = () => {
   }, [id]);
 
   useEffect(() => {
+    // console.log(bill);
     if (id && !bill.single.loading && bill.single.result) {
-      setValue("bill_code", bill.single.result.billCode);
-      setValue("bill_name", bill.single.result.billName);
+      const { note, transportFee, phoneNumber, address } = bill.single.result;
+      // setValue("bill_code", bill.single.result.billCode);
+      // setValue("bill_name", bill.single.result.billName);
       setStatus({
-        label: bill.single.result.status == 1  ? "Hoạt động": "Vô hiệu hóa",
-        value: bill.single.result.status
-      })
+        label: bill.single.result.status == 1 ? "Hoạt động" : "Vô hiệu hóa",
+        value: bill.single.result.status,
+      });
+      setValue("note", note);
+      setValue("transportFee", transportFee);
+      setValue("phoneNumber", phoneNumber);
+      setValue("address", address);
+      setValue("address", address);
+      setValue("address", address);
     }
   }, [id, bill.single.loading, bill.single.result]);
 
   // ** Function handle
   const onSubmit = async (data: any) => {
-    console.log("!23", data);
-    // if (id) {
-    //   updateBill({
-    //     axiosClientJwt,
-    //     bill: {
-    //       billName: data.bill_name,
-    //       status: status.value,
-    //     },
-    //     dispatch,
-    //     id: +id,
-    //     message,
-    //     navigate,
-    //     setError,
-    //   });
-    // } else {
-    //   createBill({
-    //     axiosClientJwt,
-    //     bill: {
-    //       customer,
-    //       employee,
-    //       address,
-    //       phoneNumber,
-    //       transportFee,
-    //       note,
-    //       status
-    //       // billName: data.bill_name,
-    //       // status: status.value
-    //     },
-    //     dispatch,
-    //     message,
-    //     navigate,
-    //     setError,
-    //   });
-    // }
+    console.log(data);
+    if (id) {
+      updateBill({
+        axiosClientJwt,
+        bill: {
+          customer: data.customer,
+          employee: data.employee,
+          address: data.address,
+          phoneNumber: data.phoneNumber,
+          transportFee: data.transportFee,
+          note: data.note,
+          status: status.value,
+        },
+        dispatch,
+        id: +id,
+        message,
+        navigate,
+        setError,
+      });
+    } else {
+      createBill({
+        axiosClientJwt,
+        bill: {
+          customer: data.customer,
+          employee: data.employee,
+          address: data.address,
+          phoneNumber: data.phoneNumber,
+          transportFee: data.transportFee,
+          note: data.note,
+          status: status.value,
+        },
+        dispatch,
+        message,
+        navigate,
+        setError,
+      });
+    }
   };
 
   const handleChangeStatus = (value: boolean) => {
-    setStatus(value)
+    setStatus(value);
   };
-
 
   const onNoteChange = (e) => {
     const value = e.target.value;
@@ -198,7 +210,6 @@ const BillCreateUpdate = () => {
     return customerOption;
   };
 
-
   //Employ search
   const onEmployeeSearch = (value: string) => {
     setSearchEmployee(value);
@@ -206,7 +217,9 @@ const BillCreateUpdate = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchFunction = valueEmployee ? getListSearchEmployee : getListEmployee;
+      const fetchFunction = valueEmployee
+        ? getListSearchEmployee
+        : getListEmployee;
 
       try {
         const params = valueEmployee ? { value: valueEmployee } : {};
@@ -245,6 +258,26 @@ const BillCreateUpdate = () => {
 
   const filterEmployeeOption = (): any => {
     return employeeOption;
+  };
+
+  const onCustomerChange = (value) => {
+    if (customer.list.loading || !customer.list.result || customer.list.error)
+      return;
+
+    const currentCustomer = customer.list.result?.listCustomer.find(
+      (item) => item.id === value,
+    );
+    setValue("customer", currentCustomer);
+  };
+
+  const onEmployeeChange = (value) => {
+    if (employee.list.loading || !employee.list.result || employee.list.error)
+      return;
+
+    const currentEmployee = employee.list.result?.listEmployees.find(
+      (item) => item.id === value,
+    );
+    setValue("employee", currentEmployee);
   };
 
   return (
@@ -295,20 +328,20 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="customer"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <div>
-                         <Select
-                              showSearch
-                              placeholder="Tìm kiếm khách hàng"
-                              optionFilterProp="children"
-                              // onChange={onCustomerChange}
-                              onSearch={onCustomerSearch}
-                              filterOption={filterCustomerOption}
-                              style={{ width: "100%" }}
-                              options={customerOption}
-                            />
+                          <Select
+                            showSearch
+                            placeholder="Tìm kiếm khách hàng"
+                            optionFilterProp="children"
+                            onChange={onCustomerChange}
+                            onSearch={onCustomerSearch}
+                            filterOption={filterCustomerOption}
+                            style={{ width: "100%" }}
+                            options={customerOption}
+                          />
                         </div>
                       );
                     }}
@@ -318,19 +351,19 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="employee"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <Select
-                              showSearch
-                              placeholder="Tìm kiếm nhân viên"
-                              optionFilterProp="children"
-                              // onChange={onCustomerChange}
-                              onSearch={onEmployeeSearch}
-                              filterOption={filterEmployeeOption}
-                              style={{ width: "100%" }}
-                              options={employeeOption}
-                            />
+                          showSearch
+                          placeholder="Tìm kiếm nhân viên"
+                          optionFilterProp="children"
+                          onChange={onEmployeeChange}
+                          onSearch={onEmployeeSearch}
+                          filterOption={filterEmployeeOption}
+                          style={{ width: "100%" }}
+                          options={employeeOption}
+                        />
                       );
                     }}
                   />
@@ -340,18 +373,18 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="address"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <div>
                           <Input {...field} placeholder="50 Mỹ đình, Hà Nội" />
-                          {errors?.address ? (
+                          {/* {errors?.address ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.address?.type === "required"
                                 ? "Vui lòng điền địa chỉ"
                                 : errors.address.message}
                             </Box>
-                          ) : null}
+                          ) : null} */}
                         </div>
                       );
                     }}
@@ -362,18 +395,18 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="phoneNumber"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <div>
                           <Input {...field} placeholder="09454684" />
-                          {errors?.phoneNumber ? (
+                          {/* {errors?.phoneNumber ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.phoneNumber?.type === "required"
                                 ? "Vui lòng điền số điện thoại"
                                 : errors.phoneNumber.message}
                             </Box>
-                          ) : null}
+                          ) : null} */}
                         </div>
                       );
                     }}
@@ -384,18 +417,22 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="transportFee"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <div>
-                          <Input prefix={"VND"} {...field} placeholder="20000" />
-                          {errors?.transportFee ? (
+                          <Input
+                            prefix={"VND"}
+                            {...field}
+                            placeholder="20000"
+                          />
+                          {/* {errors?.transportFee ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.transportFee?.type === "required"
-                                ? "Vui lòng điền số điện thoại"
+                                ? "Vui lòng điền phí vận chuyển"
                                 : errors.transportFee.message}
                             </Box>
-                          ) : null}
+                          ) : null} */}
                         </div>
                       );
                     }}
@@ -403,23 +440,43 @@ const BillCreateUpdate = () => {
                 </Form.Item>
 
                 <Form.Item
-                name="note"
-                label="Ghi chú"
-                rules={[{ required: true, message: "Điền ghi chú" }]}
-              >
-                <TextArea
-                  {...register("note")}
-                  onChange={onNoteChange}
-                  rows={4}
-                  placeholder="Ghi chú"
-                />
-              </Form.Item>
+                  name="note"
+                  label="Ghi chú"
+                  // rules={[{ required: true, message: "Điền ghi chú" }]}
+                >
+                  <Controller
+                    name="note"
+                    control={control}
+                    // rules={{ required: true }}
+                    render={({ field }) => {
+                      console.log(field);
+                      return (
+                        <div>
+                          <TextArea
+                            // {...register("note")}
+                            {...field}
+                            onChange={onNoteChange}
+                            rows={4}
+                            placeholder="Ghi chú"
+                          />
+                          {/* {errors?.transportFee ? (
+                            <Box as="div" mt={1} textColor="red.600">
+                              {errors.transportFee?.type === "required"
+                                ? "Vui lòng điền số điện thoại"
+                                : errors.transportFee.message}
+                            </Box>
+                          ) : null} */}
+                        </div>
+                      );
+                    }}
+                  />
+                </Form.Item>
 
                 <Form.Item label="Trạng thái" style={{ width: "20%" }}>
                   <Controller
-                    name="bill_status"
+                    name="status"
                     control={control}
-                    rules={{ required: true }}
+                    // rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <div>

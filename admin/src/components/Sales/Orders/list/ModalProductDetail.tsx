@@ -30,18 +30,21 @@ import {
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import { formatPriceVND } from "src/helper/currencyPrice";
 
+interface CartItem {
+  size: { id: number };
+  color: { id: number };
+  productName: string;
+  quantity: number;
+  cartQuantity?: number;
+}
+
 function ModalProductDetail({
   activeModalProductDetail,
   setActiveModalProductDetail,
   id,
   cart,
   setCart,
-}) {
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
-  const [filter, setFilter] = useState<string>("");
-  const [quantity, setQuantity] = useState<number>(1);
-
+}: any) {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [uniqueSizes, setUniqueSizes] = useState([]);
@@ -101,35 +104,74 @@ function ModalProductDetail({
     ];
 
     const sizeIds = sizes && sizes.map(({ id }) => id);
-    const sizeFiltered = sizes  && sizes.filter(
-      ({ id }, index) => !sizeIds.includes(id, index + 1),
-    );
+    const sizeFiltered =
+      sizes &&
+      sizes.filter(({ id }, index) => !sizeIds.includes(id, index + 1));
 
     const colorsIds = colors && colors.map(({ id }) => id);
-    const colorsFiltered = colors && colors.filter(
-      ({ id }, index) => !colorsIds.includes(id, index + 1),
-    );
+    const colorsFiltered =
+      colors &&
+      colors.filter(({ id }, index) => !colorsIds.includes(id, index + 1));
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
   }, [variant.result, variant.loading]);
 
   const selectedProduct =
-    !variant.loading && variant.result &&   variant.result?.listProductDetail.length > 0 &&
-    variant.result?.listProductDetail.find(
-      (product) => {
-        console.log(product)
-        return  product.size.id === selectedSize && product.color.id === selectedColor
-      }
-       
+    !variant.loading &&
+    variant.result &&
+    variant.result?.listProductDetail.length > 0 &&
+    variant.result?.listProductDetail.find((product) => {
+      return (
+        product.size.id === selectedSize && product.color.id === selectedColor
+      );
+    });
+
+  const isProductInCart = (cart: CartItem[], productVariant: CartItem) =>
+    cart.some(
+      (item) =>
+        item.size.id === productVariant.size.id &&
+        item.color.id === productVariant.color.id,
     );
 
-    
+  const canAddToCart = (productVariant: CartItem) =>
+    productVariant.quantity > 0;
 
-    console.log("selectedProduct", selectedProduct)
-    console.log("variant",  variant.result?.listProductDetail)
-    console.log("variant", selectedSize)
+  const updateCartItemQuantity = (cart: CartItem[], productVariant: CartItem) =>
+    cart.map((item) =>
+      item.size.id === productVariant.size.id &&
+      item.color.id === productVariant.color.id
+        ? { ...item, cartQuantity: item.cartQuantity! + 1 }
+        : item,
+    );
 
+  const addToCart = (productVariant: CartItem) => {
+    if (!cart) return;
+
+    if (!canAddToCart(productVariant)) {
+      Inotification({
+        type: "warning",
+        message: "Sản phẩm hết hàng"
+      })
+      return;
+    }
+
+    if (isProductInCart(cart, productVariant)) {
+      const updatedCart = updateCartItemQuantity(cart, productVariant);
+      setCart(updatedCart);
+      Inotification({
+        type: "success",
+        message: "Sản phẩm đã được cập nhật trong giỏ hàng"
+      })
+    } else {
+      setCart([...cart, { ...productVariant, cartQuantity: 1 }]);
+      Inotification({
+        type: "success",
+        message: "Sản phẩm đã được thêm vào giỏ hàng"
+      })
+      setActiveModalProductDetail(false)
+    }
+  };
   return (
     <Fragment>
       <Modal
@@ -169,9 +211,8 @@ function ModalProductDetail({
               <Divider />
 
               <Row gutter={[16, 16]}>
-                {
-                  variant.result?.listProductDetail.length > 0 && (
-                    <Box>
+                {variant.result?.listProductDetail.length > 0 && (
+                  <Box>
                     <Box>
                       <Text>Kích thước: </Text>
                       <Radio.Group
@@ -179,7 +220,7 @@ function ModalProductDetail({
                         value={selectedSize}
                         style={{ marginRight: "8px" }}
                       >
-                        {uniqueSizes.length &&
+                        {uniqueSizes &&
                           uniqueSizes.map((size) => (
                             <Radio.Button key={size.id} value={size.id}>
                               {size?.sizeName}
@@ -193,7 +234,7 @@ function ModalProductDetail({
                         onChange={handleColorChange}
                         value={selectedColor}
                       >
-                        {uniqueColors.length &&
+                        {uniqueColors &&
                           uniqueColors.map((color) => (
                             <Radio.Button
                               key={`${color.id}-${color.colorName}`}
@@ -218,20 +259,18 @@ function ModalProductDetail({
                         </Box>
                       ) : (
                         <Box>
-                          Chọn kích thước và màu để hiển thị giá và số lượng trong
-                          kho!
+                          Chọn kích thước và màu để hiển thị giá và số lượng
+                          trong kho!
                         </Box>
                       )}
                     </Box>
                   </Box>
-                  )
-                }
-               
+                )}
               </Row>
 
               <Divider />
 
-              <Button
+              {/* <Button
                 type="primary"
                 // disabled={!selectedProduct && true}
                 onClick={() => {
@@ -246,20 +285,8 @@ function ModalProductDetail({
                     ) {
                       const updatedCart = [...cart];
                       updatedCart[existingProductIndex].quantity += 1;
-                      setTimeout(() => {
-                        Inotification({
-                          type: "success",
-                          message: "Thêm vào giỏ hàng thành công!",
-                        });
-                      }, 200);
                       return setCart(updatedCart);
                     } else {
-                      setTimeout(() => {
-                        Inotification({
-                          type: "success",
-                          message: "Thêm vào giỏ hàng thành công!",
-                        });
-                      }, 200);
                       // Different variant, create a new cart item
                       return setCart([
                         ...cart,
@@ -300,6 +327,14 @@ function ModalProductDetail({
 
                   }
                 }}
+              >
+                Thêm vào giỏ hàng
+              </Button> */}
+
+              <Button
+                type="primary"
+                // disabled={!selectedProduct && true}
+                onClick={() => addToCart(selectedProduct)}
               >
                 Thêm vào giỏ hàng
               </Button>

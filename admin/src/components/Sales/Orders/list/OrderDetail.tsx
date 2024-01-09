@@ -191,25 +191,26 @@ function OrderDetail(props: any) {
         key: index,
         id: product.id,
         product: {
-          productName: product.product.product.productName,
-          productCode: product.product.product.productCode,
-          brand: product.product.product.brand,
+          productName: product.product.productName,
+          productCode: product.product.productCode,
+          brand: product.product.brand,
         },
-        quantity: product.quantity,
-        total: formatPriceVND(product.product.price * product.quantity),
-        price: formatPriceVND(product.product.price),
+        quantity: product.cartQuantity,
+        total: formatPriceVND(product.price * product.cartQuantity),
+        price: formatPriceVND(product.price),
         renderQuantity: (
           <InputNumber
             min={1}
+            max={product.quantity}
             formatter={(value) => (value ? String(value).replace(/\D/g, '') : '')}
             parser={(value) => (value ? parseInt(value, 10) : undefined)}
-            value={product.quantity}
+            value={product.cartQuantity}
             onChange={(value) => handleQuantityChange(value, product)}
             precision={0} // Set precision to 0 for integers
           />
         ),
-        inventory: product.product.quantity,
-        variant: `${product.product?.color?.colorName} - ${product.product?.size?.sizeName}`
+        inventory: product.quantity,
+        variant: `${product?.color?.colorName} - ${product?.size?.sizeName}`
       };
     });
     // return [];
@@ -217,7 +218,7 @@ function OrderDetail(props: any) {
 
   const handleQuantityChange = (value, record) => {
     const updatedCart = cart.map((item) =>
-      item.id === record.id ? { ...item, quantity: value } : item,
+      item.id === record.id ? { ...item, cartQuantity: value } : item,
     );
     setCart(updatedCart);
   };
@@ -284,7 +285,7 @@ function OrderDetail(props: any) {
     const cartArr = cart.map((item) => {
       return {
         id: item.id,
-        quantity: item.quantity,
+        quantity: item.cartQuantity,
       };
     });
 
@@ -351,7 +352,7 @@ function OrderDetail(props: any) {
 
   const updateTotalAmount = (updatedCart) => {
     const newTotalAmount = updatedCart.reduce(
-      (total, item) => total + item.product.price * item.quantity,
+      (total, item) => total + item.price * item.cartQuantity,
       0,
     );
     setTotalAmount(newTotalAmount);
@@ -483,7 +484,7 @@ function OrderDetail(props: any) {
               </Flex> */}
               <Flex justifyContent={"space-between"}>
                 <Text>Tổng tiền:</Text>
-                <Text>{totalAmount}đ</Text>
+                <Text>{formatPriceVND(totalAmount)}</Text>
               </Flex>
               {/* <Box mb={4}>
                 <Text>Tiền khách đưa:</Text>
@@ -540,6 +541,8 @@ function OrderDetail(props: any) {
         onCreate={handleCreate}
         onCancel={handleCancel}
       />
+
+ 
     </Fragment>
   );
 }

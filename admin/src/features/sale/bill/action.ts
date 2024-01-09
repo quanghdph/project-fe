@@ -28,14 +28,15 @@ export const getListBill = async ({
     const { page, limit, filter } = params;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getListBillStart());
-    const url = page || limit || filter ? `/bill?page=${page}&limit=${limit}&filter=${filter}` : '/bill'
-    const res: any = await axiosClientJwt.get(url,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    const url =
+      page || limit || filter
+        ? `/bill?page=${page}&limit=${limit}&filter=${filter}`
+        : "/bill";
+    const res: any = await axiosClientJwt.get(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+    });
     if (res?.status === 200 && res?.data && res?.data) {
       setTimeout(function () {
         dispatch(getListBillSuccess(res.data));
@@ -155,9 +156,17 @@ export const createBill = async ({
   setError,
 }: any) => {
   try {
-    const { customer, employee, address, phoneNumber, transportFee, note, status } = bill;
+    const {
+      customer,
+      employee,
+      address,
+      phoneNumber,
+      transportFee,
+      note,
+      status,
+    } = bill;
     dispatch(createBillStart());
-    const accessToken = localStorage.getItem("accessToken")
+    const accessToken = localStorage.getItem("accessToken");
     const res: IAxiosResponse<{}> = await axiosClientJwt.post(
       `/bill`,
       {
@@ -167,7 +176,7 @@ export const createBill = async ({
         phoneNumber,
         transportFee,
         note,
-        status
+        status,
       },
       {
         headers: {
@@ -179,7 +188,7 @@ export const createBill = async ({
       setTimeout(function () {
         dispatch(createBillSuccess(res.data));
         message.success("Tạo hóa đơn thành công!");
-        navigate("/catalog/categories");
+        navigate("/bills");
       }, 1000);
     }
     // else if (res?.response?.code === 400 && !res?.response?.success) {
@@ -269,21 +278,34 @@ export const updateBill = async ({
   id,
 }: any) => {
   try {
-    const { billName, status } = bill;
+    const {
+      customer,
+      employee,
+      address,
+      phoneNumber,
+      transportFee,
+      note,
+      status,
+    } = bill;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateBillStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
         `/bill/${id}`,
         {
-          billName,
+          customer,
+          employee,
+          address,
+          phoneNumber,
+          transportFee,
+          note,
           status,
         },
         {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        }
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       ),
     ]);
     if (res?.status === 200 && res?.data) {

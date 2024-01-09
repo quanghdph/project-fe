@@ -36,7 +36,6 @@ export const createSelloff = async ({
         },
       },
     );
-      console.log(res);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(createSelloffSuccess(res.data));

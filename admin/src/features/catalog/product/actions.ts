@@ -56,7 +56,7 @@ export const createProduct = async ({
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
-    console.log(images);
+
     const formData = new FormData();
     formData.append('productName', productName);
     formData.append('description', description);
@@ -272,7 +272,6 @@ export const getProduct = async ({
       },
     });
     if (res?.status === 200 && res?.data) {
-      console.log(res);
       setTimeout(function () {
         dispatch(getProductSuccess(res.data));
       }, 1000);
@@ -431,7 +430,7 @@ export const getProductDetail = async ({
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(res);
+
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(getProductDetailSuccess(res.data));
@@ -457,12 +456,12 @@ export const getVariantProductDetail = async ({
   try {
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getVariantProductStart());
-    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product-detail?idProduct=${id}`, {
+    const res: any = await axiosClientJwt.get(`/product-detail?idProduct=${id}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(res);
+
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(getVariantProductSuccess(res.data));
