@@ -21,6 +21,9 @@ import {
   getProductDetailSuccess,
   getProductDetailStart,
   getProductDetailFailed,
+  getVariantProductStart,
+  getVariantProductSuccess,
+  getVariantProductFailed,
 } from "./productSlice";
 import { IAxiosResponse } from "src/types/axiosResponse";
 import { FormValuesProduct } from "src/components/Catalog/Products/detail-update/ProductDetail";
@@ -69,10 +72,9 @@ export const createProduct = async ({
         formData.append('imgs['+i+']', images[i].originFileObj);
       }
     }
-    console.log(productDetails);
+
      for (let i = 0; i < productDetails.length; i++) {
       let detail = productDetails[i];
-        console.log(detail);
         for (var key in detail) {
           if (detail.hasOwnProperty(key)) {
             if(key=="size"||key=="color"){
@@ -86,8 +88,6 @@ export const createProduct = async ({
           }
         }
     }
-
- 
 
     const res: any = await axiosClientJwt.post(
       `/product/add`,
@@ -456,7 +456,7 @@ export const getVariantProductDetail = async ({
 }: any) => {
   try {
     const accessToken = localStorage.getItem("accessToken");
-    dispatch(getProductDetailStart());
+    dispatch(getVariantProductStart());
     const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product-detail?idProduct=${id}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -465,13 +465,13 @@ export const getVariantProductDetail = async ({
     console.log(res);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-        dispatch(getProductDetailSuccess(res.data));
+        dispatch(getVariantProductSuccess(res.data));
       }, 1000);
     } else {
-      dispatch(getProductDetailFailed(null));
+      dispatch(getVariantProductFailed(null));
     }
   } catch (error: any) {
-    dispatch(getProductDetailFailed(null));
+    dispatch(getVariantProductFailed(null));
     Inotification({
       type: "error",
       message: "Something went wrong!",

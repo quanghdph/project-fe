@@ -93,7 +93,6 @@ const BillCreateUpdate = () => {
 
   useEffect(() => {
     if (id && !bill.single.loading && bill.single.result) {
-      console.log("object", bill.single);
       setValue("bill_code", bill.single.result.billCode);
       setValue("bill_name", bill.single.result.billName);
       setStatus({
@@ -105,32 +104,40 @@ const BillCreateUpdate = () => {
 
   // ** Function handle
   const onSubmit = async (data: any) => {
-    if (id) {
-      updateBill({
-        axiosClientJwt,
-        bill: {
-          billName: data.bill_name,
-          status: status.value,
-        },
-        dispatch,
-        id: +id,
-        message,
-        navigate,
-        setError,
-      });
-    } else {
-      createBill({
-        axiosClientJwt,
-        bill: {
-          billName: data.bill_name,
-          status: status.value
-        },
-        dispatch,
-        message,
-        navigate,
-        setError,
-      });
-    }
+    console.log("!23", data);
+    // if (id) {
+    //   updateBill({
+    //     axiosClientJwt,
+    //     bill: {
+    //       billName: data.bill_name,
+    //       status: status.value,
+    //     },
+    //     dispatch,
+    //     id: +id,
+    //     message,
+    //     navigate,
+    //     setError,
+    //   });
+    // } else {
+    //   createBill({
+    //     axiosClientJwt,
+    //     bill: {
+    //       customer,
+    //       employee,
+    //       address,
+    //       phoneNumber,
+    //       transportFee,
+    //       note,
+    //       status
+    //       // billName: data.bill_name,
+    //       // status: status.value
+    //     },
+    //     dispatch,
+    //     message,
+    //     navigate,
+    //     setError,
+    //   });
+    // }
   };
 
   const handleChangeStatus = (value: boolean) => {
@@ -218,7 +225,6 @@ const BillCreateUpdate = () => {
   }, [valueEmployee, searchEmployee]);
 
   useEffect(() => {
-    console.log(employee);
     if (!employee.list.loading && employee.list.result) {
       const listOption = employee.list.result.listEmployees
         ? employee.list.result.listEmployees.map((item) => ({

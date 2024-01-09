@@ -346,11 +346,11 @@ const Products: React.FC = () => {
         </p>
       </Modal>
 
-      <ModalProductDetail
+      {/* <ModalProductDetail
           activeModalProductDetail={activeModalProductDetail}
           setActiveModalProductDetail={setActiveModalProductDetail}
           id={idProductDetail}
-        />
+        /> */}
     </Fragment>
   );
 };

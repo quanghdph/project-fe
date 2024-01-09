@@ -36,6 +36,7 @@ import {
 } from "src/features/sale/saleoff/action";
 import { Inotification } from "src/common";
 import ModalCreateCustomer from "./ModalCreateCustomer";
+import { formatPriceVND } from "src/helper/currencyPrice";
 
 interface DataType {
   key: string;
@@ -91,11 +92,31 @@ const columns = (
     key: "renderQuantity",
   },
   {
-    title: "Tổng tiền",
+    title: "Số lượng tồn kho",
+    dataIndex: "inventory",
+    ellipsis: true,
+    key: "inventory",
+  },
+  {
+    title: "Biến thể",
+    dataIndex: "variant",
+    ellipsis: true,
+    key: "variant",
+  },
+  {
+    title: "Đơn giá",
     dataIndex: "price",
     key: "price",
     render: (price, record) => {
       return <Box>{price}</Box>;
+    },
+  },
+  {
+    title: "Tổng tiền",
+    dataIndex: "total",
+    key: "total",
+    render: (total, record) => {
+      return <Box>{total}</Box>;
     },
   },
   {
@@ -175,7 +196,8 @@ function OrderDetail(props: any) {
           brand: product.product.product.brand,
         },
         quantity: product.quantity,
-        price: product.product.price * product.quantity,
+        total: formatPriceVND(product.product.price * product.quantity),
+        price: formatPriceVND(product.product.price),
         renderQuantity: (
           <InputNumber
             min={1}
@@ -186,6 +208,8 @@ function OrderDetail(props: any) {
             precision={0} // Set precision to 0 for integers
           />
         ),
+        inventory: product.product.quantity,
+        variant: `${product.product?.color?.colorName} - ${product.product?.size?.sizeName}`
       };
     });
     // return [];

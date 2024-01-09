@@ -68,6 +68,11 @@ interface ProductState {
         loading: boolean;
         error: boolean;
     }
+    variant: {
+        result: Product | null;
+        loading: boolean;
+        error: boolean;
+    }
 }
 
 const initialState: ProductState = {
@@ -102,6 +107,11 @@ const initialState: ProductState = {
         error: false
     },
     detail: {
+        result: null,
+        loading: false,
+        error: false
+    },
+    variant: {
         result: null,
         loading: false,
         error: false
@@ -210,6 +220,20 @@ export const productSlice = createSlice({
             state.detail.result = action.payload;
             state.detail.error = true;
         },
+        // ** Get product variant
+        getVariantProductStart: (state) => {
+            state.variant.loading = true;
+        },
+        getVariantProductSuccess: (state, action) => {
+            state.variant.loading = false;
+            state.variant.result = action.payload;
+            state.variant.error = false
+        },
+        getVariantProductFailed: (state, action) => {
+            state.variant.loading = false;
+            state.variant.result = action.payload;
+            state.variant.error = true;
+        },
     }
 });
 
@@ -235,6 +259,9 @@ export const {
     getProductDetailStart,
     getProductDetailSuccess,
     getProductDetailFailed,
+    getVariantProductStart,
+    getVariantProductSuccess,
+    getVariantProductFailed
 } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -7,6 +7,7 @@ import {
   Image,
   InputNumber,
   Modal,
+  Radio,
   Row,
   Space,
   Spin,
@@ -24,8 +25,10 @@ import {
   getProduct,
   getProductDetail,
   getProductImage,
+  getVariantProductDetail,
 } from "src/features/catalog/product/actions";
 import { createAxiosJwt } from "src/helper/axiosInstance";
+import { formatPriceVND } from "src/helper/currencyPrice";
 
 function ModalProductDetail({
   activeModalProductDetail,
@@ -39,12 +42,18 @@ function ModalProductDetail({
   const [filter, setFilter] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
 
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [uniqueSizes, setUniqueSizes] = useState([]);
+  const [uniqueColors, setUniqueColors] = useState([]);
+
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
   const product = useAppSelector((state) => state.product.detail);
+  const variant = useAppSelector((state) => state.product.variant);
 
   const handleOk = () => {
     setActiveModalProductDetail(false);
@@ -55,16 +64,6 @@ function ModalProductDetail({
   };
 
   useEffect(() => {
-    //getListProduct({
-    //   params: {
-    //     page,
-    //     limit,
-    //     filter,
-    //   },
-    //   navigate,
-    //   axiosClientJwt,
-    //   dispatch,
-    // });
     if (id) {
       getProductDetail({
         id: +id,
@@ -72,14 +71,65 @@ function ModalProductDetail({
         axiosClientJwt,
         navigate,
       });
-      // getProductImage({
-      //     axiosClientJwt,
-      //     dispatch,
-      //     id: +id,
-      //     navigate
-      // })
+      getVariantProductDetail({
+        id: +id,
+        dispatch,
+        axiosClientJwt,
+        navigate,
+      });
     }
   }, [id]);
+
+  const handleSizeChange = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
+  const handleColorChange = (e) => {
+    setSelectedColor(e.target.value);
+  };
+
+  const filteredProducts =
+    !variant.loading &&
+    variant.result &&
+    variant.result.listProductDetail.filter(
+      (product) =>
+        (!selectedSize || product.size.id === selectedSize) &&
+        (!selectedColor || product.color.id === selectedColor),
+    );
+
+  useEffect(() => {
+    const sizes = [
+      ...new Set(
+        variant.result.listProductDetail.map((product) => product.size),
+      ),
+    ];
+    const colors = [
+      ...new Set(
+        variant.result.listProductDetail.map((product) => product.color),
+      ),
+    ];
+
+    const sizeIds = sizes.map(({ id }) => id);
+    const sizeFiltered = sizes.filter(
+      ({ id }, index) => !sizeIds.includes(id, index + 1),
+    );
+
+    const colorsIds = colors.map(({ id }) => id);
+    const colorsFiltered = colors.filter(
+      ({ id }, index) => !colorsIds.includes(id, index + 1),
+    );
+
+    setUniqueSizes(sizeFiltered);
+    setUniqueColors(colorsFiltered);
+  }, [variant.result, variant.loading]);
+
+  const selectedProduct =
+    !variant.loading &&
+    variant.result &&
+    variant.result.listProductDetail.find(
+      (product) =>
+        product.size.id === selectedSize && product.color.id === selectedColor,
+    );
 
   return (
     <Fragment>
@@ -111,7 +161,7 @@ function ModalProductDetail({
               <Title level={3}>{product.result?.product?.productName}</Title>
               <Text as="b">{product.result?.product?.brand?.brandName}</Text>
               <Divider />
-              <div
+              <Box
                 dangerouslySetInnerHTML={{
                   __html: product.result?.product?.description,
                 }}
@@ -120,50 +170,150 @@ function ModalProductDetail({
               <Divider />
 
               <Row gutter={[16, 16]}>
-                <Col span={12}>
+                {/* <Col Text={12}>
                   <Text as="b">Giá:</Text> {product.result?.price}
                 </Col>
-                <Col span={12}>
+                <Col Text={12}>
                   <Text as="b">Màu:</Text> {product.result?.color?.colorName}
                 </Col>
-                <Col span={12}>
+                <Col Text={12}>
                   <Text as="b">Size:</Text> {product.result.size.sizeName}
                 </Col>
-                <Col span={12}>
+                <Col Text={12}>
                   <Text as="b">Số lượng:</Text> {product.result?.quantity}
-                </Col>
+                </Col> */}
+                {
+                  !variant.loading && variant.result?.listProductDetail.length > 0 && (
+                    <Box>
+                    <Box>
+                      <Text>Kích thước: </Text>
+                      <Radio.Group
+                        onChange={handleSizeChange}
+                        value={selectedSize}
+                        style={{ marginRight: "8px" }}
+                      >
+                        {uniqueSizes.length &&
+                          uniqueSizes.map((size) => (
+                            <Radio.Button key={size.id} value={size.id}>
+                              {size?.sizeName}
+                            </Radio.Button>
+                          ))}
+                      </Radio.Group>
+                    </Box>
+                    <Box style={{ marginTop: 16 }}>
+                      <Text>Màu sắc: </Text>
+                      <Radio.Group
+                        onChange={handleColorChange}
+                        value={selectedColor}
+                      >
+                        {uniqueColors.length &&
+                          uniqueColors.map((color) => (
+                            <Radio.Button
+                              key={`${color.id}-${color.colorName}`}
+                              value={color.id}
+                            >
+                              {color?.colorName}
+                            </Radio.Button>
+                          ))}
+                      </Radio.Group>
+                    </Box>
+                    <Box style={{ marginTop: 16 }}>
+                      {selectedProduct ? (
+                        <Box>
+                          <Box>
+                            <Text>
+                              Giá: {formatPriceVND(selectedProduct.price)}
+                            </Text>
+                          </Box>
+                          <Box>
+                            Số lượng trong kho: {selectedProduct.quantity}
+                          </Box>
+                        </Box>
+                      ) : (
+                        <Box>
+                          Chọn kích thước và màu để hiển thị giá và số lượng trong
+                          kho!
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                  )
+                }
+               
               </Row>
 
               <Divider />
 
               <Button
                 type="primary"
+                // disabled={!selectedProduct && true}
                 onClick={() => {
                   const existingProductIndex = cart.findIndex(
                     (e: any) => e.id == id,
                   );
 
-                  setTimeout(() => {
-                    setActiveModalProductDetail(false)
-                    Inotification({
-                      type: 'success',
-                      message: 'Thêm vào giỏ hàng thành công!'
-                  })
-                  }, 200);
-               
                   if (existingProductIndex !== -1) {
-                    const updatedCart = [...cart];
-                    updatedCart[existingProductIndex].quantity += 1;
-                    return setCart(updatedCart);
+                    if (
+                      cart[existingProductIndex].product.size.id === selectedProduct.size.id &&
+                      cart[existingProductIndex].product.color.id === selectedProduct.color.id
+                    ) {
+                      const updatedCart = [...cart];
+                      updatedCart[existingProductIndex].quantity += 1;
+                      setTimeout(() => {
+                        Inotification({
+                          type: "success",
+                          message: "Thêm vào giỏ hàng thành công!",
+                        });
+                      }, 200);
+                      return setCart(updatedCart);
+                    } else {
+                      setTimeout(() => {
+                        Inotification({
+                          type: "success",
+                          message: "Thêm vào giỏ hàng thành công!",
+                        });
+                      }, 200);
+                      // Different variant, create a new cart item
+                      return setCart([
+                        ...cart,
+                        {
+                          id: id,
+                          product: selectedProduct,
+                          quantity: 1,
+                        },
+                      ]);
+                    }
+                  
+                    // const updatedCart = [...cart];
+                    // updatedCart[existingProductIndex].quantity += 1;
+                    // return setCart(updatedCart);
+                    
                   } else {
-                    return setCart([
-                      ...cart,
-                      {
-                        id: id,
-                        product: product?.result,
-                        quantity: 1,
-                      },
-                    ]);
+                    if (selectedProduct.quantity == 0) {
+                      Inotification({
+                        type: "error",
+                        message: "Mặt hàng này hiện đã hết !",
+                      });
+                      return 
+                    } else {
+                      setTimeout(() => {
+                        setActiveModalProductDetail(false);
+                        Inotification({
+                          type: "success",
+                          message: "Thêm vào giỏ hàng thành công!",
+                        });
+                      }, 200);
+
+                      return setCart([
+                        ...cart,
+                        {
+                          id: id,
+                          product: selectedProduct,
+                          quantity: 1,
+                        },
+                      ]);
+                    }
+
                   }
                 }}
               >

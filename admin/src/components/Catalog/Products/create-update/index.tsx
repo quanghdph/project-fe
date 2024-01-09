@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import axios from 'axios';
+import axios from "axios";
 import { Inotification } from "src/common";
 import React, { Fragment, useEffect, useState } from "react";
 import {
@@ -31,15 +31,6 @@ import {
   getProduct,
 } from "src/features/catalog/product/actions";
 import { Box, Flex } from "@chakra-ui/react";
-import {
-  getBrandSelectName,
-  getCategorySelectName,
-  getMaterialSelectName,
-  getSelectName,
-  getValueByName,
-  getWaistbandSelectName,
-  removeEmpty,
-} from "src/hooks/catalog";
 import SelectImage from "../SelectImage";
 import { Asset } from "src/types";
 import {
@@ -67,6 +58,27 @@ import { getListSize } from "src/features/catalog/size/action";
 import ProductVariant from "./ProductVariant";
 import ImgCrop from "antd-img-crop";
 import { UploadOutlined } from "@ant-design/icons";
+
+const props: UploadProps = {
+  name: 'file',
+  multiple: true,
+  action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+  onChange(info) {
+    const { status } = info.file;
+    if (status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  onDrop(e) {
+    console.log('Dropped files', e.dataTransfer.files);
+  },
+};
+
 
 const ProductCreateUpdate: React.FC = () => {
   const [enabled, setEnabled] = useState<boolean>(true);
@@ -142,12 +154,12 @@ const ProductCreateUpdate: React.FC = () => {
 
   //** Variables
   const dispatch = useAppDispatch();
-  const axiosClientJwt =  axios.create({
-        baseURL: import.meta.env.VITE_BACKEND_URL,
-        headers: {
-            // "Content-Type": "application/json",
-        },
-    });;
+  const axiosClientJwt = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+    headers: {
+      // "Content-Type": "application/json",
+    },
+  });
   const product = useAppSelector((state) => state.product);
   const category = useAppSelector((state) => state.category);
   const brand = useAppSelector((state) => state.brand);
@@ -285,17 +297,6 @@ const ProductCreateUpdate: React.FC = () => {
     fetchData();
   }, [sizeSearch, sizeValue]);
 
-  // useEffect(() => {
-  //   if (id) {
-  //     getProduct({
-  //       axiosClientJwt,
-  //       dispatch,
-  //       id: +id,
-  //       navigate,
-  //     });
-  //   }
-  // }, [id]);
-
   const onSubmit = async (data) => {
     await createProduct({
       axiosClientJwt,
@@ -320,7 +321,7 @@ const ProductCreateUpdate: React.FC = () => {
           id: data.category,
         },
         images: fileList,
-        productDetails:tableData
+        productDetails: tableData,
       },
     });
   };
@@ -500,10 +501,10 @@ const ProductCreateUpdate: React.FC = () => {
     return sizeSelect;
   };
 
-
-  const onUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  const onUploadChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+  }) => {
     setFileList(Array.from(newFileList));
-
   };
 
   const onUploadPreview = async (file: UploadFile) => {
@@ -533,10 +534,7 @@ const ProductCreateUpdate: React.FC = () => {
   };
 
   const customRequest = ({ file, onSuccess, onError }) => {
-    // You can handle the file upload logic here (e.g., using Axios)
-    // Make sure to call onSuccess() when the upload is successful
-
-    // For demo purposes, we'll just simulate a successful upload
+    console.log(file);
     setTimeout(() => {
       onSuccess();
     }, 1000);
@@ -544,7 +542,9 @@ const ProductCreateUpdate: React.FC = () => {
 
   const handleRemove = (file) => {
     // Remove the file from the fileList
-    setFileList((prevList) =>Array.from(prevList) .filter((item) => item.uid !== file.uid));
+    setFileList((prevList) =>
+      Array.from(prevList).filter((item) => item.uid !== file.uid),
+    );
   };
 
   return (
@@ -575,11 +575,7 @@ const ProductCreateUpdate: React.FC = () => {
                     Hoạt động
                   </Box>
                 </Flex>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={false}
-                >
+                <Button type="primary" htmlType="submit" loading={false}>
                   {!id ? "Tạo" : "Cập nhật"}
                 </Button>
               </Flex>
@@ -765,94 +761,19 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                {/* <Box mb={3} width={"49%"}>
-                  <Flex direction={"column"}>
-                    <Box
-                      as="span"
-                      fontWeight="semibold"
-                      mb={1}
-                      sx={{ display: "inline-block" }}
-                    >
-                      Màu sắc
-                    </Box>
-                    <Controller
-                      name="color"
-                      control={control}
-                      render={({ field: { value, ...other } }) => {
-                        return (
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            // value={value}
-                            placeholder={"Chọn màu sắc"}
-                            showSearch
-                            onSearch={() => {}}
-                            onChange={(selectedOption) => {
-                              setValue("color", selectedOption); // Update 'category' field
-                            }}
-                            filterOption={filterColorOption}
-                            style={{ width: "100%" }}
-                            options={colorSelect}
-                          />
-                        );
-                      }}
-                    />
-                  </Flex>
-                </Box>
-                <Box mb={3} width={"49%"}>
-                  <Flex direction={"column"}>
-                    <Box
-                      as="span"
-                      fontWeight="semibold"
-                      mb={1}
-                      sx={{ display: "inline-block" }}
-                    >
-                      Kích thước
-                    </Box>
-                    <Controller
-                      name="size"
-                      control={control}
-                      render={({ field: { value, ...other } }) => {
-                        return (
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            // value={value}
-                            placeholder={"Chọn kích thước"}
-                            showSearch
-                            onSearch={() => {}}
-                            onChange={(selectedOption) => {
-                              setValue("size", selectedOption); 
-                            }}
-                            filterOption={filterSizeOption}
-                            style={{ width: "100%" }}
-                            options={sizeSelect}
-                          />
-                        );
-                      }}
-                    />
-                  </Flex>
-                </Box> */}
               </Flex>
             </Form>
 
-            {/* <Table dataSource={sampleVariant} columns={columns} /> */}
-            <ProductVariant tableData={tableData} setTableData={setTableData} sizes={sizeSelect} colors={colorSelect} />
+            <ProductVariant
+              tableData={tableData}
+              setTableData={setTableData}
+              sizes={sizeSelect}
+              colors={colorSelect}
+            />
 
             <Box mt={5}>
-              {/* <ImgCrop rotationSlider>
               <Upload
-                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                listType="picture-card"
-                fileList={fileList}
-                onChange={onUploadChange}
-                onPreview={onUploadPreview}
-                multiple
-              >
-                {fileList.length < 5 && '+ Upload'}
-              </Upload>
-            </ImgCrop> */}
-              <Upload
+                action="http://localhost:8080/product/add"
                 customRequest={customRequest}
                 fileList={fileList}
                 onChange={handleChange}

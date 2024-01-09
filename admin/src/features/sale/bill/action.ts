@@ -155,14 +155,19 @@ export const createBill = async ({
   setError,
 }: any) => {
   try {
-    const { billName, status } = bill;
+    const { customer, employee, address, phoneNumber, transportFee, note, status } = bill;
     dispatch(createBillStart());
     const accessToken = localStorage.getItem("accessToken")
     const res: IAxiosResponse<{}> = await axiosClientJwt.post(
       `/bill`,
       {
-        billName,
-        status: status
+        customer,
+        employee,
+        address,
+        phoneNumber,
+        transportFee,
+        note,
+        status
       },
       {
         headers: {
