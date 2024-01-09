@@ -112,10 +112,9 @@ function ModalProductDetail({
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
-  }, [variant.result, variant.loading]);
+  }, [variant.result]);
 
   const selectedProduct =
-    !variant.loading &&
     variant.result &&
     variant.result.listProductDetail.find(
       (product) =>
