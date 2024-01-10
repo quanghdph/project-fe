@@ -38,6 +38,7 @@ import {
 import { Inotification } from "src/common";
 import ModalCreateCustomer from "./ModalCreateCustomer";
 import { formatPriceVND } from "src/helper/currencyPrice";
+import ModalCreateBill from "./ModalCreateBill";
 
 interface DataType {
   key: string;
@@ -162,6 +163,7 @@ function OrderDetail(props: any) {
   const [value] = useDebounce(search, 1000);
   const [totalAmount, setTotalAmount] = useState();
   const [visible, setVisible] = useState(false);
+  const [billVisible, setBillVisible] = useState(false);
 
   const {
     control,
@@ -169,6 +171,8 @@ function OrderDetail(props: any) {
     setValue,
     setError,
     register,
+    reset,
+    trigger,
     formState: { errors },
     getValues,
     watch,
@@ -390,10 +394,51 @@ function OrderDetail(props: any) {
     setVisible(false);
   };
 
+  const showBillModal = () => {
+    trigger()
+    setBillVisible(true);
+  };
+
+  const handleBillCancel = () => {
+    setBillVisible(false);
+  };
+
+  const handleBillOk = (values) => {
+    trigger().then((isValid) => {
+      if (isValid) {
+        // If form is valid, you can access the form data here
+        const formData = getValues();
+
+        const cartArr = cart.map((item) => {
+          return {
+            id: item.id,
+            quantity: item.cartQuantity,
+          };
+        });
+    
+        formData && createSelloff({
+          params: {
+            idKhachHang: formData.customer.id,
+            thanhToan: formData.paymentMethod,
+            trangThaiTT: 1,
+            note: formData.note,
+            sanPhams: cartArr ? cartArr : [],
+          },
+          dispatch,
+          axiosClientJwt,
+          navigate,
+          message,
+        })
+      }
+    });
+    setBillVisible(false);
+  };
+
   return (
     <Fragment>
       <Form
-        onFinish={handleSubmit(onSubmit)}
+        // onFinish={handleSubmit(onSubmit)}
+        // onFinish={(data) => console.log('Form data in Form component:', data)}
         layout="vertical"
         autoComplete="off"
       >
@@ -527,9 +572,10 @@ function OrderDetail(props: any) {
               </Box>
 
               <Button
-                htmlType="submit"
+                // htmlType="submit"
                 type="primary"
-                loading={selloff?.create?.loading}
+                // loading={selloff?.create?.loading}
+                onClick={showBillModal}
               >
                 Tạo hóa đơn
               </Button>
@@ -543,6 +589,16 @@ function OrderDetail(props: any) {
         onCreate={handleCreate}
         onCancel={handleCancel}
       />
+    <Modal
+    open={billVisible}
+          title="Hóa đơn"
+          okText="Đồng ý"
+          cancelText="Hủy"
+          onOk={handleBillOk}
+          onCancel={handleBillCancel}
+        >
+          <p>Bạn có muốn thanh toán hóa đơn không?</p>
+        </Modal>
 
  
     </Fragment>

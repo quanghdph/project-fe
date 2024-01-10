@@ -1,15 +1,28 @@
 import { Modal } from 'antd'
 import React from 'react'
+import { useForm } from 'react-hook-form';
 
-function ModalCreateBill({visibleBill, handleBillOk, handleBillCancel}: any) {
+function ModalCreateBill({visibleBill, onCreate, onCancel, onOk, reset}: any) {
+
+  const handleCreate = (data) => {
+    onCreate(data);
+    reset(); // Reset the form after successful submission
+  };
+
+  const onSubmit = (data) => {
+    handleCreate(data);
+    
+  };
+
   return (
     <Modal
-        title="Sample Modal"
-        open={visibleBill}
-        onOk={handleBillOk}
-        onCancel={handleBillCancel}
+    title="Hóa đơn"
+    okText="Đồng ý"
+    cancelText="Hủy"
+    onOk={handleOk}
+    onCancel={handleCancel}
       >
-        <p>This is a sample modal content.</p>
+        <p>Bạn có muốn thanh toán hóa đơn không?</p>
       </Modal>
   )
 }
