@@ -89,6 +89,8 @@ const ProductVariant = (props: any) => {
       render: (text, record) => (
         <InputNumber
           min={0}
+          formatter={(value) => (value ? String(value).replace(/\D/g, '') : '')}
+          parser={(value) => (value ? parseInt(value, 10) : undefined)}
           value={record.quantity}
           onChange={(value) => handleQuantityChange(record.key, value)}
         />

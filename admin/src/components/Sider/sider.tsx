@@ -86,15 +86,15 @@ const SiderBar = () => {
                                     navigate('catalog/material')
                                 }
                             },
-                            {
-                                key: "waistband",
-                                icon: <AlibabaOutlined />,
-                                label: "Cạp quần",
-                                className: location.pathname === "catalog/waistbands" ? "ant-menu-item-selected" : "",
-                                onClick: () => {
-                                    navigate('catalog/waistbands')
-                                }
-                            },
+                            // {
+                            //     key: "waistband",
+                            //     icon: <AlibabaOutlined />,
+                            //     label: "Cạp quần",
+                            //     className: location.pathname === "catalog/waistbands" ? "ant-menu-item-selected" : "",
+                            //     onClick: () => {
+                            //         navigate('catalog/waistbands')
+                            //     }
+                            // },
                             {
                                 key: "categories",
                                 icon: <UnorderedListOutlined />,

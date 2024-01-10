@@ -435,6 +435,7 @@ function OrderDetail(props: any) {
                               showSearch
                               placeholder="Tìm kiếm khách hàng"
                               optionFilterProp="children"
+                              loading={customer.list.loading}
                               onChange={onCustomerChange}
                               onSearch={onCustomerSearch}
                               filterOption={filterCustomerOption}

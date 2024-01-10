@@ -321,7 +321,6 @@ export const updateProduct = async ({
       description,
       material,
       category,
-      waistband,
       brand,
       status,
     } = product;
@@ -335,7 +334,6 @@ export const updateProduct = async ({
       description,
       material,
       category,
-      waistband,
       brand,
       status,
         },
