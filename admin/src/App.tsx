@@ -83,7 +83,7 @@ const App = () => {
               <Route path='products'>
                 <Route index element={<ProductListPage />} />
                 <Route path='create' element={<ProductCreateUpdatePage />} />
-                <Route path='detail-update/:id' element={<ProductCreatePage />} />
+                <Route path='detail-update/:id' element={<ProductCreateUpdatePage />} />
               </Route>
               <Route path='brands'>
                 <Route index element={<BrandListPage />} />

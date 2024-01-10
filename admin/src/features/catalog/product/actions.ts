@@ -48,7 +48,7 @@ export const createProduct = async ({
       description,
       material,
       category,
-      waistband,
+      // waistband,
       brand,
       status,
       images,
@@ -63,7 +63,7 @@ export const createProduct = async ({
     formData.append('status', status);
     formData.append('material.id', material.id);
     formData.append('category.id', category.id);
-    formData.append('waistband.id', waistband.id);
+    // formData.append('waistband.id', waistband.id);
     formData.append('brand.id', brand.id);
 
     // Append each image file to FormData
@@ -448,9 +448,9 @@ export const getProductDetail = async ({
 };
 
 export const getVariantProductDetail = async ({
-  id,
-  dispatch,
   axiosClientJwt,
+  dispatch,
+  id,
   navigate,
 }: any) => {
   try {

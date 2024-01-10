@@ -29,6 +29,8 @@ import { createAxiosJwt } from "src/helper/axiosInstance";
 import {
   createProduct,
   getProduct,
+  getProductDetail,
+  getVariantProductDetail,
 } from "src/features/catalog/product/actions";
 import { Box, Flex } from "@chakra-ui/react";
 import SelectImage from "../SelectImage";
@@ -45,10 +47,10 @@ import {
   getListMaterial,
   getListSearchMaterial,
 } from "src/features/catalog/material/action";
-import {
-  getListSearchWaistband,
-  getListWaistband,
-} from "src/features/catalog/waistband/action";
+// import {
+//   getListSearchWaistband,
+//   getListWaistband,
+// } from "src/features/catalog/waistband/action";
 import ProductDetail from "../detail-update";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -109,6 +111,10 @@ const ProductCreateUpdate: React.FC = () => {
   const [colorSelect, setColorSelect] = useState([]);
   const [sizeSelect, setSizeSelect] = useState([]);
   const [tableData, setTableData] = useState([]);
+
+  const [uniqueSizes, setUniqueSizes] = useState([]);
+  const [uniqueColors, setUniqueColors] = useState([]);
+
   //** Third party
   const navigate = useNavigate();
   let { id } = useParams();
@@ -133,10 +139,10 @@ const ProductCreateUpdate: React.FC = () => {
         value: 0,
         label: "Chọn thương hiệu",
       },
-      waistband: {
-        value: 0,
-        label: "Chọn cạp quần",
-      },
+      // waistband: {
+      //   value: 0,
+      //   label: "Chọn cạp quần",
+      // },
       material: {
         value: 0,
         label: "Chọn chất liệu",
@@ -164,7 +170,7 @@ const ProductCreateUpdate: React.FC = () => {
   const category = useAppSelector((state) => state.category);
   const brand = useAppSelector((state) => state.brand);
   const material = useAppSelector((state) => state.material);
-  const waistband = useAppSelector((state) => state.waistband);
+  // const waistband = useAppSelector((state) => state.waistband);
   const color = useAppSelector((state) => state.color);
   const size = useAppSelector((state) => state.size);
 
@@ -235,27 +241,27 @@ const ProductCreateUpdate: React.FC = () => {
     fetchData();
   }, [materialSearch, materialValue]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchFunction = waistbandValue
-        ? getListSearchWaistband
-        : getListWaistband;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const fetchFunction = waistbandValue
+  //       ? getListSearchWaistband
+  //       : getListWaistband;
 
-      try {
-        const params = waistbandValue ? { value: waistbandValue } : {};
-        await fetchFunction({
-          params,
-          navigate,
-          axiosClientJwt,
-          dispatch,
-        });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  //     try {
+  //       const params = waistbandValue ? { value: waistbandValue } : {};
+  //       await fetchFunction({
+  //         params,
+  //         navigate,
+  //         axiosClientJwt,
+  //         dispatch,
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [waistbandSearch, waistbandValue]);
+  //   fetchData();
+  // }, [waistbandSearch, waistbandValue]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -297,7 +303,28 @@ const ProductCreateUpdate: React.FC = () => {
     fetchData();
   }, [sizeSearch, sizeValue]);
 
+  useEffect(() => {
+    if(id) {
+      getProductDetail({
+        id: +id,
+        dispatch,
+        axiosClientJwt,
+        navigate,
+      })
+      getVariantProductDetail({
+        axiosClientJwt,
+        dispatch,
+        id: +id,
+        navigate,
+      })
+    }
+  }, [id])
+
   const onSubmit = async (data) => {
+
+  if(id) {
+    console.log(data);
+  } else {
     await createProduct({
       axiosClientJwt,
       dispatch,
@@ -314,9 +341,9 @@ const ProductCreateUpdate: React.FC = () => {
         material: {
           id: data.material,
         },
-        waistband: {
-          id: data.waistband,
-        },
+        // waistband: {
+        //   id: data.waistband,
+        // },
         category: {
           id: data.category,
         },
@@ -324,6 +351,7 @@ const ProductCreateUpdate: React.FC = () => {
         productDetails: tableData,
       },
     });
+  }
   };
 
   const onMaterialSearch = (value: string) => {
@@ -421,31 +449,31 @@ const ProductCreateUpdate: React.FC = () => {
     return colorSelect;
   };
 
-  useEffect(() => {
-    if (!waistband.list.loading && waistband.list.result) {
-      const listOption = waistband.list.result.listWaistbands
-        ? waistband.list.result.listWaistbands.map((item) => ({
-            value: item.id,
-            label: item.waistbandName,
-          }))
-        : waistband.list.result.map((item) => ({
-            value: item.id,
-            label: item.waistbandName,
-          }));
-      if (!waistbandValue) {
-        setWaistbandSelect(listOption);
-      } else {
-        listOption && setWaistbandSelect(listOption);
-      }
-    }
-  }, [waistband.list.result, waistband.list.loading, waistbandValue]);
+  // useEffect(() => {
+  //   if (!waistband.list.loading && waistband.list.result) {
+  //     const listOption = waistband.list.result.listWaistbands
+  //       ? waistband.list.result.listWaistbands.map((item) => ({
+  //           value: item.id,
+  //           label: item.waistbandName,
+  //         }))
+  //       : waistband.list.result.map((item) => ({
+  //           value: item.id,
+  //           label: item.waistbandName,
+  //         }));
+  //     if (!waistbandValue) {
+  //       setWaistbandSelect(listOption);
+  //     } else {
+  //       listOption && setWaistbandSelect(listOption);
+  //     }
+  //   }
+  // }, [waistband.list.result, waistband.list.loading, waistbandValue]);
 
-  const filterWaistbandOption = (
-    input: string,
-    option?: { label: string; value: string },
-  ) => {
-    return waistbandSelect;
-  };
+  // const filterWaistbandOption = (
+  //   input: string,
+  //   option?: { label: string; value: string },
+  // ) => {
+  //   return waistbandSelect;
+  // };
 
   useEffect(() => {
     if (!material.list.loading && material.list.result) {
@@ -546,6 +574,65 @@ const ProductCreateUpdate: React.FC = () => {
       Array.from(prevList).filter((item) => item.uid !== file.uid),
     );
   };
+
+  useEffect(() => {
+    const sizes = product.variant.result && [
+      ...new Set(
+        product.variant.result.listProductDetail.map((product) => product.size),
+      ),
+    ];
+    const colors = product.variant.result && [
+      ...new Set(
+        product.variant.result.listProductDetail.map((product) => product.color),
+      ),
+    ];
+
+    const sizeIds = sizes && sizes.map(({ id }) => id);
+    const sizeFiltered =
+      sizes &&
+      sizes.filter(({ id }, index) => !sizeIds.includes(id, index + 1));
+
+    const colorsIds = colors && colors.map(({ id }) => id);
+    const colorsFiltered =
+      colors &&
+      colors.filter(({ id }, index) => !colorsIds.includes(id, index + 1));
+
+    setUniqueSizes(sizeFiltered);
+    setUniqueColors(colorsFiltered);
+  }, [product.variant.result, product.variant.loading]);
+
+  useEffect(() => {
+    console.log(product);
+    if(product?.detail?.result && !product?.detail.loading) {
+      setValue("productName", product?.detail?.result?.product?.productName)
+      setValue("description", product?.detail?.result?.product?.description)
+      setValue("category", product?.detail?.result?.product?.category.id)
+      setValue("brand", product?.detail?.result?.product?.brand.id)
+      setValue("material", product?.detail?.result?.product?.material.id)
+      // setSizeSelect({})
+    }
+  }, [id, product.detail.loading, product.detail.result])
+  
+  // useEffect(() => {
+  //   if(uniqueSizes) {
+  //     const listOption = uniqueSizes?.map(item => {
+  //       return {
+  //         value: item.id,
+  //         label: item.sizeName
+  //       }
+  //     })
+  //     setSizeSelect(listOption)
+  //   }
+  //   if(uniqueColors) {
+  //     const listOption = uniqueColors?.map(item => {
+  //       return {
+  //         value: item.id,
+  //         label: item.colorName
+  //       }
+  //     })
+  //     setColorSelect(listOption)
+  //   }
+  // }, [id, product.variant.loading, product.variant.result])
 
   return (
     <Fragment>
@@ -699,7 +786,7 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                <Box mb={3} width={"49%"}>
+                {/* <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
                       as="span"
@@ -730,7 +817,7 @@ const ProductCreateUpdate: React.FC = () => {
                       }}
                     />
                   </Flex>
-                </Box>
+                </Box> */}
                 <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box

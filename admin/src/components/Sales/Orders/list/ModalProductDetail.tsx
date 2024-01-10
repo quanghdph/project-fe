@@ -151,8 +151,8 @@ function ModalProductDetail({
     if (!canAddToCart(productVariant)) {
       Inotification({
         type: "warning",
-        message: "Sản phẩm hết hàng"
-      })
+        message: "Sản phẩm hết hàng",
+      });
       return;
     }
 
@@ -161,15 +161,15 @@ function ModalProductDetail({
       setCart(updatedCart);
       Inotification({
         type: "success",
-        message: "Sản phẩm đã được cập nhật trong giỏ hàng"
-      })
+        message: "Sản phẩm đã được cập nhật trong giỏ hàng",
+      });
     } else {
       setCart([...cart, { ...productVariant, cartQuantity: 1 }]);
       Inotification({
         type: "success",
-        message: "Sản phẩm đã được thêm vào giỏ hàng"
-      })
-      setActiveModalProductDetail(false)
+        message: "Sản phẩm đã được thêm vào giỏ hàng",
+      });
+      setActiveModalProductDetail(false);
     }
   };
   return (
@@ -331,13 +331,15 @@ function ModalProductDetail({
                 Thêm vào giỏ hàng
               </Button> */}
 
-              <Button
-                type="primary"
-                // disabled={!selectedProduct && true}
-                onClick={() => addToCart(selectedProduct)}
-              >
-                Thêm vào giỏ hàng
-              </Button>
+              {cart && (
+                <Button
+                  type="primary"
+                  // disabled={!selectedProduct && true}
+                  onClick={() => addToCart(selectedProduct)}
+                >
+                  Thêm vào giỏ hàng
+                </Button>
+              )}
             </Col>
           </Row>
         ) : (
