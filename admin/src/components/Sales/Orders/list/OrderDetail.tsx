@@ -25,6 +25,7 @@ import {
   createCustomerFast,
   getListCustomer,
   getListSearchCustomer,
+  getListSearchPhoneNumberCustomer,
 } from "src/features/customer/action";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import TextArea from "antd/lib/input/TextArea";
@@ -239,7 +240,7 @@ function OrderDetail(props: any) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchFunction = value ? getListSearchCustomer : getListCustomer;
+      const fetchFunction = value ? getListSearchPhoneNumberCustomer : getListCustomer;
 
       try {
         const params = value ? { value: value } : {};
