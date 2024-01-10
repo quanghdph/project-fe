@@ -36,28 +36,22 @@ const FilterProduct = ({ setFilterCategories, setPrice, price, setColor, setSize
 
     // ** Effect
     React.useEffect(() => {
-        axiosClient.get(`category`, {
-            params: {
-                skip,
-                take,
-                status: "active"
-            }
-        }).then((res) => {
+        axiosClient.get(`category`).then((res) => {
             // const result = { ...res } as unknown as IAxiosResponse<Cateogry[]>
-            console.log(res.data.listCategories)
+            console.log(res.data)
             setCategories(res.data as unknown as CategoryList)
         })
         // axiosClient.get(`product/options`).then((res) => {
         //     const result = { ...res } as unknown as IAxiosResponse<ProductOption[]>
         //     setOptions(result.response.data as unknown as ProductOption[])
         // })
-    }, [skip, take])
+    }, [])
 
     const optionsCategoriesToRender = () => {
-        if (categories?.categories) {
-            return categories?.categories.map((category) => {
+        if (categories?.listCategories) {
+            return categories?.listCategories.map((category) => {
                 return {
-                    label: category.category_name,
+                    label: category.categoryName,
                     value: category.id
                 }
             })

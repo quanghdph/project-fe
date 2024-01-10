@@ -27,27 +27,27 @@ const CardProduct = ({ product, span }: CardProductProps) => {
    //    setVariant(product?.product_variants?.find((variant) => variant.id === value)!)
    // }
 
-   // const handleAddToCard = () => {
-   //    if (variant?.stock > 0) {
-   //       addToCart({
-   //          axiosClientJwt,
-   //          cart: {
-   //             quantity: 1
-   //          },
-   //          dispatch,
-   //          id: variant?.id,
-   //          toast,
-   //       })
-   //    } else {
-   //       toast({
-   //          status: 'warning',
-   //          title: 'This product is out of stock',
-   //          isClosable: true,
-   //          position: "top-right",
-   //          variant: 'left-accent',
-   //       })
-   //    }
-   // }
+   const handleAddToCard = () => {
+      // if (variant?.stock > 0) {
+      //    addToCart({
+      //       axiosClientJwt,
+      //       cart: {
+      //          quantity: 1
+      //       },
+      //       dispatch,
+      //       id: variant?.id,
+      //       toast,
+      //    })
+      // } else {
+      //    toast({
+      //       status: 'warning',
+      //       title: 'This product is out of stock',
+      //       isClosable: true,
+      //       position: "top-right",
+      //       variant: 'left-accent',
+      //    })
+      // }
+   }
 
    return (
       <Fragment>
@@ -77,7 +77,7 @@ const CardProduct = ({ product, span }: CardProductProps) => {
                   />
                </Box> */}
                <Flex justifyContent='flex-start' mt='10px'>
-                  {/* <Button size='sm' colorScheme='blue' borderRadius='3px' onClick={handleAddToCard} isLoading={cart.addToCart.loading}>Add to cart</Button> */}
+                  <Button size='sm' colorScheme='blue' borderRadius='3px' onClick={handleAddToCard} isLoading={cart.addToCart.loading}>Add to cart</Button>
                </Flex>
             </Card>
          </Col>

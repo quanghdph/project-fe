@@ -8,3 +8,15 @@ const formatMoney = (money:number) => {
 }
 
 export default formatMoney
+
+export function formatPriceVND(price) {
+  if (typeof price !== "number") {
+    throw new Error("Phải là số!!");
+  }
+
+  const formattedPrice = price.toLocaleString("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+  return formattedPrice;
+}

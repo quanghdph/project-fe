@@ -48,15 +48,16 @@ const Header = () => {
             setShow("");
         }
     };
-
+    console.log(auth);
     return (
         <React.Fragment>
             <header className={pathname != '/' ? `sticky shadow lg:fixed top-0 bg-white z-50 w-full transition duration-200 ${show}` : `sticky shadow lg:fixed lg:shadow-none top-0 bg-white lg:bg-transparent z-50 w-full transition duration-200 ${show}`}>
                 <div className="flex px-4 mx-auto h-16 2xl:max-w-screen-2xl xl:max-w-screen-xl lg:max-w-screen-lg md:max-w-screen-md sm:max-w-screen-sm justify-between items-center">
                     <div className="flex items-center gap-8">
                         <nav className="shrink-0">
-                            <Link to="/" className="logo">
-                                <img src={Logo} alt="img-logo" />
+                            <Link to="/" className="logo font-bold text-xl">
+                                {/* <img src={Logo} alt="img-logo" /> */}
+                                YoungBoy
                             </Link>
                         </nav>
                         <ul className="hidden lg:flex m-0">
@@ -85,11 +86,12 @@ const Header = () => {
                                     <div className="flex items-end justify-center">
                                         <Menu>
                                             <MenuButton as={"span"}>
-                                                Hi, {!auth.login.loading && auth.login.result ? auth.login.result.first_name + auth.login.result.last_name : ''}
+                                                Hi, {!auth.login.loading && auth.login.result ? auth.login.result?.data?.username : ''}
                                             </MenuButton>
                                             <MenuList>
                                                 <MenuItem onClick={() => { navigate('/account') }}>My account</MenuItem>
-                                                <MenuItem onClick={() => logOut(dispatch, navigate, axiosClientJwt, toast)}>Logout</MenuItem>
+                                                {/* onClick={() => logOut(dispatch, navigate, axiosClientJwt, toast)} */}
+                                                <MenuItem >Logout</MenuItem>
                                             </MenuList>
                                         </Menu>
                                     </div>

@@ -7,7 +7,7 @@ const MainPage = () => {
         <Fragment>
             <Slider />
             <div className='px-10 py-8'>
-                <ProductBy title='New arrivals' url="product/new-arrivals" />
+                <ProductBy title='Product' url="product" />
                 <ProductBy title='Most bought' url="product/most-bought"/>
             </div>
         </Fragment>

@@ -20,12 +20,15 @@ const ProductBy = ({ title, url }: ProductByProps) => {
     React.useEffect(() => {
         axiosClient.get(url).then((res) => {
             const result = { ...res } as unknown as IAxiosResponse<Product[]>
-            setProducts(result.response.data)
+            if(result.status == 200 && result.data) {
+                setProducts(result.data.list)
+            }
         })
     }, [])
 
     // ** Function handle
     const dataToRender = () => {
+        console.log(products);
         if (products && products.length) {
             return (
                 <Row style={{ marginBottom: "2rem" }}>

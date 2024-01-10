@@ -24,11 +24,11 @@ const ProtectRoute = ({ children }: ProtectRouteProps) => {
     const accessToken = localStorage.getItem("accessToken")
     const navigate = useNavigate()
 
-    // React.useEffect(() => {
-    //     if (!accessToken) {
-    //         navigate('/')
-    //     }
-    // }, [accessToken])
+    React.useEffect(() => {
+        if (!accessToken) {
+            navigate('/')
+        }
+    }, [accessToken])
 
     return (
         <React.Fragment>
