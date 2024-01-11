@@ -18,61 +18,61 @@ import {
 import { IAxiosResponse } from "src/shared/types/axiosResponse";
 import { AddToCartParams, DeleteFromCartParams, GetCartParams, GetListProductOnCartParams, UpdateCartParams } from "./type";
 
-export const addToCart = async ({ axiosClientJwt, cart, dispatch, id, toast }: AddToCartParams) => {
-    try {
-        const { quantity } = cart
-        const accessToken = localStorage.getItem("accessToken")
-        if (accessToken) {
-            dispatch(addToCartStart());
-            const res: IAxiosResponse<{}> = await axiosClientJwt.post(`product/cart/${id}`, {
-                quantity
-            }, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
-            if (res?.response?.code === 200 && res?.response?.success) {
-                setTimeout(function () {
-                    dispatch(addToCartSuccess(res.response.data));
-                    toast({
-                        status: 'success',
-                        variant: 'left-accent',
-                        title: "Added in card!",
-                        isClosable: true,
-                        position: "top-right"
-                    })
-                }, 1000);
-            } else if (res?.response?.code === 400 && !res?.response?.success) {
-                dispatch(addToCartFailed(null));
-                toast({
-                    status: 'warning',
-                    title: res?.response?.message,
-                    isClosable: true,
-                    variant: 'left-accent',
-                    position: "top-right"
-                })
-            } else {
-                dispatch(addToCartFailed(null));
-            }
-        } else {
-            toast({
-                status: 'error',
-                title: "You need to login to perform this action!",
-                variant: 'left-accent',
-                isClosable: true,
-                position: "top-right"
-            })
-        }
-    } catch (error: any) {
-        dispatch(addToCartFailed(null));
-        toast({
-            status: 'error',
-            variant: 'left-accent',
-            title: "Something went wrong!",
-            isClosable: true,
-        })
-    }
-}
+// export const addToCart = async ({ axiosClientJwt, cart, dispatch, id, toast }: AddToCartParams) => {
+//     try {
+//         const { quantity } = cart
+//         const accessToken = localStorage.getItem("accessToken")
+//         if (accessToken) {
+//             dispatch(addToCartStart());
+//             const res: IAxiosResponse<{}> = await axiosClientJwt.post(`product/cart/${id}`, {
+//                 quantity
+//             }, {
+//                 headers: {
+//                     Authorization: `Bearer ${accessToken}`
+//                 }
+//             });
+//             if (res?.response?.code === 200 && res?.response?.success) {
+//                 setTimeout(function () {
+//                     dispatch(addToCartSuccess(res.response.data));
+//                     toast({
+//                         status: 'success',
+//                         variant: 'left-accent',
+//                         title: "Added in card!",
+//                         isClosable: true,
+//                         position: "top-right"
+//                     })
+//                 }, 1000);
+//             } else if (res?.response?.code === 400 && !res?.response?.success) {
+//                 dispatch(addToCartFailed(null));
+//                 toast({
+//                     status: 'warning',
+//                     title: res?.response?.message,
+//                     isClosable: true,
+//                     variant: 'left-accent',
+//                     position: "top-right"
+//                 })
+//             } else {
+//                 dispatch(addToCartFailed(null));
+//             }
+//         } else {
+//             toast({
+//                 status: 'error',
+//                 title: "You need to login to perform this action!",
+//                 variant: 'left-accent',
+//                 isClosable: true,
+//                 position: "top-right"
+//             })
+//         }
+//     } catch (error: any) {
+//         dispatch(addToCartFailed(null));
+//         toast({
+//             status: 'error',
+//             variant: 'left-accent',
+//             title: "Something went wrong!",
+//             isClosable: true,
+//         })
+//     }
+// }
 
 export const getListProductOnCart = async ({ axiosClientJwt, dispatch, toast }: GetListProductOnCartParams) => {
     try {
@@ -196,3 +196,60 @@ export const updateCart = async ({ axiosClientJwt, dispatch, id, toast, cart, re
 }
 
 
+
+
+export const addToCart = async ({ axiosClientJwt, cart, dispatch, id, toast }: AddToCartParams) => {
+    try {
+        const { quantity } = cart
+        const accessToken = localStorage.getItem("accessToken")
+        if (accessToken) {
+            dispatch(addToCartStart());
+            const res: IAxiosResponse<{}> = await axiosClientJwt.post(`cart-detail/${id}`, {
+                quantity
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            if (res?.response?.code === 200 && res?.response?.success) {
+                setTimeout(function () {
+                    dispatch(addToCartSuccess(res.response.data));
+                    toast({
+                        status: 'success',
+                        variant: 'left-accent',
+                        title: "Added in card!",
+                        isClosable: true,
+                        position: "top-right"
+                    })
+                }, 1000);
+            } else if (res?.response?.code === 400 && !res?.response?.success) {
+                dispatch(addToCartFailed(null));
+                toast({
+                    status: 'warning',
+                    title: res?.response?.message,
+                    isClosable: true,
+                    variant: 'left-accent',
+                    position: "top-right"
+                })
+            } else {
+                dispatch(addToCartFailed(null));
+            }
+        } else {
+            toast({
+                status: 'error',
+                title: "You need to login to perform this action!",
+                variant: 'left-accent',
+                isClosable: true,
+                position: "top-right"
+            })
+        }
+    } catch (error: any) {
+        dispatch(addToCartFailed(null));
+        toast({
+            status: 'error',
+            variant: 'left-accent',
+            title: "Something went wrong!",
+            isClosable: true,
+        })
+    }
+}

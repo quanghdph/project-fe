@@ -93,16 +93,16 @@ const ProductDetail = () => {
 
   const onSubmit = (data: { quantity: number }) => {
     if (id) {
-      addToCart({
-        axiosClientJwt,
-        cart: {
-          quantity: data.quantity,
-        },
-        dispatch,
-        id: variantId ? variantId : 0,
-        toast,
-      });
-    }
+    //   addToCart({
+    //     axiosClientJwt,
+    //     cart: {
+    //       quantity: data.quantity,
+    //     },
+    //     dispatch,
+    //     id: variantId ? variantId : 0,
+    //     toast,
+    //   });
+    // }
   };
 
   const handleSizeChange = (e) => {
@@ -147,6 +147,8 @@ const ProductDetail = () => {
         product.size.id === selectedSize && product.color.id === selectedColor
       );
     });
+
+  console.log(selectedProduct);
 
   return (
     <React.Fragment>
@@ -337,6 +339,14 @@ const ProductDetail = () => {
                                                 </Button>
                                             ) : null
                                         } */}
+                    <Button
+                      className="!bg-primary text-white hover:!bg-[#5866c9]"
+                      variant="solid"
+                      // isLoading={cart.addToCart.loading}
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Thêm vào giỏ hàng
+                    </Button>
                   </div>
                   {/* </form> */}
                   <p
