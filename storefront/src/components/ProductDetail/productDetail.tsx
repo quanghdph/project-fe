@@ -148,6 +148,8 @@ const ProductDetail = () => {
       );
     });
 
+  console.log(selectedProduct);
+
   return (
     <React.Fragment>
       <div className="py-8 px-10 mt-16">
@@ -337,6 +339,14 @@ const ProductDetail = () => {
                                                 </Button>
                                             ) : null
                                         } */}
+                    <Button
+                      className="!bg-primary text-white hover:!bg-[#5866c9]"
+                      variant="solid"
+                      // isLoading={cart.addToCart.loading}
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Thêm vào giỏ hàng
+                    </Button>
                   </div>
                   {/* </form> */}
                   <p
