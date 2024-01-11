@@ -1,6 +1,6 @@
 // src/components/AddressPage.tsx
 import React, { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Form,
   Input,
@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
 import { PaginationProps } from "antd/es/pagination";
 import { useDebounce } from "use-debounce";
+import { getDistrictAddress, getProvinceAddress } from "src/features/address/action";
 
 type FormData = {
   street: string;
@@ -36,6 +37,11 @@ const AddressPage: React.FC = () => {
   const [filter, setFilter] = useState<string>("");
 
   const [customerOption, setCustomerOption] = useState();
+  const [provinceOption, setProvinceOption] = useState();
+  const [districtOption, setDistrictOption] = useState();
+  const [provinceId, setProvinceId] = useState();
+  const [districtId, setDistrictId] = useState();
+  // const [districtOption, setDistrictOption] = useState();
   const [search, setSearch] = useState<string>("");
   const [value] = useDebounce(search, 1000);
 
@@ -43,6 +49,7 @@ const AddressPage: React.FC = () => {
 
   // ** Variables
   const customer = useAppSelector((state) => state.customer);
+  const address = useAppSelector((state) => state.address);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
@@ -163,6 +170,20 @@ const AddressPage: React.FC = () => {
     fetchData();
   }, [page, limit]);
 
+  useEffect(() => {
+    getProvinceAddress({dispatch})
+  }, [])
+
+  useEffect(() => {
+    if(provinceId) {
+      getDistrictAddress({province_id: provinceId, dispatch})
+    }
+  }, [provinceId])
+
+  useEffect(() => {
+  //  console.log(address);
+  }, [address])
+
   const dataRender = (): any => {
     if (!customer.listAddress.loading && customer.listAddress.result) {
       if (customer.listAddress.result.listAddresses) {
@@ -233,6 +254,28 @@ const AddressPage: React.FC = () => {
     return customerOption;
   };
 
+  useEffect(() => {
+    if (address.province.result && !address.province.loading) {
+      const listOption = address.province.result.map((item) => ({
+        value: item.ProvinceID,
+        label: item.ProvinceName,
+      }));
+      setProvinceOption(listOption);
+    }
+  }, [address.province.result, address.province.loading]);
+
+  useEffect(() => {
+    if (address.district.result && !address.district.loading) {
+      const listOption = address.district.result.map((item) => ({
+        value: item.DistrictID,
+        label: item.DistrictName,
+      }));
+      setDistrictOption(listOption);
+    }
+  }, [address.district.result, address.district.loading, provinceOption]);
+
+
+
   return (
     <Row>
       <Col span={24}>
@@ -282,26 +325,59 @@ const AddressPage: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Phường/Xã"
-                name="ward"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the street address!",
-                  },
-                ]}
+                label="Tỉnh/Thành phố"
+                // name="province"
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please enter the street address!",
+                //   },
+                // ]}
               >
-                <Input {...control} />
+                <Controller
+                  control={control}
+                  name="province"
+                  render={({ field }) => (
+                    <Select
+                    {...field}
+                    placeholder="Chọn thành phố"
+                    onChange={(selectedValue, option) => {
+                      field.onChange(selectedValue);
+                      // Any additional logic you want to perform on select change
+                      
+                    }}
+                    style={{ width: "100%" }}
+                    options={provinceOption} 
+                    />
+                  )}
+                />
               </Form.Item>
 
               <Form.Item
                 label="Quận/Huyện"
                 name="district"
-                rules={[
-                  { required: true, message: "Please enter the district!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please enter the district!" },
+                // ]}
               >
-                <Input {...control} />
+                 <Controller
+                  control={control}
+                  name="district"
+                  render={({ field }) => (
+                    <Select
+                    {...field}
+                    placeholder="Chọn quận/huyện"
+                    onChange={(selectedValue, option) => {
+                      field.onChange(selectedValue);
+                      // Any additional logic you want to perform on select change
+                      setProvinceId(selectedValue)
+                      // getDistrictAddress({province_id: selectedValue, dispatch}) 
+                    }}
+                    style={{ width: "100%" }}
+                    options={districtOption} 
+                    />
+                  )}
+                />
               </Form.Item>
 
               <Form.Item

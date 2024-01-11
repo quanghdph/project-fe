@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import { countries } from 'src/constants';
-import { createAddress, getAddress, updateAddress as updateAddressAction } from 'src/features/address/action';
+import { createAddress, getAddress, getProvinceAddress, updateAddress as updateAddressAction } from 'src/features/address/action';
 import { createAxiosJwt } from 'src/helper/axiosInstance';
 
 interface FormValuesCustomerAddress {
@@ -86,6 +86,12 @@ const AddressModal = ({ addressModal, setAddressModal, mode, updateAddress, setR
             reset()
         }
     }, [id, mode, store.single.loading, store.single.result])
+
+    
+  useEffect(() => {
+    getProvinceAddress({dispatch})
+  }, [])
+// console.log(address);
 
     // ** Function handle
     const onSubmit = async (data: FormValuesCustomerAddress) => {

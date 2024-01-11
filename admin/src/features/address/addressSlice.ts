@@ -26,6 +26,21 @@ interface AddressState {
         result: UserAddress | null;
         loading: boolean;
         error: boolean;
+    },
+    province: {
+        result:  null,
+        loading: boolean,
+        error: boolean
+    },
+    district: {
+        result:  null,
+        loading: boolean,
+        error: boolean
+    },
+    ward: {
+        result:  null,
+        loading: boolean,
+        error: boolean
     }
 }
 
@@ -52,6 +67,21 @@ const initialState: AddressState = {
     },
     setDefaultShipping: {
         result: null,
+        loading: false,
+        error: false
+    }
+    ,  province: {
+        result:  null,
+        loading: false,
+        error: false
+    },
+    district: {
+        result:  null,
+        loading: false,
+        error: false
+    },
+    ward: {
+        result:  null,
         loading: false,
         error: false
     }
@@ -131,6 +161,51 @@ export const addressSlice = createSlice({
             state.setDefaultShipping.result = action.payload;
             state.setDefaultShipping.error = true;
         },
+
+        // ** Get province address
+        getProvinceAddressStart: (state) => {
+            state.province.loading = true;
+        },
+        getProvinceAddressSuccess: (state, action) => {
+            state.province.loading = false;
+            state.province.result = action.payload;
+            state.province.error = false
+        },
+        getProvinceAddressFailed: (state, action) => {
+            state.province.loading = false;
+            state.province.result = action.payload;
+            state.province.error = true;
+        },
+
+         // ** Get district address
+        getDistrictAddressStart: (state) => {
+            state.district.loading = true;
+        },
+        getDistrictAddressSuccess: (state, action) => {
+            state.district.loading = false;
+            state.district.result = action.payload;
+            state.district.error = false
+        },
+        getDistrictAddressFailed: (state, action) => {
+            state.district.loading = false;
+            state.district.result = action.payload;
+            state.district.error = true;
+        },
+
+         // ** Get ward address
+         getWardAddressStart: (state) => {
+            state.ward.loading = true;
+        },
+        getWardAddressSuccess: (state, action) => {
+            state.ward.loading = false;
+            state.ward.result = action.payload;
+            state.ward.error = false
+        },
+        getWardAddressFailed: (state, action) => {
+            state.ward.loading = false;
+            state.ward.result = action.payload;
+            state.ward.error = true;
+        },
     }
 });
 
@@ -149,7 +224,16 @@ export const {
     getAddressFailed,
     setDefaultShippingAddressStart,
     setDefaultShippingSuccess,
-    setDefaultShippingFailed
+    setDefaultShippingFailed,
+    getProvinceAddressStart,
+    getProvinceAddressSuccess,
+    getProvinceAddressFailed,
+    getDistrictAddressStart,
+    getDistrictAddressSuccess,
+    getDistrictAddressFailed,
+    getWardAddressStart,
+    getWardAddressSuccess,
+    getWardAddressFailed,
 } = addressSlice.actions;
 
 export default addressSlice.reducer;

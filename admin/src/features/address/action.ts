@@ -13,12 +13,22 @@ import {
     getAddressFailed,
     setDefaultShippingAddressStart,
     setDefaultShippingSuccess,
-    setDefaultShippingFailed
+    setDefaultShippingFailed,
+    getProvinceAddressStart,
+    getProvinceAddressFailed,
+    getProvinceAddressSuccess,
+    getDistrictAddressStart,
+    getDistrictAddressSuccess,
+    getDistrictAddressFailed,
+    getWardAddressStart,
+    getWardAddressSuccess,
+    getWardAddressFailed
 } from "./addressSlice";
 import { Inotification } from 'src/common';
 import { IAxiosResponse } from "src/types/axiosResponse";
 import { UserAddress } from "src/types/user";
 import { CreateAddressParams, DeleteAddressParams, GetAddressParams, SetDefaultShippingAddressParams, UpdateAddressParams } from "./type";
+import axios from "axios";
 
 export const deleteAddress = async ({ id, dispatch, axiosClientJwt, navigate, message, refresh, setIsModalOpen, setRefresh }: DeleteAddressParams) => {
     try {
@@ -241,3 +251,85 @@ export const setDefaultShippingAddressAction = async ({ customer_id, axiosClient
     }
 }
 
+
+export const getProvinceAddress = async ({ dispatch }: any) => {
+    try {
+        // const accessToken = localStorage.getItem("accessToken")
+        dispatch(getProvinceAddressStart());
+        const res: IAxiosResponse<UserAddress> = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/province`, {
+            headers: {
+                token: `264902db-af84-11ee-8586-12380ed2f541`
+            }
+        });
+        if (res?.status === 200 && res.data.code == 200) {
+            setTimeout(function () {
+                dispatch(getProvinceAddressSuccess(res.data.data));
+            }, 1000)
+        } else {
+            dispatch(getProvinceAddressFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getProvinceAddressFailed(null));
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
+
+export const getDistrictAddress = async ({ province_id, dispatch }: any) => {
+    try {
+        // const accessToken = localStorage.getItem("accessToken")
+        dispatch(getDistrictAddressStart());
+        console.log("pid", province_id);
+        const res: any= await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
+            params: {
+                province_id
+            },
+            headers: {
+                token: `264902db-af84-11ee-8586-12380ed2f541`
+            }
+        });
+        if (res?.status === 200 && res.data.code == 200) {
+            setTimeout(function () {
+                dispatch(getDistrictAddressSuccess(res.data.data));
+            }, 1000)
+        } else {
+            dispatch(getDistrictAddressFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getDistrictAddressFailed(null));
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
+
+export const getWardAddress = async ({ district_id , dispatch }: any) => {
+    try {
+        // const accessToken = localStorage.getItem("accessToken")
+        dispatch(getWardAddressStart());
+        const res: any= await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
+            params: {
+                district_id 
+            },
+            headers: {
+                token: `264902db-af84-11ee-8586-12380ed2f541`
+            }
+        });
+        if (res?.status === 200 && res.data.code == 200) {
+            setTimeout(function () {
+                dispatch(getWardAddressSuccess(res.data.data));
+            }, 1000)
+        } else {
+            dispatch(getWardAddressFailed(null));
+        }
+    } catch (error: any) {
+        dispatch(getWardAddressFailed(null));
+        Inotification({
+            type: 'error',
+            message: 'Something went wrong!'
+        })
+    }
+}
