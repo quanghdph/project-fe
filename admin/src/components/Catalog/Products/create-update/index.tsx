@@ -32,7 +32,7 @@ import {
   getProductDetail,
   getVariantProductDetail,
 } from "src/features/catalog/product/actions";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import SelectImage from "../SelectImage";
 import { Asset } from "src/types";
 import {
@@ -176,6 +176,7 @@ const ProductCreateUpdate: React.FC = () => {
 
   //upload
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileMainList, setFileMainList] = useState<UploadFile[]>([]);
 
   const [selectedfile, SetSelectedFile] = useState([]);
   const [Files, SetFiles] = useState([]);
@@ -417,14 +418,12 @@ const ProductCreateUpdate: React.FC = () => {
           material: {
             id: data.material,
           },
-          // waistband: {
-          //   id: data.waistband,
-          // },
           category: {
             id: data.category,
           },
           images: fileList,
           productDetails: tableData,
+          mainImage: fileMainList,
         },
       });
     }
@@ -517,39 +516,6 @@ const ProductCreateUpdate: React.FC = () => {
       }
     }
   }, [color.list.result, color.list.loading, colorValue]);
-
-  const filterColorOption = (
-    input: string,
-    option?: { label: string; value: string },
-  ) => {
-    return colorSelect;
-  };
-
-  // useEffect(() => {
-  //   if (!waistband.list.loading && waistband.list.result) {
-  //     const listOption = waistband.list.result.listWaistbands
-  //       ? waistband.list.result.listWaistbands.map((item) => ({
-  //           value: item.id,
-  //           label: item.waistbandName,
-  //         }))
-  //       : waistband.list.result.map((item) => ({
-  //           value: item.id,
-  //           label: item.waistbandName,
-  //         }));
-  //     if (!waistbandValue) {
-  //       setWaistbandSelect(listOption);
-  //     } else {
-  //       listOption && setWaistbandSelect(listOption);
-  //     }
-  //   }
-  // }, [waistband.list.result, waistband.list.loading, waistbandValue]);
-
-  // const filterWaistbandOption = (
-  //   input: string,
-  //   option?: { label: string; value: string },
-  // ) => {
-  //   return waistbandSelect;
-  // };
 
   useEffect(() => {
     if (!material.list.loading && material.list.result) {
@@ -652,6 +618,41 @@ const ProductCreateUpdate: React.FC = () => {
     );
   };
 
+  const customMainRequest = ({ file, onSuccess, onError }) => {
+    setTimeout(() => {
+      onSuccess();
+    }, 1000);
+  };
+
+  const onUploadMainChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+  }) => {
+    setFileMainList(Array.from(newFileList));
+  };
+
+  const onUploadMainPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as RcFile);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
+
+  const handleMainRemove = (file) => {
+    // Remove the file from the fileList
+    setFileMainList((prevList) =>
+      Array.from(prevList).filter((item) => item.uid !== file.uid),
+    );
+  };
+
+
   useEffect(() => {
     const sizes = product?.variant?.result && [
       ...new Set(
@@ -691,27 +692,6 @@ const ProductCreateUpdate: React.FC = () => {
       // setSizeSelect({})
     }
   }, [id, product?.detail?.loading, product?.detail?.result]);
-
-  // useEffect(() => {
-  //   if(uniqueSizes) {
-  //     const listOption = uniqueSizes?.map(item => {
-  //       return {
-  //         value: item.id,
-  //         label: item.sizeName
-  //       }
-  //     })
-  //     setSizeSelect(listOption)
-  //   }
-  //   if(uniqueColors) {
-  //     const listOption = uniqueColors?.map(item => {
-  //       return {
-  //         value: item.id,
-  //         label: item.colorName
-  //       }
-  //     })
-  //     setColorSelect(listOption)
-  //   }
-  // }, [id, product?.variant?.loading, product?.variant?.result])
 
   return (
     <Fragment>
@@ -938,6 +918,24 @@ const ProductCreateUpdate: React.FC = () => {
             />
 
             <Box mt={5}>
+              <Text>Chọn ảnh chính</Text>
+            <Upload
+                action="http://localhost:8080/product/add"
+                customRequest={customMainRequest}
+                fileList={fileMainList}
+                onChange={onUploadMainChange}
+                onRemove={handleMainRemove}
+                listType="picture-card"
+                onPreview={onUploadMainPreview}
+                showUploadList={{
+                  showPreviewIcon: true,
+                  showRemoveIcon: true,
+                }}
+                multiple={true}
+              >
+                {fileMainList.length >= 1 ? null : uploadButton}
+              </Upload>
+              <Text>Chọn biến thể</Text>
               <Upload
                 action="http://localhost:8080/product/add"
                 customRequest={customRequest}

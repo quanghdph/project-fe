@@ -1,6 +1,6 @@
 import { Preloader } from '@/components/common';
 import 'normalize.css/normalize.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'react-dom';
 import 'react-phone-input-2/lib/style.css';
 import { onAuthStateFail, onAuthStateSuccess } from '@/redux/actions/authActions';
@@ -8,6 +8,7 @@ import configureStore from '@/redux/store/store';
 import '@/styles/style.scss';
 import WebFont from 'webfontloader';
 import App from './App';
+import { useSelector } from 'react-redux';
 // import firebase from '@/services/firebase';
 
 WebFont.load({
@@ -30,6 +31,12 @@ render(<Preloader />, root);
 //   }
 //   // then render the app after checking the auth state
 // });
+
+
+// if(isAuthenticating) {
+
+// }
+
 render(<App store={store} persistor={persistor} />, root);
 
 if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {

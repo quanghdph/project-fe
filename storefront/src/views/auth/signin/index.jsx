@@ -20,15 +20,18 @@ const SignInSchema = Yup.object().shape({
 });
 
 const SignIn = ({ history }) => {
-  const { authStatus, isAuthenticating } = useSelector((state) => ({
+  const { authStatus, isAuthenticating, store } = useSelector((state) => ({
     authStatus: state.app.authStatus,
-    isAuthenticating: state.app.isAuthenticating
+    isAuthenticating: state.app.isAuthenticating,
+    store: state
   }));
+
+  console.log(store);
 
   const dispatch = useDispatch();
 
   useScrollTop();
-  useDocumentTitle('Sign In | Salinaka');
+  useDocumentTitle('Đăng nhập | Young Boy');
 
   useEffect(() => () => {
     dispatch(setAuthStatus(null));
@@ -64,7 +67,7 @@ const SignIn = ({ history }) => {
           )}
           <div className={`auth ${authStatus?.message && (!authStatus?.success && 'input-error')}`}>
             <div className="auth-main">
-              <h3>Sign in to Salinaka</h3>
+              <h3>Sign in to YoungBoy</h3>
               <br />
               <div className="auth-wrapper">
                 <Formik

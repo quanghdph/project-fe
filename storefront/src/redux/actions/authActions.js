@@ -1,9 +1,9 @@
 import * as type from '@/constants/constants';
 
-export const signIn = (email, password) => ({
+export const signIn = (username, password) => ({
   type: type.SIGNIN,
   payload: {
-    email,
+    username,
     password
   }
 });

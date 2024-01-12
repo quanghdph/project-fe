@@ -52,7 +52,8 @@ export const createProduct = async ({
       brand,
       status,
       images,
-      productDetails
+      productDetails,
+      mainImage
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
@@ -68,11 +69,12 @@ export const createProduct = async ({
 
     // Append each image file to FormData
     if (images) {
-      console.log(images);
       for (let i = 0; i < images.length; i++) {
         formData.append('imgs['+i+']', images[i].originFileObj);
       }
     }
+
+    formData.append('mainImage', mainImage[0].originFileObj)
 
      for (let i = 0; i < productDetails.length; i++) {
       let detail = productDetails[i];
