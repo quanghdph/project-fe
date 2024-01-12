@@ -233,6 +233,7 @@ const ProductCreateUpdate: React.FC = () => {
     // form reset on submit
     e.target.reset();
     if (selectedfile.length > 0) {
+      console.log(selectedfile);
       for (let index = 0; index < selectedfile.length; index++) {
         SetFiles((preValue) => {
           return [...preValue, selectedfile[index]];
@@ -422,7 +423,7 @@ const ProductCreateUpdate: React.FC = () => {
           category: {
             id: data.category,
           },
-          images: Files,
+          images: fileList,
           productDetails: tableData,
         },
       });
@@ -652,14 +653,14 @@ const ProductCreateUpdate: React.FC = () => {
   };
 
   useEffect(() => {
-    const sizes = product.variant.result && [
+    const sizes = product?.variant?.result && [
       ...new Set(
-        product.variant.result.listProductDetail.map((product) => product.size),
+        product?.variant?.result.listProductDetail.map((product) => product.size),
       ),
     ];
-    const colors = product.variant.result && [
+    const colors = product?.variant?.result && [
       ...new Set(
-        product.variant.result.listProductDetail.map(
+        product?.variant?.result.listProductDetail.map(
           (product) => product.color,
         ),
       ),
@@ -677,7 +678,7 @@ const ProductCreateUpdate: React.FC = () => {
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
-  }, [product.variant.result, product.variant.loading]);
+  }, [product?.variant?.result, product?.variant?.loading]);
 
   useEffect(() => {
     console.log(product);
@@ -689,7 +690,7 @@ const ProductCreateUpdate: React.FC = () => {
       setValue("material", product?.detail?.result?.product?.material.id);
       // setSizeSelect({})
     }
-  }, [id, product.detail.loading, product.detail.result]);
+  }, [id, product?.detail?.loading, product?.detail?.result]);
 
   // useEffect(() => {
   //   if(uniqueSizes) {
@@ -710,7 +711,7 @@ const ProductCreateUpdate: React.FC = () => {
   //     })
   //     setColorSelect(listOption)
   //   }
-  // }, [id, product.variant.loading, product.variant.result])
+  // }, [id, product?.variant?.loading, product?.variant?.result])
 
   return (
     <Fragment>
@@ -937,11 +938,11 @@ const ProductCreateUpdate: React.FC = () => {
             />
 
             <Box mt={5}>
-              {/* <Upload
+              <Upload
                 action="http://localhost:8080/product/add"
                 customRequest={customRequest}
                 fileList={fileList}
-                onChange={handleChange}
+                onChange={onUploadChange}
                 onRemove={handleRemove}
                 listType="picture-card"
                 onPreview={onUploadPreview}
@@ -952,8 +953,8 @@ const ProductCreateUpdate: React.FC = () => {
                 multiple={true}
               >
                 {fileList.length >= 5 ? null : uploadButton}
-              </Upload> */}
-              <form onSubmit={FileUploadSubmit}>
+              </Upload>
+              {/* <form onSubmit={FileUploadSubmit}>
                 <div className="kb-file-upload">
                   <div className="file-upload-box">
                     <input
@@ -1014,11 +1015,6 @@ const ProductCreateUpdate: React.FC = () => {
                     );
                   })}
                 </div>
-                {/* <div className="kb-buttons-box">
-                  <button type="submit" className="btn btn-primary form-submit">
-                    Upload
-                  </button>
-                </div> */}
               </form>
               {Files.length > 0 ? (
                 <div className="kb-attach-box">
@@ -1074,7 +1070,7 @@ const ProductCreateUpdate: React.FC = () => {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
             </Box>
           </Card>
         </Col>

@@ -68,6 +68,7 @@ export const createProduct = async ({
 
     // Append each image file to FormData
     if (images) {
+      console.log(images);
       for (let i = 0; i < images.length; i++) {
         formData.append('imgs['+i+']', images[i].originFileObj);
       }

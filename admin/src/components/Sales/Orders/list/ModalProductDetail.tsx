@@ -92,14 +92,14 @@ function ModalProductDetail({
   };
 
   useEffect(() => {
-    const sizes = variant.result && [
+    const sizes = variant?.result && [
       ...new Set(
-        variant.result.listProductDetail.map((product) => product.size),
+        variant?.result.listProductDetail.map((product) => product.size),
       ),
     ];
-    const colors = variant.result && [
+    const colors = variant?.result && [
       ...new Set(
-        variant.result.listProductDetail.map((product) => product.color),
+        variant?.result.listProductDetail.map((product) => product.color),
       ),
     ];
 
@@ -115,13 +115,13 @@ function ModalProductDetail({
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
-  }, [variant.result, variant.loading]);
+  }, [variant?.result, variant?.loading]);
 
   const selectedProduct =
-    !variant.loading &&
-    variant.result &&
-    variant.result?.listProductDetail.length > 0 &&
-    variant.result?.listProductDetail.find((product) => {
+    !variant?.loading &&
+    variant?.result &&
+    variant?.result?.listProductDetail.length > 0 &&
+    variant?.result?.listProductDetail.find((product) => {
       return (
         product.size.id === selectedSize && product.color.id === selectedColor
       );
@@ -187,13 +187,13 @@ function ModalProductDetail({
           </>
         )}
       >
-        {!product.loading && product.result && product.result.product ? (
+        {!product?.loading && product?.result && product?.result?.product ? (
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} md={8} lg={6} xl={4}>
               {/* Product Image */}
               <img
                 src="https://via.placeholder.com/200x200"
-                alt={product.result.product.productName}
+                alt={product?.result?.product?.productName}
                 style={{ width: "100%", maxWidth: "200px" }}
               />
             </Col>
@@ -211,7 +211,7 @@ function ModalProductDetail({
               <Divider />
 
               <Row gutter={[16, 16]}>
-                {variant.result?.listProductDetail.length > 0 && (
+                {variant?.result?.listProductDetail.length > 0 && (
                   <Box>
                     <Box>
                       <Text>Kích thước: </Text>
