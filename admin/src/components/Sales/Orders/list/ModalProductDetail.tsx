@@ -68,12 +68,12 @@ function ModalProductDetail({
 
   useEffect(() => {
     if (id) {
-      getProductDetail({
-        id: +id,
-        dispatch,
-        axiosClientJwt,
-        navigate,
-      });
+      // getProductDetail({
+      //   id: +id,
+      //   dispatch,
+      //   axiosClientJwt,
+      //   navigate,
+      // });
       getVariantProductDetail({
         id: +id,
         dispatch,
@@ -172,6 +172,8 @@ function ModalProductDetail({
       setActiveModalProductDetail(false);
     }
   };
+
+  console.log(variant)
   return (
     <Fragment>
       <Modal
@@ -187,7 +189,7 @@ function ModalProductDetail({
           </>
         )}
       >
-        {!product?.loading && product?.result && product?.result?.product ? (
+        {!variant?.loading && variant?.result  ? (
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} md={8} lg={6} xl={4}>
               {/* Product Image */}
@@ -199,12 +201,12 @@ function ModalProductDetail({
             </Col>
             <Col xs={24} sm={12} md={16} lg={18} xl={20}>
               {/* Product Details */}
-              <Title level={3}>{product.result?.product?.productName}</Title>
-              <Text as="b">{product.result?.product?.brand?.brandName}</Text>
+              <Title level={3}>{variant.result?.listProductDetail[0]?.product.productName}</Title>
+              <Text as="b">{variant.result?.listProductDetail[0]?.product?.brand?.brandName}</Text>
               <Divider />
               <Box
                 dangerouslySetInnerHTML={{
-                  __html: product.result?.product?.description,
+                  __html: variant.result?.listProductDetail[0]?.product?.description,
                 }}
               />
 

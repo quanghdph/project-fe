@@ -73,7 +73,7 @@ const columns = (
     width: '180px',
     render: (status: number) => {
         return (
-            <Tag color={status ? 'green' : 'gold'}>{status ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
+            <Tag color={status == 1 ? 'green' : 'gold'}>{status ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
         )
     }
 },

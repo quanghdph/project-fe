@@ -18,7 +18,7 @@ const useProduct = (id) => {
         if (!product || product.id !== id) {
           setLoading(true);
           const response = await axios.get(
-            `/product-detail/${id}`,
+            `/product-detail?idProduct=${id}`,
           );
 
           if (!response.data) {
@@ -29,7 +29,7 @@ const useProduct = (id) => {
           }
 
           if (didMount) {
-            setProduct(response.data);
+            setProduct(response.data.listProductDetail);
             setLoading(false);
           }
         }

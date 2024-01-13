@@ -383,12 +383,12 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      getProductDetail({
-        id: +id,
-        dispatch,
-        axiosClientJwt,
-        navigate,
-      });
+      // getProductDetail({
+      //   id: +id,
+      //   dispatch,
+      //   axiosClientJwt,
+      //   navigate,
+      // });
       getVariantProductDetail({
         axiosClientJwt,
         dispatch,

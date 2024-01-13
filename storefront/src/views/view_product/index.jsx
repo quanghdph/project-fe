@@ -22,7 +22,6 @@ const ViewProduct = () => {
   useDocumentTitle(`View ${product?.product?.productname || 'Item'}`);
 
   const [selectedImage, setSelectedImage] = useState(product?.image || '');
-  
 
   const [productVariant, setProductVariant] = React.useState();
   const [selectedSize, setSelectedSize] = useState(null);
@@ -32,7 +31,6 @@ const ViewProduct = () => {
 
   const [selectedCartSize, setSelectedCartSize] = useState('');
   const [selectedCartColor, setSelectedCartColor] = useState('');
-
 
   // const {
   //   recommendedProducts,
@@ -67,25 +65,26 @@ const ViewProduct = () => {
   // };
 
   const handleAddToBasket = () => {
-    addToBasket({ ...product, selectedColor, selectedSize: selectedSize || product.sizes[0] });
+    console.log({ ...product, selectedColor: selectedCartColor, selectedSize: selectedCartSize });
+    // addToBasket({ ...product, selectedColor: selectedCartColor, selectedSize: selectedCartSize });
   };
 
-  React.useEffect(() => {
-    axios.get(`/product-detail?idProduct=${id}`).then((res) => {
-      const result = { ...res };
-      setProductVariant(result.data);
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   // axios.get(`/product-detail?idProduct=${id}`).then((res) => {
+  //   //   const result = { ...res };
+  //   // });
+  //   setProductVariant(result.data);
+  // }, []);
 
   useEffect(() => {
-    const sizes = productVariant && [
+    const sizes = product && [
       ...new Set(
-        productVariant?.listProductDetail.map((product) => product.size),
+        product?.map((product) => product.size),
       ),
     ];
-    const colors = productVariant && [
+    const colors = product && [
       ...new Set(
-        productVariant?.listProductDetail.map((product) => product.color),
+        product?.map((product) => product.color),
       ),
     ];
 
@@ -101,12 +100,12 @@ const ViewProduct = () => {
 
     setUniqueSizes(sizeFiltered);
     setUniqueColors(colorsFiltered);
-  }, [productVariant]);
+  }, [product]);
 
   const selectedProduct =
-    productVariant &&
-    productVariant?.listProductDetail.length > 0 &&
-    productVariant?.listProductDetail.find((product) => {
+    product &&
+    product?.length > 0 &&
+    product?.find((product) => {
       return (
         product.size.id === selectedSize && product.color.id === selectedColor
       );
@@ -160,9 +159,9 @@ const ViewProduct = () => {
             </div> */}
             <div className="product-modal-details">
               <br />
-              <span className="text-subtle">{product?.brand?.brandName}</span>
-              <h1 className="margin-top-0">{product?.product?.productName}</h1>
-              <span>{product?.product?.description}</span>
+              <span className="text-subtle">{product[0]?.brand?.brandName}</span>
+              <h1 className="margin-top-0">{product[0]?.product?.productName}</h1>
+              <span>{product[0]?.product?.description}</span>
               <br />
               <br />
               <div className="divider" />

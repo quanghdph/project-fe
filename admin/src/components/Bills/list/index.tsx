@@ -12,6 +12,8 @@ import {
   Select,
   Space,
   Table,
+  Tabs,
+  TabsProps,
   Tag,
   message,
 } from "antd";
@@ -24,12 +26,11 @@ import {
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { createAxiosJwt } from "src/helper/axiosInstance";
-import {
-  deleteBill,
-  getListBill,
-} from "src/features/sale/bill/action";
+import { deleteBill, getListBill } from "src/features/sale/bill/action";
 import type { ColumnsType } from "antd/es/table";
 import { useDebounce } from "use-debounce";
+import Title from "antd/lib/skeleton/Title";
+import { formatPriceVND } from "src/helper/currencyPrice";
 interface DataType {
   key: number;
   id: number;
@@ -51,27 +52,34 @@ const columns = (
     ellipsis: true,
     key: "id",
     width: "5%",
-    fixed: "left"
+    fixed: "left",
   },
   {
-    title: "Tên khách hàng",
+    title: "Khách hàng",
     dataIndex: "customer_name",
     ellipsis: true,
     key: "customer_name",
-    width: "15%",
+    width: "13%",
   },
-  {
-    title: "Tên nhân viên",
-    dataIndex: "employee_name",
-    ellipsis: true,
-    key: "employee_name",
-    width: "15%",
-  },
+  // {
+  //   title: "Tên nhân viên",
+  //   dataIndex: "employee_name",
+  //   ellipsis: true,
+  //   key: "employee_name",
+  //   width: "15%",
+  // },
   {
     title: "Số điện thoại",
     dataIndex: "phoneNumber",
     ellipsis: true,
     key: "phoneNumber",
+    width: "10%",
+  },
+  {
+    title: "Tổng tiền",
+    dataIndex: "total",
+    ellipsis: true,
+    key: "total",
     width: "15%",
   },
   {
@@ -79,26 +87,35 @@ const columns = (
     dataIndex: "transportFee",
     ellipsis: true,
     key: "transportFee",
-    width: "15%",
+    width: "9%",
   },
   {
     title: "Ghi chú",
     dataIndex: "note",
     ellipsis: true,
     key: "note",
-    width: "15%",
+    width: "13%",
   },
   {
-    title: 'Hoạt động',
-    dataIndex: 'status',
-    key: 'status',
-    width: '180px',
-    render: (status: number) => {
-        return (
-            <Tag color={status ? 'green' : 'gold'}>{status == 1 ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
-        )
-    }
-},
+    title: "Ngày tạo",
+    dataIndex: "createDate",
+    ellipsis: true,
+    key: "createDate",
+    width: "13%",
+  },
+  // {
+  //   title: "Hoạt động",
+  //   dataIndex: "status",
+  //   key: "status",
+  //   width: "10%",
+  //   render: (status: number) => {
+  //     return (
+  //       <Tag color={status == 1 ? "green" : "gold"}>
+  //         {status == 1 ? "Hoạt động" : "Vô hiệu hóa"}
+  //       </Tag>
+  //     );
+  //   },
+  // },
   {
     title: "Hành động",
     key: "action",
@@ -115,12 +132,12 @@ const columns = (
             shape="circle"
             icon={<DeleteOutlined />}
             onClick={() => {
-               setIsModalOpen(true);
-               setBillDelete({
-                  ...billDelete,
-                  id: record.id,
-                  name: record.bill_name,
-                });
+              setIsModalOpen(true);
+              setBillDelete({
+                ...billDelete,
+                id: record.id,
+                name: record.bill_name,
+              });
             }}
           />
         </Space>
@@ -129,11 +146,91 @@ const columns = (
   },
 ];
 
+const items = (
+  setIsModalOpen,
+  billDelete,
+  setBillDelete,
+  navigate,
+  dataRender,
+  bill,
+  handleOnChangePagination,
+  handleOnShowSizeChange,
+) => [
+  {
+    key: "1",
+    label: "Tất cả",
+    children: (
+      <Card>
+        <Table
+          bordered
+          columns={columns(setIsModalOpen, billDelete, setBillDelete, navigate)}
+          dataSource={dataRender()}
+          scroll={{ x: "100vw" }}
+          loading={bill.list.loading}
+          pagination={{
+            total: bill.list.result?.total,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+            onChange: handleOnChangePagination,
+            onShowSizeChange: handleOnShowSizeChange,
+            responsive: true,
+          }}
+        />
+      </Card>
+    ),
+  },
+  {
+    key: "2",
+    label: "Chờ thanh toán",
+    children: "Content of Tab Pane 2",
+  },
+  {
+    key: "3",
+    label: "Chờ xử lí",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "4",
+    label: "Chờ xác thực",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "5",
+    label: "Đã xác thực",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "6",
+    label: "Chờ giao hàng",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "7",
+    label: "Đang giao hàng",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "8",
+    label: "Đã nhận hàng",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "9",
+    label: "Đã hoàn thành",
+    children: "Content of Tab Pane 3",
+  },
+  {
+    key: "10",
+    label: "Đã hủy",
+    children: "Content of Tab Pane 3",
+  },
+];
+
 const Bill = () => {
   // ** State
-  const [page, setPage] = useState<number>(1)
-  const [limit, setLimit] = useState<number>(10)
-  const [filter, setFilter] = useState<string>('')
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [filter, setFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [billDelete, setBillDelete] = useState<{
     id: number;
@@ -152,11 +249,11 @@ const Bill = () => {
   // ** Effect
   useEffect(() => {
     getListBill({
-        params: {
-            page,
-            limit,
-            filter
-        },
+      params: {
+        page,
+        limit,
+        filter,
+      },
       navigate,
       axiosClientJwt,
       dispatch,
@@ -171,11 +268,12 @@ const Bill = () => {
           key: index,
           id: bill.id,
           customer_name: `${bill.customer.firstName} ${bill.customer.lastName}`,
-          employee_name: `${bill.employee.firstName} ${bill.employee.lastName}`,
+          // employee_name: `${bill.employee.firstName} ${bill.employee.lastName}`,
           phoneNumber: bill.phoneNumber,
-          transportFee: bill.transportFee,
+          transportFee: formatPriceVND(bill.transportFee),
           note: bill.note,
-          status: bill.status
+          createDate: bill.createDate,
+          // status: bill.status,
         };
       });
     }
@@ -184,15 +282,15 @@ const Bill = () => {
 
   const handleOk = async () => {
     await deleteBill({
-        axiosClientJwt,
-        dispatch,
-        navigate,
-        id: billDelete?.id!,
-        refresh,
-        setIsModalOpen,
-        setRefresh,
-        message
-    })
+      axiosClientJwt,
+      dispatch,
+      navigate,
+      id: billDelete?.id!,
+      refresh,
+      setIsModalOpen,
+      setRefresh,
+      message,
+    });
   };
 
   const handleCancel = () => {
@@ -200,13 +298,22 @@ const Bill = () => {
   };
 
   const handleOnChangePagination = (e: number) => {
-    setPage(e)
+    setPage(e);
   };
 
-  const handleOnShowSizeChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
-    setPage(current)
-    setLimit(pageSize)
+  const handleOnShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    current,
+    pageSize,
+  ) => {
+    setPage(current);
+    setLimit(pageSize);
   };
+
+  const onChange = (key: string) => {
+    // console.log(key);
+  };
+
+  console.log(bill);
 
   return (
     <Fragment>
@@ -221,7 +328,7 @@ const Bill = () => {
         </Col>
         <Col span={24}>
           <Row>
-            <Col span={24}>
+            {/* <Col span={24}>
               <Flex justifyContent={"flex-end"} alignItems={"center"}>
                 <Button
                   style={{ textTransform: "uppercase" }}
@@ -232,31 +339,24 @@ const Bill = () => {
                   Thêm mới hóa đơn
                 </Button>
               </Flex>
-            </Col>
+            </Col> */}
             <Divider />
             <Col span={24}>
-              <Card>
-                <Table
-                  bordered
-                  columns={columns(
-                    setIsModalOpen,
-                    billDelete,
-                    setBillDelete,
-                    navigate,
-                  )}
-                  dataSource={dataRender()}
-                  scroll={{ x: "100vw" }}
-                  loading={bill.list.loading}
-                  pagination={{
-                    total: bill.list.result?.total,
-                    showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} items`,
-                     onChange: handleOnChangePagination,
-                    onShowSizeChange: handleOnShowSizeChange,
-                    responsive: true,
-                  }}
-                />
-              </Card>
+              <Title>Danh sách hóa đơn</Title>
+              <Tabs
+                defaultActiveKey="1"
+                items={items(
+                  setIsModalOpen,
+                  billDelete,
+                  setBillDelete,
+                  navigate,
+                  dataRender,
+                  bill,
+                  handleOnChangePagination,
+                  handleOnShowSizeChange,
+                )}
+                onChange={onChange}
+              />
             </Col>
           </Row>
         </Col>
