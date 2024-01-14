@@ -164,16 +164,24 @@ function ModalProductDetail({
         message: "Sản phẩm đã được cập nhật trong giỏ hàng",
       });
     } else {
-      setCart([...cart, { ...productVariant, cartQuantity: 1 }]);
-      Inotification({
-        type: "success",
-        message: "Sản phẩm đã được thêm vào giỏ hàng",
-      });
+      console.log(productVariant);
+      if(productVariant?.product?.status !== 1) {
+        Inotification({
+          type: "error",
+          message: "Sản phẩm không hoạt động!!",
+        });
+      } else {
+        setCart([...cart, { ...productVariant, cartQuantity: 1 }]);
+        Inotification({
+          type: "success",
+          message: "Sản phẩm đã được thêm vào giỏ hàng",
+        });
+      }
+      
       setActiveModalProductDetail(false);
     }
   };
 
-  console.log(variant)
   return (
     <Fragment>
       <Modal

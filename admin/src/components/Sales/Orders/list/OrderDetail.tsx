@@ -274,6 +274,7 @@ function OrderDetail(props: any) {
             label: `${item.firstName} ${item.lastName}`,
           }));
       if (!value) {
+        console.log("cus", listOption);
         setCustomerOption(listOption);
       } else {
         listOption && setCustomerOption(listOption);
@@ -479,7 +480,7 @@ function OrderDetail(props: any) {
                           <div>
                             <Select
                               showSearch
-                              placeholder="Tìm kiếm khách hàng"
+                              placeholder="Tìm kiếm khách hàng theo sdt"
                               optionFilterProp="children"
                               loading={customer.list.loading}
                               onChange={onCustomerChange}
@@ -533,14 +534,14 @@ function OrderDetail(props: any) {
                 <Text>Tổng tiền:</Text>
                 <Text>{formatPriceVND(totalAmount)}</Text>
               </Flex>
-              {/* <Box mb={4}>
+              <Box mb={4}>
                 <Text>Tiền khách đưa:</Text>
                 <InputNumber prefix="VND" style={{ width: "100%" }} />
               </Box>
               <Flex justifyContent={"space-between"}>
-                <Text>Tiền thừa:</Text>
+                <Text>Tiền dư:</Text>
                 <Text>500.000đ</Text>
-              </Flex> */}
+              </Flex>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text>Chọn phương thức thanh toán</Text>
                 <Form.Item name="paymentMethod">
@@ -577,7 +578,7 @@ function OrderDetail(props: any) {
                 // loading={selloff?.create?.loading}
                 onClick={showBillModal}
               >
-                Tạo hóa đơn
+                Hoàn thành
               </Button>
             </Card>
           )}

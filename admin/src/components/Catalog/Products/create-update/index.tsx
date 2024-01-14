@@ -31,6 +31,7 @@ import {
   getProduct,
   getProductDetail,
   getVariantProductDetail,
+  updateProduct,
 } from "src/features/catalog/product/actions";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import SelectImage from "../SelectImage";
@@ -178,83 +179,6 @@ const ProductCreateUpdate: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [fileMainList, setFileMainList] = useState<UploadFile[]>([]);
 
-  const [selectedfile, SetSelectedFile] = useState([]);
-  const [Files, SetFiles] = useState([]);
-
-  const filesizes = (bytes, decimals = 2) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  };
-
-  const InputChange = (e) => {
-    // --For Multiple File Input
-    let images = [];
-    for (let i = 0; i < e.target.files.length; i++) {
-      images.push(e.target.files[i]);
-      let reader = new FileReader();
-      let file = e.target.files[i];
-      reader.onloadend = () => {
-        SetSelectedFile((preValue) => {
-          return [
-            ...preValue,
-            {
-              id: shortid.generate(),
-              filename: e.target.files[i].name,
-              filetype: e.target.files[i].type,
-              fileimage: reader.result,
-              datetime:
-                e.target.files[i].lastModifiedDate.toLocaleString("en-IN"),
-              filesize: filesizes(e.target.files[i].size),
-            },
-          ];
-        });
-      };
-      if (e.target.files[i]) {
-        reader.readAsDataURL(file);
-      }
-    }
-  };
-
-  const DeleteSelectFile = (id) => {
-    if (window.confirm("Are you sure you want to delete this Image?")) {
-      const result = selectedfile.filter((data) => data.id !== id);
-      SetSelectedFile(result);
-    } else {
-      // alert('No');
-    }
-  };
-
-  const FileUploadSubmit = async (e) => {
-    e.preventDefault();
-
-    // form reset on submit
-    e.target.reset();
-    if (selectedfile.length > 0) {
-      console.log(selectedfile);
-      for (let index = 0; index < selectedfile.length; index++) {
-        SetFiles((preValue) => {
-          return [...preValue, selectedfile[index]];
-        });
-      }
-      SetSelectedFile([]);
-    } else {
-      alert("Please select file");
-    }
-  };
-
-  const DeleteFile = async (id) => {
-    if (window.confirm("Are you sure you want to delete this Image?")) {
-      const result = Files.filter((data) => data.id !== id);
-      SetFiles(result);
-    } else {
-      // alert('No');
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -400,7 +324,31 @@ const ProductCreateUpdate: React.FC = () => {
 
   const onSubmit = async (data) => {
     if (id) {
-      console.log(data);
+      await updateProduct({
+        axiosClientJwt,
+        dispatch,
+        navigate,
+        setError,
+        message,
+        id,
+        product: {
+          productName: data.productName,
+          description: data.description,
+          status: enabled ? 1 : 0,
+          brand: {
+            id: data.brand,
+          },
+          material: {
+            id: data.material,
+          },
+          category: {
+            id: data.category,
+          },
+          images: fileList,
+          productDetails: tableData,
+          mainImage: fileMainList,
+        },
+      });
     } else {
       await createProduct({
         axiosClientJwt,
@@ -652,11 +600,12 @@ const ProductCreateUpdate: React.FC = () => {
     );
   };
 
-
   useEffect(() => {
     const sizes = product?.variant?.result && [
       ...new Set(
-        product?.variant?.result.listProductDetail.map((product) => product.size),
+        product?.variant?.result.listProductDetail.map(
+          (product) => product.size,
+        ),
       ),
     ];
     const colors = product?.variant?.result && [
@@ -682,16 +631,70 @@ const ProductCreateUpdate: React.FC = () => {
   }, [product?.variant?.result, product?.variant?.loading]);
 
   useEffect(() => {
-    console.log(product);
-    if (id && product?.detail?.result && !product?.detail.loading) {
-      setValue("productName", product?.detail?.result?.product?.productName);
-      setValue("description", product?.detail?.result?.product?.description);
-      setValue("category", product?.detail?.result?.product?.category.id);
-      setValue("brand", product?.detail?.result?.product?.brand.id);
-      setValue("material", product?.detail?.result?.product?.material.id);
+    if (id && product?.variant?.result && !product?.variant.loading) {
+      console.log(uniqueSizes);
+      console.log(uniqueColors);
+      console.log("table", tableData);
+      setValue(
+        "productName",
+        product?.variant?.result?.listProductDetail[0]?.product?.productName,
+      );
+      setValue(
+        "description",
+        product?.variant?.result?.listProductDetail[0]?.product?.description,
+      );
+      setValue(
+        "category",
+        product?.variant?.result?.listProductDetail[0]?.product?.category.id,
+      );
+      setValue(
+        "brand",
+        product?.variant?.result?.listProductDetail[0]?.product?.brand.id,
+      );
+      setValue(
+        "material",
+        product?.variant?.result?.listProductDetail[0]?.product?.material?.id,
+      );
       // setSizeSelect({})
     }
-  }, [id, product?.detail?.loading, product?.detail?.result]);
+  }, [id, product.variant.loading, product.variant.result]);
+
+  useEffect(() => {
+    if (id && fileMainList.length == 0) {
+      setFileMainList([
+        ...fileMainList,
+        { url: `${import.meta.env.VITE_BACKEND_URL}/product/${id}/image-main` },
+      ]);
+    }
+
+    if (id && tableData.length == 0) {
+      uniqueSizes.map((size) => {
+        uniqueColors.map((color) => {
+          setTableData([
+            ...tableData,
+            {
+              color: {
+                label: color.colorName,
+                value: color.id,
+                disable: null,
+                title: null,
+              },
+              key: `${size.sizeName}-${color.colorName}`,
+              price: 0,
+              quantity: 0,
+              size: {
+                label: size.sizeName,
+                value: size.id,
+                disable: null,
+                title: null,
+              },
+              status: 1,
+            },
+          ]);
+        });
+      });
+    }
+  }, [id, product.variant.loading, product.variant.result]);
 
   return (
     <Fragment>
@@ -710,8 +713,10 @@ const ProductCreateUpdate: React.FC = () => {
         <Col span={24}>
           <Card>
             <Form onFinish={handleSubmit(onSubmit)} autoComplete="off">
-              <Flex justifyContent="space-between" alignItems="center">
-                <Flex justifyContent="center" alignItems="center">
+              <Flex justifyContent={`${id ? "space-between" : "flex-end"}`} alignItems="center">
+               {
+                id && (
+                  <Flex justifyContent="center" alignItems="center">
                   <Switch
                     checked={enabled}
                     size="small"
@@ -721,7 +726,13 @@ const ProductCreateUpdate: React.FC = () => {
                     Hoạt động
                   </Box>
                 </Flex>
-                <Button type="primary" htmlType="submit" loading={false}>
+                )
+               }
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={product.createProduct.loading}
+                >
                   {!id ? "Tạo" : "Cập nhật"}
                 </Button>
               </Flex>
@@ -845,38 +856,6 @@ const ProductCreateUpdate: React.FC = () => {
                     />
                   </Flex>
                 </Box>
-                {/* <Box mb={3} width={"49%"}>
-                  <Flex direction={"column"}>
-                    <Box
-                      as="span"
-                      fontWeight="semibold"
-                      mb={1}
-                      sx={{ display: "inline-block" }}
-                    >
-                      Cạp quần
-                    </Box>
-                    <Controller
-                      name="waistband"
-                      control={control}
-                      render={({ field: { value, ...other } }) => {
-                        return (
-                          <Select
-                            value={value}
-                            showSearch
-                            optionFilterProp="children"
-                            onSearch={onWaistbandSearch}
-                            onChange={(selectedOption) => {
-                              setValue("waistband", selectedOption);
-                            }}
-                            filterOption={filterWaistbandOption}
-                            style={{ width: "100%" }}
-                            options={waistbandSelect}
-                          />
-                        );
-                      }}
-                    />
-                  </Flex>
-                </Box> */}
                 <Box mb={3} width={"49%"}>
                   <Flex direction={"column"}>
                     <Box
@@ -919,7 +898,7 @@ const ProductCreateUpdate: React.FC = () => {
 
             <Box mt={5}>
               <Text>Chọn ảnh chính</Text>
-            <Upload
+              <Upload
                 action="http://localhost:8080/product/add"
                 customRequest={customMainRequest}
                 fileList={fileMainList}
@@ -935,140 +914,27 @@ const ProductCreateUpdate: React.FC = () => {
               >
                 {fileMainList.length >= 1 ? null : uploadButton}
               </Upload>
-              <Text>Chọn biến thể</Text>
-              <Upload
-                action="http://localhost:8080/product/add"
-                customRequest={customRequest}
-                fileList={fileList}
-                onChange={onUploadChange}
-                onRemove={handleRemove}
-                listType="picture-card"
-                onPreview={onUploadPreview}
-                showUploadList={{
-                  showPreviewIcon: true,
-                  showRemoveIcon: true,
-                }}
-                multiple={true}
-              >
-                {fileList.length >= 5 ? null : uploadButton}
-              </Upload>
-              {/* <form onSubmit={FileUploadSubmit}>
-                <div className="kb-file-upload">
-                  <div className="file-upload-box">
-                    <input
-                      type="file"
-                      id="fileupload"
-                      className="file-upload-input"
-                      onChange={InputChange}
-                      multiple
-                    />
-                    <span>
-                      Drag and drop or{" "}
-                      <span className="file-link">Choose your files</span>
-                    </span>
-                  </div>
-                </div>
-                <div className="kb-attach-box mb-3">
-                  {selectedfile.map((data, index) => {
-                    const {
-                      id,
-                      filename,
-                      filetype,
-                      fileimage,
-                      datetime,
-                      filesize,
-                    } = data;
-                    return (
-                      <div className="file-atc-box" key={id}>
-                        {filename.match(/.(jpg|jpeg|png|gif|svg)$/i) ? (
-                          <div className="file-image">
-                            {" "}
-                            <img src={fileimage} alt="" />
-                          </div>
-                        ) : (
-                          <div className="file-image">
-                            <i className="far fa-file-alt"></i>
-                          </div>
-                        )}
-                        <div className="file-detail">
-                          <h6>{filename}</h6>
-                          <p></p>
-                          <p>
-                            <span>Size : {filesize}</span>
-                            <span className="ml-2">
-                              Modified Time : {datetime}
-                            </span>
-                          </p>
-                          <div className="file-actions">
-                            <button
-                              type="button"
-                              className="file-action-btn"
-                              onClick={() => DeleteSelectFile(id)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </form>
-              {Files.length > 0 ? (
-                <div className="kb-attach-box">
-                  <hr />
-                  {Files.map((data, index) => {
-                    const {
-                      id,
-                      filename,
-                      filetype,
-                      fileimage,
-                      datetime,
-                      filesize,
-                    } = data;
-                    return (
-                      <div className="file-atc-box" key={index}>
-                        {filename.match(/.(jpg|jpeg|png|gif|svg)$/i) ? (
-                          <div className="file-image">
-                            {" "}
-                            <img src={fileimage} alt="" />
-                          </div>
-                        ) : (
-                          <div className="file-image">
-                            <i className="far fa-file-alt"></i>
-                          </div>
-                        )}
-                        <div className="file-detail">
-                          <h6>{filename}</h6>
-                          <p>
-                            <span>Size : {filesize}</span>
-                            <span className="ml-3">
-                              Modified Time : {datetime}
-                            </span>
-                          </p>
-                          <div className="file-actions">
-                            <button
-                              className="file-action-btn"
-                              onClick={() => DeleteFile(id)}
-                            >
-                              Delete
-                            </button>
-                            <a
-                              href={fileimage}
-                              className="file-action-btn"
-                              download={filename}
-                            >
-                              Download
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                ""
-              )} */}
+              {!id && (
+                <>
+                  <Text>Chọn biến thể</Text>
+                  <Upload
+                    action="http://localhost:8080/product/add"
+                    customRequest={customRequest}
+                    fileList={fileList}
+                    onChange={onUploadChange}
+                    onRemove={handleRemove}
+                    listType="picture-card"
+                    onPreview={onUploadPreview}
+                    showUploadList={{
+                      showPreviewIcon: true,
+                      showRemoveIcon: true,
+                    }}
+                    multiple={true}
+                  >
+                    {fileList.length >= 5 ? null : uploadButton}
+                  </Upload>
+                </>
+              )}
             </Box>
           </Card>
         </Col>

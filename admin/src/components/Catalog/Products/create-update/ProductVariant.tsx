@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, InputNumber, Select, Table } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { Flex } from "@chakra-ui/react";
-import { set } from "lodash";
+import { set, size } from "lodash";
 
 const { Option } = Select;
 
 const ProductVariant = (props: any) => {
   const { sizes, colors ,setTableData,tableData} = props;
   const { control, setValue, watch } = useForm();
-
 
   const handleQuantityChange = (key, value) => {
     const updatedData = tableData.map((item) =>

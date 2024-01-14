@@ -264,7 +264,7 @@ export const getListSearchPhoneNumberCustomer = async ({
       const accessToken = localStorage.getItem("accessToken");
       dispatch(getListCustomerStart());
       const res: any = await axiosClientJwt.get(
-        `/customer/phone-number?phoneNumber=${value}`,
+        `/customer?phoneNumber=${value}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -319,6 +319,7 @@ export const updateProduct = async ({
   setRefresh,
 }: any) => {
   try {
+
     const {
       productName,
       description,
@@ -326,20 +327,51 @@ export const updateProduct = async ({
       category,
       brand,
       status,
+      images,
+      productDetails,
+      mainImage
     } = product;
+
+    const formData = new FormData();
+    formData.append('productName', productName);
+    formData.append('description', description);
+    formData.append('status', status);
+    formData.append('material.id', material.id);
+    formData.append('category.id', category.id);
+    // formData.append('waistband.id', waistband.id);
+    formData.append('brand.id', brand.id);
+
+    // Append each image file to FormData
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append('imgs['+i+']', images[i].originFileObj);
+      }
+    }
+
+    formData.append('mainImage', mainImage[0].originFileObj)
+
+     for (let i = 0; i < productDetails.length; i++) {
+      let detail = productDetails[i];
+        for (var key in detail) {
+          if (detail.hasOwnProperty(key)) {
+            if(key=="size"||key=="color"){
+              let fieldName = "productDetails[" + i + "]." + key;
+              formData.append(fieldName+"Id", detail[key].key);
+            }else{
+             let fieldName = "productDetails[" + i + "]." + key;
+             formData.append(fieldName, detail[key]);
+            }
+           
+          }
+        }
+    }
+    
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateProductStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
       await axiosClientJwt.put(
         `/product/${id}`,
-        {
-          productName,
-      description,
-      material,
-      category,
-      brand,
-      status,
-        },
+       formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

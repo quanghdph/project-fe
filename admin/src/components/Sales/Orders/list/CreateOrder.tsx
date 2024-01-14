@@ -44,12 +44,13 @@ function CreateOrder({cart, setCart}) {
 
   const handleCreateOrder = () => {
     const orderCode = `HD${generateRandomNumberString(6)}`
-    if (listOrder.length < 1) {
+    if (listOrder.length < 5) {
+      setCart([])
       setListOrder([...listOrder, orderCode]);
     } else {
       Inotification({
         type: "error",
-        message: "Chỉ được tạo 1 đơn hàng!",
+        message: "Chỉ được tạo 5 đơn hàng!",
       });
     }
   }
