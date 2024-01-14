@@ -7,11 +7,29 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { removeFromBasket } from '@/redux/actions/basketActions';
+import { displayActionMessage } from '@/helpers/utils';
+import axios from 'axios';
 
 const BasketItem = ({ product }) => {
   const dispatch = useDispatch();
-  const onRemoveFromBasket = () => dispatch(removeFromBasket(product.id));
-  
+  const onRemoveFromBasket = async () => {
+    const access_token = localStorage.getItem("access_token")
+
+    try {
+     const response = await axios.delete(
+       `/cart-detail/${product.id}`,{
+         headers: {
+           'Authorization': `Bearer ${access_token}`
+         }
+       }
+     );
+    dispatch(removeFromBasket(product.id))
+    } catch (error) {
+     error.response.data ?  displayActionMessage(`${error.response.data}`, 'error') : displayActionMessage(`Đã xảy ra lỗi`, 'error')
+    }
+    // return )
+  };
+
   return (
     <div className="basket-item">
       <BasketItemControl product={product} />
@@ -31,8 +49,8 @@ const BasketItem = ({ product }) => {
           </Link>
           <div className="basket-item-specs">
             <div>
-              <span className="spec-title">Quantity</span>
-              <h5 className="my-0">{product.quantity}</h5>
+              <span className="spec-title">Số lượng</span>
+              <h5 className="my-0">{product.cartQuantity}</h5>
             </div>
             <div>
               <span className="spec-title">Size</span>
@@ -58,7 +76,7 @@ const BasketItem = ({ product }) => {
           </div>
         </div>
         <div className="basket-item-price">
-          <h4 className="my-0">{displayMoney(product.price * product.quantity)}</h4>
+          <h4 className="my-0">{displayMoney(product.price * product.cartQuantity)}</h4>
         </div>
         <button
           className="basket-item-remove button button-border button-border-gray button-small"

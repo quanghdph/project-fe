@@ -8,13 +8,13 @@ const BasketItemControl = ({ product }) => {
   const dispatch = useDispatch();
 
   const onAddQty = () => {
-    if (product.quantity < product.maxQuantity) {
+    if (product.cartQuantity < product.quantity) {
       dispatch(addQtyItem(product.id));
     }
   };
 
   const onMinusQty = () => {
-    if ((product.maxQuantity >= product.quantity) && product.quantity !== 0) {
+    if ((product.quantity >= product.cartQuantity) && product.cartQuantity !== 0) {
       dispatch(minusQtyItem(product.id));
     }
   };
@@ -23,7 +23,7 @@ const BasketItemControl = ({ product }) => {
     <div className="basket-item-control">
       <button
         className="button button-border button-border-gray button-small basket-control basket-control-add"
-        disabled={product.maxQuantity === product.quantity}
+        disabled={product.quantity === product.cartQuantity}
         onClick={onAddQty}
         type="button"
       >
@@ -31,7 +31,7 @@ const BasketItemControl = ({ product }) => {
       </button>
       <button
         className="button button-border button-border-gray button-small basket-control basket-control-minus"
-        disabled={product.quantity === 1}
+        disabled={product.cartQuantity === 1}
         onClick={onMinusQty}
         type="button"
       >

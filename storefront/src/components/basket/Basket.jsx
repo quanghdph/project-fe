@@ -54,7 +54,7 @@ const Basket = () => {
       dispatch(clearBasket());
     }
   };
-  console.log("123", basket);
+
   return user && user.role === "ADMIN" ? null : (
     <Boundary>
       <Modal isOpen={isOpenModal} onRequestClose={onCloseModal}>
@@ -83,9 +83,7 @@ const Basket = () => {
           <div className="basket-header">
             <h3 className="basket-header-title">
               Giỏ hàng &nbsp;
-              <span>
-                ({` ${basket.length} sản phẩm`})
-              </span>
+              <span>({` ${basket.length} sản phẩm`})</span>
             </h3>
             <BasketToggle>
               {({ onClickToggle }) => (
@@ -94,7 +92,7 @@ const Basket = () => {
                   onClick={onClickToggle}
                   role="presentation"
                 >
-                  Close
+                  Đóng
                 </span>
               )}
             </BasketToggle>
@@ -109,19 +107,29 @@ const Basket = () => {
           </div>
           {basket.length <= 0 && (
             <div className="basket-empty">
-              <h5 className="basket-empty-msg">Không có sản phẩm nào trong giỏ</h5>
+              <h5 className="basket-empty-msg">
+                Không có sản phẩm nào trong giỏ
+              </h5>
             </div>
           )}
-          {basket.map((product, i) => (
-            <BasketItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${
-                product?.productDetail}_${i}`}
-              product={product?.productDetail}
-              basket={basket}
-              dispatch={dispatch}
-            />
-          ))}
+          {basket.map((product, i) => {
+            // const productCustom = {
+            //   ...product,
+            //   productDetail: {
+            //     ...product.productDetail,
+            //     cartQuantity: 1,
+            //   }
+            // };
+            return (
+              <BasketItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${product.productDetail?.id}_${i}`}
+                product={product.productDetail}
+                basket={basket}
+                dispatch={dispatch}
+              />
+            );
+          })}
         </div>
         <div className="basket-checkout">
           <div className="basket-total">
@@ -148,6 +156,17 @@ const Basket = () => {
                 )}
               </h2>
             )} */}
+             <h2 className="basket-total-amount">
+                {displayMoney(
+                  calculateTotal(
+                    basket.map(
+                      (product) =>
+                        product.productDetail.price *
+                        product.productDetail.cartQuantity
+                    )
+                  )
+                )}
+              </h2>
           </div>
           <button
             className="basket-checkout-button button"

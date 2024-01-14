@@ -212,8 +212,17 @@ function* authSaga({ type, payload }) {
         localStorage.setItem("access_token", token)
         if(token) {
           const basket = yield call(getCartDetail, token);
-          console.log("object", basket);
-          yield put(setBasketItems(basket.data));
+          const customCart = basket.data.length > 0 && basket.data.map(item => {
+            return {
+              ...item,
+              productDetail: {
+                ...item.productDetail,
+                cartQuantity: 1
+              }
+            }
+          })
+          console.log("object", customCart);
+          yield put(setBasketItems(customCart));
         }
       }
 

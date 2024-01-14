@@ -93,14 +93,17 @@ const ViewProduct = () => {
 
     const handleAddToBasket = () => {
       
-      // if(!authStatus?.success) {
-      //   displayActionMessage('Bạn cần đăng nhập để thêm vào giỏ hàng!', 'info');
-      // }
-      addToBasket({
-        ...selectedProduct,
-        selectedColor: selectedCartColor,
-        selectedSize: selectedCartSize,
-      });
+      if(!authStatus) {
+        displayActionMessage('Bạn cần đăng nhập để thêm vào giỏ hàng!', 'info');
+      } else {
+        addToBasket({
+          ...selectedProduct,
+          cartQuantity: 1
+          // selectedColor: selectedCartColor,
+          // selectedSize: selectedCartSize,
+        });
+      }
+     
     };
 
   return (

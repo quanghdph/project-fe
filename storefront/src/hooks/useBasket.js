@@ -7,26 +7,36 @@ const useBasket = () => {
   const { basket } = useSelector((state) => ({ basket: state.basket }));
   const dispatch = useDispatch();
 
-  const isItemOnBasket = (id) => !!basket.find((item) => item.id === id);
+  const isItemOnBasket = (id) => !!basket.find((item) => item.productDetail.id === id);
 
   const addToBasket = async (product) => {
-    console.log("add", product);
     const access_token = localStorage.getItem("access_token")
+   try {
     const response = await axios.post(
-      `/cart-detail?productDetailId=${product.id}`, {
+      `/cart-detail?productDetailId=${product.id}`, null ,{
         headers: {
           'Authorization': `Bearer ${access_token}`
         }
       }
     );
-
-    console.log(response);
-
+    // console.log("object product", response);
+    dispatch(dispatchAddToBasket({
+      productDetail: {
+        ...product,
+        cartQuantity: 1
+      }
+    }));
+    displayActionMessage('Thêm vào giỏ hàng thành công', 'success');
+   } catch (error) {
+    // console.log(error);
+    displayActionMessage(`${error.response.data}`, 'info')
+   }
+   
     // if (isItemOnBasket(product.id)) {
     //   // dispatch(removeFromBasket(product.id));
     //   displayActionMessage('Sản phẩm đã có trong giỏ hàng', 'info');
     // } else {
-    //   dispatch(dispatchAddToBasket(product));
+    //   
     //   displayActionMessage('Thêm vào giỏ hàng thành công', 'success');
     // }
   };

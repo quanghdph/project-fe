@@ -10,30 +10,35 @@ export default (state = [], action) => {
     case SET_BASKET_ITEMS:
       return action.payload;
     case ADD_TO_BASKET:
-      console.log("action.payload", action.payload);
-      // return state.some((product) => product.id === action.payload.id)
-      //   ? state
-      //   : [action.payload, ...state];
+      return state.some((product) => product.id === action.payload.id)
+        ? state
+        : [action.payload, ...state];
     case REMOVE_FROM_BASKET:
-      return state.filter((product) => product.id !== action.payload);
+      return state.filter((product) => product.productDetail.id !== action.payload);
     case CLEAR_BASKET:
       return [];
     case ADD_QTY_ITEM:
       return state.map((product) => {
-        if (product.id === action.payload) {
+        if (product.productDetail.id === action.payload) {
           return {
             ...product,
-            quantity: product.quantity + 1
+            productDetail: {
+              ...product.productDetail,
+              cartQuantity: product.productDetail.cartQuantity + 1
+            }
           };
         }
         return product;
       });
     case MINUS_QTY_ITEM:
       return state.map((product) => {
-        if (product.id === action.payload) {
+        if (product.productDetail.id === action.payload) {
           return {
             ...product,
-            quantity: product.quantity - 1
+            productDetail: {
+              ...product.productDetail,
+              cartQuantity: product.productDetail.cartQuantity - 1
+            }
           };
         }
         return product;
