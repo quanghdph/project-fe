@@ -11,7 +11,7 @@ import { StepTracker } from '../components';
 import withCheckout from '../hoc/withCheckout';
 
 const OrderSummary = ({ basket, subtotal }) => {
-  useDocumentTitle('Check Out Step 1 | Salinaka');
+  useDocumentTitle('Check Out Step 1 | YoungBoy');
   useScrollTop();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -30,8 +30,8 @@ const OrderSummary = ({ basket, subtotal }) => {
             <BasketItem
               basket={basket}
               dispatch={dispatch}
-              key={product.id}
-              product={product}
+              key={`${product.productDetail.id}`}
+              product={product.productDetail}
             />
           ))}
         </div>

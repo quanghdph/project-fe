@@ -34,6 +34,16 @@ const signIn = async (username, password) => {
   return response;
 };
 
+const getCartDetail = async (token) => {
+  const response = axios.get("/cart-detail/cart-details", {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response;
+};
+
 function* handleError(e) {
   const obj = { success: false, type: "auth", isError: true };
   yield put(setAuthenticating(false));
@@ -153,22 +163,22 @@ function* authSaga({ type, payload }) {
     //     yield handleError(e);
     //   }
     //   break;
-    // case SIGNOUT: {
-    //   try {
-    //     yield initRequest();
-    //     yield call(firebase.signOut);
-    //     yield put(clearBasket());
-    //     yield put(clearProfile());
-    //     yield put(resetFilter());
-    //     yield put(resetCheckout());
-    //     yield put(signOutSuccess());
-    //     yield put(setAuthenticating(false));
-    //     yield call(history.push, ROUTE_SIGNIN);
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    //   break;
-    // }
+    case SIGNOUT: {
+      try {
+        yield initRequest();
+        // yield call(firebase.signOut);
+        yield put(clearBasket());
+        yield put(clearProfile());
+        yield put(resetFilter());
+        yield put(resetCheckout());
+        yield put(signOutSuccess());
+        yield put(setAuthenticating(false));
+        yield call(history.push, ROUTE_SIGNIN);
+      } catch (e) {
+        console.log(e);
+      }
+      break;
+    }
     // case RESET_PASSWORD: {
     //   try {
     //     yield initRequest();
@@ -190,14 +200,24 @@ function* authSaga({ type, payload }) {
           username: payload.username,
           id: payload.userid,
         };
-            yield put(signInSuccess({
-          id: payload.userid,
-          role: 'CUSTOMER',
-          provider: null
-        }));
+
+        yield put(
+          signInSuccess({
+            id: payload.userId,
+            role: "USER",
+            provider: "password",
+          })
+        );
+        const token = payload.token;
+        localStorage.setItem("access_token", token)
+        if(token) {
+          const basket = yield call(getCartDetail, token);
+          console.log("object", basket);
+          yield put(setBasketItems(basket.data));
+        }
       }
 
-      yield call(() => history.push('/'));
+      yield call(() => history.push("/"));
       // const snapshot = yield call(username.getUser, payload.uid);
       // const response =  yield call(signIn, payload.username, payload.password);
       // console.log(payload);

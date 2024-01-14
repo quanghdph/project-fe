@@ -6,7 +6,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { selectFilter } from '@/selectors/selector';
 
 const Shop = () => {
-  useDocumentTitle('Shop | Salinaka');
+  useDocumentTitle('Shop | YoungBoy');
   useScrollTop();
 
   const store = useSelector((state) => ({
@@ -19,9 +19,9 @@ const Shop = () => {
   return (
     <main className="content">
       <section className="product-list-wrapper">
-        <AppliedFilters filteredProductsCount={store.filteredProducts.length} />
+        {/* <AppliedFilters filteredProductsCount={store.filteredProducts.length} /> */}
         <ProductList {...store}>
-          <ProductGrid products={store.filteredProducts} />
+          <ProductGrid  />
         </ProductList>
       </section>
     </main>

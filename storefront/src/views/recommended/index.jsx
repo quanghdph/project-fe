@@ -5,7 +5,7 @@ import { useDocumentTitle, useScrollTop } from '@/hooks';
 import bannerImg from '@/images/banner-girl-1.png';
 
 const RecommendedProducts = () => {
-  useDocumentTitle('Recommended Products | Salinaka');
+  useDocumentTitle('Recommended Products | YoungBoy');
   useScrollTop();
 
   // const {

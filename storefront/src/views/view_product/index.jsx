@@ -1,27 +1,23 @@
-import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import Select from 'react-select';
-import { ColorChooser, ImageLoader, MessageDisplay } from '@/components/common';
-import { ProductShowcaseGrid } from '@/components/product';
-import { RECOMMENDED_PRODUCTS, SHOP } from '@/constants/routes';
-import { displayMoney } from '@/helpers/utils';
-import {
-  useBasket,
-  useDocumentTitle,
-  useProduct,
-  useScrollTop
-} from '@/hooks';
-import axios from 'axios';
+import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import Select from "react-select";
+import { ColorChooser, ImageLoader, MessageDisplay } from "@/components/common";
+import { ProductShowcaseGrid } from "@/components/product";
+import { RECOMMENDED_PRODUCTS, SHOP } from "@/constants/routes";
+import { displayMoney, displayActionMessage } from "@/helpers/utils";
+import { useBasket, useDocumentTitle, useProduct, useScrollTop } from "@/hooks";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const ViewProduct = () => {
   const { id } = useParams();
   const { product, isLoading, error } = useProduct(id);
   const { addToBasket, isItemOnBasket } = useBasket(id);
   useScrollTop();
-  useDocumentTitle(`View ${product?.product?.productname || 'Item'}`);
+  useDocumentTitle(`View ${product?.product?.productname || "Item"}`);
 
-  const [selectedImage, setSelectedImage] = useState(product?.image || '');
+  const [selectedImage, setSelectedImage] = useState(product?.image || "");
 
   const [productVariant, setProductVariant] = React.useState();
   const [selectedSize, setSelectedSize] = useState(null);
@@ -29,8 +25,8 @@ const ViewProduct = () => {
   const [uniqueSizes, setUniqueSizes] = useState([]);
   const [uniqueColors, setUniqueColors] = useState([]);
 
-  const [selectedCartSize, setSelectedCartSize] = useState('');
-  const [selectedCartColor, setSelectedCartColor] = useState('');
+  const [selectedCartSize, setSelectedCartSize] = useState("");
+  const [selectedCartColor, setSelectedCartColor] = useState("");
 
   // const {
   //   recommendedProducts,
@@ -40,10 +36,10 @@ const ViewProduct = () => {
   // } = useRecommendedProducts(6);
   const colorOverlay = useRef(null);
 
-  const recommendedProducts = [];
-  const fetchRecommendedProducts = () => {};
-  const errorFeatured = false;
-  const isLoadingFeatured = false;
+  // const recommendedProducts = [];
+  // const fetchRecommendedProducts = () => {};
+  // const errorFeatured = false;
+  // const isLoadingFeatured = false;
 
   useEffect(() => {
     setSelectedImage(product?.image);
@@ -57,35 +53,18 @@ const ViewProduct = () => {
     setSelectedCartColor(newValue.value);
   };
 
-  // const onSelectedColorChange = (color) => {
-  //   setSelectedColor(color);
-  //   if (colorOverlay.current) {
-  //     colorOverlay.current.value = color;
-  //   }
-  // };
-
-  const handleAddToBasket = () => {
-    console.log({ ...product, selectedColor: selectedCartColor, selectedSize: selectedCartSize });
-    // addToBasket({ ...product, selectedColor: selectedCartColor, selectedSize: selectedCartSize });
-  };
-
-  // React.useEffect(() => {
-  //   // axios.get(`/product-detail?idProduct=${id}`).then((res) => {
-  //   //   const result = { ...res };
-  //   // });
-  //   setProductVariant(result.data);
-  // }, []);
+  const { authStatus, isAuthenticating, store } = useSelector((state) => ({
+    authStatus: state.app.authStatus,
+    isAuthenticating: state.app.isAuthenticating,
+    store: state
+  }));
 
   useEffect(() => {
     const sizes = product && [
-      ...new Set(
-        product?.map((product) => product.size),
-      ),
+      ...new Set(product?.map((product) => product.size)),
     ];
     const colors = product && [
-      ...new Set(
-        product?.map((product) => product.color),
-      ),
+      ...new Set(product?.map((product) => product.color)),
     ];
 
     const sizeIds = sizes && sizes.map(({ id }) => id);
@@ -107,9 +86,22 @@ const ViewProduct = () => {
     product?.length > 0 &&
     product?.find((product) => {
       return (
-        product.size.id === selectedSize && product.color.id === selectedColor
+        product.size.id === selectedCartSize &&
+        product.color.id === selectedCartColor
       );
     });
+
+    const handleAddToBasket = () => {
+      
+      // if(!authStatus?.success) {
+      //   displayActionMessage('Bạn cần đăng nhập để thêm vào giỏ hàng!', 'info');
+      // }
+      addToBasket({
+        ...selectedProduct,
+        selectedColor: selectedCartColor,
+        selectedSize: selectedCartSize,
+      });
+    };
 
   return (
     <main className="content">
@@ -117,18 +109,16 @@ const ViewProduct = () => {
         <div className="loader">
           <h4>Tải dữ liệu sản phẩm...</h4>
           <br />
-          <LoadingOutlined style={{ fontSize: '3rem' }} />
+          <LoadingOutlined style={{ fontSize: "3rem" }} />
         </div>
       )}
-      {error && (
-        <MessageDisplay message={error} />
-      )}
-      {(product && !isLoading) && (
+      {error && <MessageDisplay message={error} />}
+      {product && !isLoading && (
         <div className="product-view">
           <Link to={SHOP}>
             <h3 className="button-link d-inline-flex">
               <ArrowLeftOutlined />
-              &nbsp; Back to shop
+              &nbsp; Quay lại cửa hàng
             </h3>
           </Link>
           <div className="product-modal">
@@ -159,8 +149,12 @@ const ViewProduct = () => {
             </div> */}
             <div className="product-modal-details">
               <br />
-              <span className="text-subtle">{product[0]?.brand?.brandName}</span>
-              <h1 className="margin-top-0">{product[0]?.product?.productName}</h1>
+              <span className="text-subtle">
+                {product[0]?.brand?.brandName}
+              </span>
+              <h1 className="margin-top-0">
+                {product[0]?.product?.productName}
+              </h1>
               <span>{product[0]?.product?.description}</span>
               <br />
               <br />
@@ -173,7 +167,10 @@ const ViewProduct = () => {
                 <Select
                   placeholder="--Chọn kích thước--"
                   onChange={onSelectedSizeChange}
-                  options={uniqueSizes?.map((size) => ({ label: `${size?.sizeName}`, value: size.id }))}
+                  options={uniqueSizes?.map((size) => ({
+                    label: `${size?.sizeName}`,
+                    value: size.id,
+                  }))}
                   styles={{ menu: (provided) => ({ ...provided, zIndex: 10 }) }}
                 />
               </div>
@@ -189,25 +186,37 @@ const ViewProduct = () => {
                   />
                 </div>
               )} */}
-               <Select
-                  placeholder="--Chọn màu sắc--"
-                  onChange={onSelectedColorChange}
-                  options={uniqueColors?.map((color) => ({ label: `${color?.colorName}`, value: color.id }))}
-                  styles={{ menu: (provided) => ({ ...provided, zIndex: 10 }) }}
-                />
-              <h1>{displayMoney(product?.price)}</h1>
+              <Select
+                placeholder="--Chọn màu sắc--"
+                onChange={onSelectedColorChange}
+                options={uniqueColors?.map((color) => ({
+                  label: `${color?.colorName}`,
+                  value: color.id,
+                }))}
+                styles={{ menu: (provided) => ({ ...provided, zIndex: 10 }) }}
+              />
+
+              {selectedProduct && <h1>{displayMoney(selectedProduct?.price)}</h1>}
+
               <div className="product-modal-action">
                 <button
-                  className={`button button-small ${isItemOnBasket(product.id) ? 'button-border button-border-gray' : ''}`}
+                  className={`button button-small ${
+                    isItemOnBasket(product.id)
+                      ? "button-border button-border-gray"
+                      : ""
+                  }`}
+                  disabled={!selectedProduct && true}
                   onClick={handleAddToBasket}
                   type="button"
                 >
-                  {isItemOnBasket(product.id) ? 'Xóa khỏi giỏ' : 'Thêm vào giỏ hàng'}
+                  {isItemOnBasket(product.id)
+                    ? "Xóa khỏi giỏ"
+                    : "Thêm vào giỏ hàng"}
                 </button>
               </div>
             </div>
           </div>
-          <div style={{ marginTop: '10rem' }}>
+          {/* <div style={{ marginTop: "10rem" }}>
             <div className="display-header">
               <h1>Recommended</h1>
               <Link to={RECOMMENDED_PRODUCTS}>See All</Link>
@@ -219,9 +228,12 @@ const ViewProduct = () => {
                 buttonLabel="Try Again"
               />
             ) : (
-              <ProductShowcaseGrid products={recommendedProducts} skeletonCount={3} />
+              <ProductShowcaseGrid
+                products={recommendedProducts}
+                skeletonCount={3}
+              />
             )}
-          </div>
+          </div> */}
         </div>
       )}
     </main>

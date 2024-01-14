@@ -20,6 +20,18 @@ import {
   removeProductSuccess,
   searchProductSuccess
 } from '../actions/productActions';
+import axios from 'axios';
+
+function getProductAPI() {
+  const response = axios.get("/product", {
+    params: {
+      page: 1,
+      limit: 10,
+      filter: ""
+    }
+  })
+  return response;
+}
 
 function* initRequest() {
   yield put(setLoading(true));
@@ -43,19 +55,24 @@ function* productSaga({ type, payload }) {
       try {
         yield initRequest();
         const state = yield select();
+        const resultAPI = yield call(getProductAPI)
+        const result = resultAPI && {
+          products: resultAPI.data.list,
+          total: resultAPI.data.total
+        }
         // const result = yield call(firebase.getProducts, payload);
-        const result = {
-          product: []
-        };
+        // const result = {
+        //   product: []
+        // };
 
         if (result.products.length === 0) {
-          handleError('No items found.');
+          handleError('Không tìm thấy sản phẩm nào!');
         } else {
-          yield put(getProductsSuccess({
-            products: result.products,
-            lastKey: result.lastKey ? result.lastKey : state.products.lastRefKey,
-            total: result.total ? result.total : state.products.total
-          }));
+          // yield put(getProductsSuccess({
+          //   products: result.products,
+          //   // lastKey: result.lastKey ? result.lastKey : state.products.lastRefKey,
+          //   total: result.total ? result.total : state.products.total
+          // }));
           yield put(setRequestStatus(''));
         }
         // yield put({ type: SET_LAST_REF_KEY, payload: result.lastKey });

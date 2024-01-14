@@ -10,9 +10,10 @@ export default (state = [], action) => {
     case SET_BASKET_ITEMS:
       return action.payload;
     case ADD_TO_BASKET:
-      return state.some((product) => product.id === action.payload.id)
-        ? state
-        : [action.payload, ...state];
+      console.log("action.payload", action.payload);
+      // return state.some((product) => product.id === action.payload.id)
+      //   ? state
+      //   : [action.payload, ...state];
     case REMOVE_FROM_BASKET:
       return state.filter((product) => product.id !== action.payload);
     case CLEAR_BASKET:

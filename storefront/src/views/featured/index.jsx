@@ -5,7 +5,7 @@ import { useDocumentTitle, useScrollTop } from '@/hooks';
 import bannerImg from '@/images/banner-guy.png';
 
 const FeaturedProducts = () => {
-  useDocumentTitle('Featured Products | Salinaka');
+  useDocumentTitle('Featured Products | YoungBoy');
   useScrollTop();
 
   // const {

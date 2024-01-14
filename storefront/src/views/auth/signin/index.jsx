@@ -33,10 +33,10 @@ const SignIn = ({ history }) => {
   useScrollTop();
   useDocumentTitle('Đăng nhập | Young Boy');
 
-  useEffect(() => () => {
-    dispatch(setAuthStatus(null));
-    dispatch(setAuthenticating(false));
-  }, []);
+  // useEffect(() => () => {
+  //   dispatch(setAuthStatus(null));
+  //   dispatch(setAuthenticating(false));
+  // }, []);
 
   const onSignUp = () => history.push(SIGNUP);
 

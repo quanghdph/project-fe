@@ -1,20 +1,20 @@
 /* eslint-disable max-len */
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
-import { BasketItem, BasketToggle } from '@/components/basket';
-import { Boundary, Modal } from '@/components/common';
-import { CHECKOUT_STEP_1 } from '@/constants/routes';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import { BasketItem, BasketToggle } from "@/components/basket";
+import { Boundary, Modal } from "@/components/common";
+import { CHECKOUT_STEP_1 } from "@/constants/routes";
 // import firebase from 'firebase/firebase';
-import { calculateTotal, displayMoney } from '@/helpers/utils';
-import { useDidMount, useModal } from '@/hooks';
-import { clearBasket } from '@/redux/actions/basketActions';
+import { calculateTotal, displayMoney } from "@/helpers/utils";
+import { useDidMount, useModal } from "@/hooks";
+import { clearBasket } from "@/redux/actions/basketActions";
 
 const Basket = () => {
   const { isOpenModal, onOpenModal, onCloseModal } = useModal();
   const { basket, user } = useSelector((state) => ({
     basket: state.basket,
-    user: state.auth
+    user: state.auth,
   }));
   const history = useHistory();
   const { pathname } = useLocation();
@@ -34,8 +34,9 @@ const Basket = () => {
   }, [basket.length]);
 
   const onCheckOut = () => {
-    if ((basket.length !== 0 && user)) {
-      document.body.classList.remove('is-basket-open');
+    console.log(basket);
+    if (basket.length !== 0 && user) {
+      document.body.classList.remove("is-basket-open");
       history.push(CHECKOUT_STEP_1);
     } else {
       onOpenModal();
@@ -44,7 +45,7 @@ const Basket = () => {
 
   const onSignInClick = () => {
     onCloseModal();
-    document.body.classList.remove('basket-open');
+    document.body.classList.remove("basket-open");
     history.push(CHECKOUT_STEP_1);
   };
 
@@ -53,13 +54,10 @@ const Basket = () => {
       dispatch(clearBasket());
     }
   };
-
-  return user && user.role === 'ADMIN' ? null : (
+  console.log("123", basket);
+  return user && user.role === "ADMIN" ? null : (
     <Boundary>
-      <Modal
-        isOpen={isOpenModal}
-        onRequestClose={onCloseModal}
-      >
+      <Modal isOpen={isOpenModal} onRequestClose={onCloseModal}>
         <p className="text-center">You must sign in to continue checking out</p>
         <br />
         <div className="d-flex-center">
@@ -84,11 +82,9 @@ const Basket = () => {
         <div className="basket-list">
           <div className="basket-header">
             <h3 className="basket-header-title">
-              My Basket &nbsp;
+              Giỏ hàng &nbsp;
               <span>
-                (
-                {` ${basket.length} ${basket.length > 1 ? 'items' : 'item'}`}
-                )
+                ({` ${basket.length} sản phẩm`})
               </span>
             </h3>
             <BasketToggle>
@@ -113,14 +109,15 @@ const Basket = () => {
           </div>
           {basket.length <= 0 && (
             <div className="basket-empty">
-              <h5 className="basket-empty-msg">Your basket is empty</h5>
+              <h5 className="basket-empty-msg">Không có sản phẩm nào trong giỏ</h5>
             </div>
           )}
           {basket.map((product, i) => (
             <BasketItem
               // eslint-disable-next-line react/no-array-index-key
-              key={`${product.id}_${i}`}
-              product={product}
+              key={`${
+                product?.productDetail}_${i}`}
+              product={product?.productDetail}
               basket={basket}
               dispatch={dispatch}
             />
@@ -128,18 +125,37 @@ const Basket = () => {
         </div>
         <div className="basket-checkout">
           <div className="basket-total">
-            <p className="basket-total-title">Subtotal Amout:</p>
-            <h2 className="basket-total-amount">
-              {displayMoney(calculateTotal(basket.map((product) => product.price * product.quantity)))}
-            </h2>
+            <p className="basket-total-title">Tổng đơn:</p>
+
+            {/* {product ? (
+              <h2 className="basket-total-amount">
+                {displayMoney(
+                  calculateTotal(
+                    basket.map((product) => product.price * product.quantity)
+                  )
+                )}
+              </h2>
+            ) : (
+              <h2 className="basket-total-amount">
+                {displayMoney(
+                  calculateTotal(
+                    basket.map(
+                      (product) =>
+                        product.productDetail.price *
+                        product.productDetail.quantity
+                    )
+                  )
+                )}
+              </h2>
+            )} */}
           </div>
           <button
             className="basket-checkout-button button"
-            disabled={basket.length === 0 || pathname === '/checkout'}
+            disabled={basket.length === 0 || pathname === "/checkout"}
             onClick={onCheckOut}
             type="button"
           >
-            Check Out
+            Thanh toán
           </button>
         </div>
       </div>

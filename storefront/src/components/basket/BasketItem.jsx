@@ -11,22 +11,22 @@ import { removeFromBasket } from '@/redux/actions/basketActions';
 const BasketItem = ({ product }) => {
   const dispatch = useDispatch();
   const onRemoveFromBasket = () => dispatch(removeFromBasket(product.id));
-
+  
   return (
     <div className="basket-item">
       <BasketItemControl product={product} />
       <div className="basket-item-wrapper">
         <div className="basket-item-img-wrapper">
           <ImageLoader
-            alt={product.name}
+            alt={product.product.productName}
             className="basket-item-img"
-            src={product.image}
+            // src={product.image}
           />
         </div>
         <div className="basket-item-details">
-          <Link to={`/product/${product.id}`} onClick={() => document.body.classList.remove('is-basket-open')}>
+          <Link to={`/product/${product.id.toString()}`} onClick={() => document.body.classList.remove('is-basket-open')}>
             <h4 className="underline basket-item-name">
-              {product.name}
+              {product.product.productName}
             </h4>
           </Link>
           <div className="basket-item-specs">
@@ -37,20 +37,23 @@ const BasketItem = ({ product }) => {
             <div>
               <span className="spec-title">Size</span>
               <h5 className="my-0">
-                {product.selectedSize}
+                {product.size.sizeName}
                 {' '}
-                mm
               </h5>
             </div>
             <div>
               <span className="spec-title">Color</span>
-              <div style={{
-                backgroundColor: product.selectedColor || product.availableColors[0],
+              {/* <div style={{
+                backgroundColor: product.selectedColor,
                 width: '15px',
                 height: '15px',
                 borderRadius: '50%'
               }}
-              />
+              /> */}
+               <h5 className="my-0">
+                {product.color.colorName}
+                {' '}
+              </h5>
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 
 WebFont.load({
   google: {
-    families: ['Tajawal']
+    families: ['Open Sans']
   }
 });
 

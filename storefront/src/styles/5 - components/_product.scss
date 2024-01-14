@@ -557,3 +557,24 @@
     margin-top: 0;
   }
 }
+
+
+.row {
+  margin: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.text {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.radio-group {
+  margin-right: 8px;
+}
+
+.box-info {
+  margin-top: 16px;
+}
