@@ -8,10 +8,11 @@
     "storefront"
   ],
   "scripts": {
-    "dev:admin": "cd admin && yarn start",
-    "dev:storefront": "cd storefront && yarn dev",
+    "dev:admin": "cd admin && npm start",
+    "dev:storefront": "cd storefront && npm run dev",
     "build:admin": "cd admin && yarn build",
-    "build:storefront": "cd storefront && yarn build"
+    "build:storefront": "cd storefront && yarn build",
+    "dev": "concurrently cd admin && npm start && cd storefront && npm run dev"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.6.0",

@@ -310,7 +310,7 @@ export const getWardAddress = async ({ district_id , dispatch }: any) => {
     try {
         // const accessToken = localStorage.getItem("accessToken")
         dispatch(getWardAddressStart());
-        const res: any= await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
+        const res: any= await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward`, {
             params: {
                 district_id 
             },

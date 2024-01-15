@@ -69,8 +69,8 @@ const initialState: AddressState = {
         result: null,
         loading: false,
         error: false
-    }
-    ,  province: {
+    },  
+    province: {
         result:  null,
         loading: false,
         error: false

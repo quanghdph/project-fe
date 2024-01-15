@@ -107,7 +107,7 @@ const columns = (
   },
 ];
 
-function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
+function ProductList({ navigate, cart, setCart, setPage, setLimit, page }) {
   const [filter, setFilter] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [activeModalProductDetail, setActiveModalProductDetail] = useState(false);
@@ -120,7 +120,7 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
   // useEffect(() => {
    
   // }, [page, limit]);
-
+  console.log("3", product);
   const dataRender = (): any => {
     if (!product.list.loading && product.list.result?.list) {
       return product.list.result?.list.map((product, index: number) => {
@@ -197,6 +197,7 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit }) {
           onChange: handleOnChangePagination,
           onShowSizeChange: handleOnShowSizeChange,
           responsive: true,
+          pageSize: page
         }}
         scroll={{ x: true }}
         // style={{maxWidth: 600}}

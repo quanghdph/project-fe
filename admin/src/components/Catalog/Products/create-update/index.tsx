@@ -48,45 +48,18 @@ import {
   getListMaterial,
   getListSearchMaterial,
 } from "src/features/catalog/material/action";
-// import {
-//   getListSearchWaistband,
-//   getListWaistband,
-// } from "src/features/catalog/waistband/action";
 import ProductDetail from "../detail-update";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useDebounce } from "use-debounce";
-import { getListColor } from "src/features/catalog/color/action";
+import { getListColor, getListSearchColor } from "src/features/catalog/color/action";
 import { getListSize } from "src/features/catalog/size/action";
 import ProductVariant from "./ProductVariant";
-import ImgCrop from "antd-img-crop";
 import { UploadOutlined } from "@ant-design/icons";
-import shortid from "shortid";
-
-const props: UploadProps = {
-  name: "file",
-  multiple: true,
-  action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
+import { useSelector } from "react-redux";
 
 const ProductCreateUpdate: React.FC = () => {
   const [enabled, setEnabled] = useState<boolean>(true);
-  const [variantItem, setVariantItem] = useState<number[]>([]);
-  const [productOptions, setProductOptions] = useState<number[]>([]);
   const [featuredAsset, setFeaturedAsset] = useState<Asset>();
   const [isModalAssetOpen, setIsModalAssetOpen] = useState<boolean>(false);
 
@@ -96,8 +69,6 @@ const ProductCreateUpdate: React.FC = () => {
   const [categoryValue] = useDebounce(categorySearch, 1000);
   const [brandSearch, setBrandSearch] = useState<string>("");
   const [brandValue] = useDebounce(brandSearch, 1000);
-  const [waistbandSearch, setWaistbandSSearch] = useState<string>("");
-  const [waistbandValue] = useDebounce(waistbandSearch, 1000);
   const [materialSearch, setMaterialSearch] = useState<string>("");
   const [materialValue] = useDebounce(materialSearch, 1000);
   const [colorSearch, setColorSearch] = useState<string>("");
@@ -124,6 +95,7 @@ const ProductCreateUpdate: React.FC = () => {
     handleSubmit,
     setValue,
     setError,
+    register,
     watch,
     formState: { errors },
   } = useForm({
@@ -140,10 +112,6 @@ const ProductCreateUpdate: React.FC = () => {
         value: 0,
         label: "Chọn thương hiệu",
       },
-      // waistband: {
-      //   value: 0,
-      //   label: "Chọn cạp quần",
-      // },
       material: {
         value: 0,
         label: "Chọn chất liệu",
@@ -167,14 +135,14 @@ const ProductCreateUpdate: React.FC = () => {
       // "Content-Type": "application/json",
     },
   });
-  const product = useAppSelector((state) => state.product);
-  const category = useAppSelector((state) => state.category);
-  const brand = useAppSelector((state) => state.brand);
-  const material = useAppSelector((state) => state.material);
-  // const waistband = useAppSelector((state) => state.waistband);
-  const color = useAppSelector((state) => state.color);
-  const size = useAppSelector((state) => state.size);
-
+  const {
+    product,
+    category,
+    brand,
+    material,
+    color,
+    size,
+  } = useSelector((state) => state);
   //upload
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [fileMainList, setFileMainList] = useState<UploadFile[]>([]);
@@ -243,28 +211,6 @@ const ProductCreateUpdate: React.FC = () => {
     fetchData();
   }, [materialSearch, materialValue]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const fetchFunction = waistbandValue
-  //       ? getListSearchWaistband
-  //       : getListWaistband;
-
-  //     try {
-  //       const params = waistbandValue ? { value: waistbandValue } : {};
-  //       await fetchFunction({
-  //         params,
-  //         navigate,
-  //         axiosClientJwt,
-  //         dispatch,
-  //       });
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [waistbandSearch, waistbandValue]);
-
   useEffect(() => {
     const fetchData = async () => {
       const fetchFunction = colorValue ? getListSearchColor : getListColor;
@@ -307,12 +253,6 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      // getProductDetail({
-      //   id: +id,
-      //   dispatch,
-      //   axiosClientJwt,
-      //   navigate,
-      // });
       getVariantProductDetail({
         axiosClientJwt,
         dispatch,
@@ -344,9 +284,9 @@ const ProductCreateUpdate: React.FC = () => {
           category: {
             id: data.category,
           },
-          images: fileList,
-          productDetails: tableData,
-          mainImage: fileMainList,
+          // images: fileList,
+          // productDetails: tableData,
+          // mainImage: fileMainList,
         },
       });
     } else {
@@ -387,27 +327,38 @@ const ProductCreateUpdate: React.FC = () => {
   const onCategorySearch = (value: string) => {
     setCategorySearch(value);
   };
-  const onWaistbandSearch = (value: string) => {
-    setWaistbandSSearch(value);
-  };
+
+  // useEffect(() => {
+  //   if (!category.list.loading && category.list.result) {
+  //     const listOption = category.list.result.listCategories
+  //       ? category.list.result.listCategories.map((item) => ({
+  //           value: item.id,
+  //           label: item.categoryName,
+  //         }))
+  //       : category.list.result.map((item) => ({
+  //           value: item.id,
+  //           label: item.categoryName,
+  //         }));
+
+  //     if (!categoryValue) {
+  //       setCategorySelect(listOption);
+  //     } else {
+  //       listOption && setCategorySelect(listOption);
+  //     }
+  //   }
+  // }, [category.list.result, category.list.loading, categoryValue]);
 
   useEffect(() => {
     if (!category.list.loading && category.list.result) {
-      const listOption = category.list.result.listCategories
-        ? category.list.result.listCategories.map((item) => ({
-            value: item.id,
-            label: item.categoryName,
-          }))
-        : category.list.result.map((item) => ({
-            value: item.id,
-            label: item.categoryName,
-          }));
-
-      if (!categoryValue) {
-        setCategorySelect(listOption);
-      } else {
+      const listOption = (category.list.result.listCategories ?? category.list.result)
+        .map((item) => ({
+          value: item.id,
+          label: item.categoryName,
+        }));
+  
+        !categoryValue && setCategorySelect(listOption);
+        
         listOption && setCategorySelect(listOption);
-      }
     }
   }, [category.list.result, category.list.loading, categoryValue]);
 
@@ -511,13 +462,6 @@ const ProductCreateUpdate: React.FC = () => {
       }
     }
   }, [size.list.result, size.list.loading, sizeValue]);
-
-  const filterSizeOption = (
-    input: string,
-    option?: { label: string; value: string },
-  ) => {
-    return sizeSelect;
-  };
 
   const onUploadChange: UploadProps["onChange"] = ({
     fileList: newFileList,
@@ -632,9 +576,6 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     if (id && product?.variant?.result && !product?.variant.loading) {
-      console.log(uniqueSizes);
-      console.log(uniqueColors);
-      console.log("table", tableData);
       setValue(
         "productName",
         product?.variant?.result?.listProductDetail[0]?.product?.productName,
@@ -713,25 +654,26 @@ const ProductCreateUpdate: React.FC = () => {
         <Col span={24}>
           <Card>
             <Form onFinish={handleSubmit(onSubmit)} autoComplete="off">
-              <Flex justifyContent={`${id ? "space-between" : "flex-end"}`} alignItems="center">
-               {
-                id && (
+              <Flex
+                justifyContent={`${id ? "space-between" : "flex-end"}`}
+                alignItems="center"
+              >
+                {id && (
                   <Flex justifyContent="center" alignItems="center">
-                  <Switch
-                    checked={enabled}
-                    size="small"
-                    onChange={() => setEnabled(!enabled)}
-                  />
-                  <Box as="span" ml={2} fontWeight="semibold">
-                    Hoạt động
-                  </Box>
-                </Flex>
-                )
-               }
+                    <Switch
+                      checked={enabled}
+                      size="small"
+                      onChange={() => setEnabled(!enabled)}
+                    />
+                    <Box as="span" ml={2} fontWeight="semibold">
+                      Hoạt động
+                    </Box>
+                  </Flex>
+                )}
                 <Button
                   type="primary"
                   htmlType="submit"
-                  loading={product.createProduct.loading}
+                  loading={!id ? product.createProduct.loading : product.update.loading}
                 >
                   {!id ? "Tạo" : "Cập nhật"}
                 </Button>
@@ -754,11 +696,11 @@ const ProductCreateUpdate: React.FC = () => {
                           {...other}
                           value={value || ""}
                         />
-                        {errors?.name ? (
+                        {errors?.productName ? (
                           <Box as="span" textColor="red.500">
-                            {errors.name?.type === "required"
+                            {errors.productName?.type === "required"
                               ? "Vui lòng điền tên sản phẩm!"
-                              : errors.name.message}
+                              : errors.productName.message}
                           </Box>
                         ) : null}
                       </Box>
@@ -805,21 +747,32 @@ const ProductCreateUpdate: React.FC = () => {
                     <Controller
                       name="category"
                       control={control}
+                      rules={{ required: true }}
                       render={({ field: { value, ...other } }) => {
                         return (
-                          <Select
-                            showSearch
-                            onSearch={onCategorySearch}
-                            optionFilterProp="children"
-                            // onChange={onCategorySearchChange}
-                            onChange={(selectedOption) => {
-                              setValue("category", selectedOption); // Update 'category' field
-                            }}
-                            value={value}
-                            filterOption={filterCategoryOption}
-                            style={{ width: "100%" }}
-                            options={categorySelect}
-                          />
+                          <>
+                            <Select
+                              showSearch
+                              onSearch={onCategorySearch}
+                              optionFilterProp="children"
+                              // onChange={onCategorySearchChange}
+                              onChange={(selectedOption) => {
+                                setValue("category", selectedOption); // Update 'category' field
+                              }}
+                              value={value}
+                              placeholder={"Chọn danh mục"}
+                              filterOption={filterCategoryOption} 
+                              style={{ width: "100%" }}
+                              options={categorySelect}
+                            />
+                            {errors?.category ? (
+                              <Box as="span" textColor="red.500">
+                                {errors.category?.type === "required"
+                                  ? "Vui lòng điền tên sản phẩm!"
+                                  : errors.category.message}
+                              </Box>
+                            ) : null}
+                          </>
                         );
                       }}
                     />
@@ -889,14 +842,20 @@ const ProductCreateUpdate: React.FC = () => {
               </Flex>
             </Form>
 
-            <ProductVariant
+          {
+            !id && (
+              <ProductVariant
               tableData={tableData}
               setTableData={setTableData}
               sizes={sizeSelect}
               colors={colorSelect}
             />
+            )
+          }
 
-            <Box mt={5}>
+          {
+            !id && (
+              <Box mt={5}>
               <Text>Chọn ảnh chính</Text>
               <Upload
                 action="http://localhost:8080/product/add"
@@ -914,7 +873,7 @@ const ProductCreateUpdate: React.FC = () => {
               >
                 {fileMainList.length >= 1 ? null : uploadButton}
               </Upload>
-              {!id && (
+              {/* {!id && (
                 <>
                   <Text>Chọn biến thể</Text>
                   <Upload
@@ -934,8 +893,10 @@ const ProductCreateUpdate: React.FC = () => {
                     {fileList.length >= 5 ? null : uploadButton}
                   </Upload>
                 </>
-              )}
+              )} */}
             </Box>
+            )
+          }
           </Card>
         </Col>
       </Row>
@@ -949,4 +910,4 @@ const ProductCreateUpdate: React.FC = () => {
     </Fragment>
   );
 };
-export default ProductCreateUpdate;
+export default React.memo(ProductCreateUpdate);

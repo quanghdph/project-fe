@@ -6,6 +6,7 @@ import {
   Card,
   Col,
   Divider,
+  Image,
   Input,
   Modal,
   PaginationProps,
@@ -57,6 +58,26 @@ const columns = (
     ellipsis: true,
     key: "id",
     width: "5%",
+  },
+  {
+    title: "#",
+    dataIndex: "id",
+    ellipsis: true,
+    key: "id",
+    width: "10%",
+    render: (product, record) => {
+      return (
+        <Image
+          style={{ width: "100%", maxWidth: "300px", maxHeight: "75%" }}
+          onError={(e) => {
+            e.target.src = 'https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg';
+          }}
+          src={`${import.meta.env.VITE_BACKEND_URL}/product/${
+            record.id
+          }/image-main`}
+        />
+      );
+    },
   },
   {
     title: "Tên",
@@ -347,10 +368,10 @@ const Products: React.FC = () => {
       </Modal>
 
       <ModalProductDetail
-          activeModalProductDetail={activeModalProductDetail}
-          setActiveModalProductDetail={setActiveModalProductDetail}
-          id={idProductDetail}
-        />
+        activeModalProductDetail={activeModalProductDetail}
+        setActiveModalProductDetail={setActiveModalProductDetail}
+        id={idProductDetail}
+      />
     </Fragment>
   );
 };

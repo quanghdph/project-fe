@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, MoneyCollectOutlined } from "@ant-design/icons";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import {
   Avatar,
@@ -9,6 +9,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Radio,
   Select,
   Space,
   Table,
@@ -39,6 +40,8 @@ import { Inotification } from "src/common";
 import ModalCreateCustomer from "./ModalCreateCustomer";
 import { formatPriceVND } from "src/helper/currencyPrice";
 import ModalCreateBill from "./ModalCreateBill";
+import vnpayLogo from 'src/assets/Icon-VNPAY.webp';
+import moneyLogo from 'src/assets/money.png';
 
 interface DataType {
   key: string;
@@ -207,7 +210,9 @@ function OrderDetail(props: any) {
           <InputNumber
             min={1}
             max={product.quantity}
-            formatter={(value) => (value ? String(value).replace(/\D/g, '') : '')}
+            formatter={(value) =>
+              value ? String(value).replace(/\D/g, "") : ""
+            }
             parser={(value) => (value ? parseInt(value, 10) : undefined)}
             value={product.cartQuantity}
             onChange={(value) => handleQuantityChange(value, product)}
@@ -215,7 +220,7 @@ function OrderDetail(props: any) {
           />
         ),
         inventory: product.quantity,
-        variant: `${product?.color?.colorName} - ${product?.size?.sizeName}`
+        variant: `${product?.color?.colorName} - ${product?.size?.sizeName}`,
       };
     });
     // return [];
@@ -244,7 +249,9 @@ function OrderDetail(props: any) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchFunction = value ? getListSearchPhoneNumberCustomer : getListCustomer;
+      const fetchFunction = value
+        ? getListSearchPhoneNumberCustomer
+        : getListCustomer;
 
       try {
         const params = value ? { value: value } : {};
@@ -274,7 +281,6 @@ function OrderDetail(props: any) {
             label: `${item.firstName} ${item.lastName}`,
           }));
       if (!value) {
-        console.log("cus", listOption);
         setCustomerOption(listOption);
       } else {
         listOption && setCustomerOption(listOption);
@@ -396,7 +402,7 @@ function OrderDetail(props: any) {
   };
 
   const showBillModal = () => {
-    trigger()
+    trigger();
     setBillVisible(true);
   };
 
@@ -416,20 +422,21 @@ function OrderDetail(props: any) {
             quantity: item.cartQuantity,
           };
         });
-    
-        formData && createSelloff({
-          params: {
-            idKhachHang: formData.customer.id,
-            thanhToan: formData.paymentMethod,
-            trangThaiTT: 1,
-            note: formData.note,
-            sanPhams: cartArr ? cartArr : [],
-          },
-          dispatch,
-          axiosClientJwt,
-          navigate,
-          message,
-        })
+
+        formData &&
+          createSelloff({
+            params: {
+              idKhachHang: formData.customer.id,
+              thanhToan: formData.paymentMethod,
+              trangThaiTT: 1,
+              note: formData.note,
+              sanPhams: cartArr ? cartArr : [],
+            },
+            dispatch,
+            axiosClientJwt,
+            navigate,
+            message,
+          });
       }
     });
     setBillVisible(false);
@@ -466,7 +473,7 @@ function OrderDetail(props: any) {
           />
 
           <Card>
-            <Flex justifyContent={"space-between"} mb={3}>
+            <Flex direction={"column"} justifyContent={"space-between"} mb={3}>
               <Title level={5}>Thông tin khách hàng</Title>
               <Flex gap={2} width={400}>
                 <Box flex={1}>
@@ -521,15 +528,11 @@ function OrderDetail(props: any) {
             )}
           </Card>
 
-          {cart.length > 0 && (
+          {/* {cart.length > 0 && (
             <Card>
               <Flex justifyContent={"space-between"}>
                 <Title level={5}>Thông tin thanh toán</Title>
               </Flex>
-              {/* <Flex justifyContent={"space-between"}>
-                <Text>Tạm tính:</Text>
-                <Text>500.000đ</Text>
-              </Flex> */}
               <Flex justifyContent={"space-between"}>
                 <Text>Tổng tiền:</Text>
                 <Text>{formatPriceVND(totalAmount)}</Text>
@@ -542,19 +545,24 @@ function OrderDetail(props: any) {
                 <Text>Tiền dư:</Text>
                 <Text>500.000đ</Text>
               </Flex>
-              <Flex justifyContent={"space-between"} alignItems={"center"}>
+              <Flex direction={"column"} justifyContent={"space-between"}>
                 <Text>Chọn phương thức thanh toán</Text>
-                <Form.Item name="paymentMethod">
-                  <Select
-                    defaultValue="0"
-                    style={{ width: 220 }}
-                    {...register("paymentMethod")}
-                    onChange={(value) => setValue("paymentMethod", value)}
-                    options={[
-                      { value: "0", label: "Thanh toán tiền mặt" },
-                      { value: "1", label: "Chuyển khoản" },
-                    ]}
-                  />
+                <Form.Item name="paymentMethod" >
+                  <Radio.Group
+                    size="large"
+                    buttonStyle="solid"
+                    onChange={(value) => setValue("paymentMethod", value.target.value)}
+                    defaultValue={0}
+                  >
+                    <Radio.Button value="0" checked>
+                    <Image src={moneyLogo} width={20} height={20} preview={false} />
+                     Tiền mặt
+                    </Radio.Button>
+                    <Radio.Button value="1" >
+                      <Image src={vnpayLogo} width={20} height={20} preview={false} />
+                      Chuyển khoản
+                    </Radio.Button>
+                  </Radio.Group>
                 </Form.Item>
               </Flex>
               <Box mb={2}>
@@ -581,27 +589,25 @@ function OrderDetail(props: any) {
                 Hoàn thành
               </Button>
             </Card>
-          )}
+          )} */}
         </Flex>
       </Form>
-      <ModalProduct navigate={navigate} setOpen={setOpen} open={open} />
+      {/* <ModalProduct navigate={navigate} setOpen={setOpen} open={open} /> */}
       <ModalCreateCustomer
         visible={visible}
         onCreate={handleCreate}
         onCancel={handleCancel}
       />
-    <Modal
-    open={billVisible}
-          title="Hóa đơn"
-          okText="Đồng ý"
-          cancelText="Hủy"
-          onOk={handleBillOk}
-          onCancel={handleBillCancel}
-        >
-          <p>Bạn có muốn thanh toán hóa đơn không?</p>
-        </Modal>
-
- 
+      {/* <Modal
+        open={billVisible}
+        title="Hóa đơn"
+        okText="Đồng ý"
+        cancelText="Hủy"
+        onOk={handleBillOk}
+        onCancel={handleBillCancel}
+      >
+        <p>Bạn có muốn thanh toán hóa đơn không?</p>
+      </Modal> */}
     </Fragment>
   );
 }
