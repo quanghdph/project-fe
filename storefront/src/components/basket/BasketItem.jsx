@@ -38,7 +38,7 @@ const BasketItem = ({ product }) => {
           <ImageLoader
             alt={product.product.productName}
             className="basket-item-img"
-            // src={product.image}
+            src={`http://localhost:8080/product/${product.product.id}/image-main`}
           />
         </div>
         <div className="basket-item-details">

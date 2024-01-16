@@ -25,9 +25,9 @@ const ModalCreateCustomer = ({ visible, onCreate, onCancel }) => {
   return (
     <Modal
       open={visible}
-      title="Create Customer"
-      okText="Create"
-      cancelText="Cancel"
+      title="Thêm mới khách hàng"
+      okText="Xác nhận"
+      cancelText="Hủy"
       onCancel={onCancel}
       onOk={handleSubmit(onSubmit)}
     >
@@ -58,19 +58,19 @@ const ModalCreateCustomer = ({ visible, onCreate, onCancel }) => {
         </Form.Item>
         <Form.Item
           label="Email"
-          validateStatus={errors.email ? 'error' : ''}
-          help={errors.email && errors.email.message}
+          // validateStatus={errors.email ? 'error' : ''}
+          // help={errors.email && errors.email.message}
         >
           <Controller
             name="email"
             control={control}
-            rules={{
-              required: 'Vui lòng điền email!',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: 'Invalid email address',
-              },
-            }}
+            // rules={{
+            //   required: 'Vui lòng điền email!',
+            //   pattern: {
+            //     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+            //     message: 'Invalid email address',
+            //   },
+            // }}
             render={({ field }) => <Input {...field} />}
           />
         </Form.Item>

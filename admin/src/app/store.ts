@@ -28,6 +28,7 @@ import employeeSlice from 'src/features/employee/employeeSlice';
 import brandSlice from 'src/features/catalog/brand/brandSlice';
 import billSlice from 'src/features/sale/bill/billSlice';
 import selloffSlice from 'src/features/sale/saleoff/selloffSlice';
+import checkoutSlice from 'src/features/sale/checkout/checkoutSlice';
 
 const persistConfig = {
   key: 'root',
@@ -53,6 +54,7 @@ const rootReducer = combineReducers({
   order: orderSlice,
   bill: billSlice,
   selloff: selloffSlice,
+  checkout: checkoutSlice,
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

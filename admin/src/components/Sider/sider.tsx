@@ -87,6 +87,15 @@ const SiderBar = () => {
                                 }
                             },
                             // {
+                            //     key: "variant",
+                            //     icon: <ScissorOutlined />,
+                            //     label: "Biến thể",
+                            //     className: location.pathname === "catalog/material" ? "ant-menu-item-selected" : "",
+                            //     onClick: () => {
+                            //         navigate('catalog/material')
+                            //     }
+                            // },
+                            // {
                             //     key: "waistband",
                             //     icon: <AlibabaOutlined />,
                             //     label: "Cạp quần",
@@ -193,31 +202,31 @@ const SiderBar = () => {
                     },
                 ]
             },
-            {
-                key: "settings",
-                icon: "",
-                label: "Cài đặt",
-                children: [
-                    {
-                        key: "administrators",
-                        icon: <UserAddOutlined />,
-                        label: "Quản trị viên",
-                        className: location.pathname === "settings/administrators" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('settings/administrators')
-                        }
-                    },
-                    {
-                        key: "roles",
-                        icon: <UsergroupAddOutlined />,
-                        label: "Vai trò",
-                        className: location.pathname === "settings/roles" ? "ant-menu-item-selected" : "",
-                        onClick: () => {
-                            navigate('settings/roles')
-                        }
-                    },
-                ]
-            },
+            // {
+            //     key: "settings",
+            //     icon: "",
+            //     label: "Cài đặt",
+            //     children: [
+            //         {
+            //             key: "administrators",
+            //             icon: <UserAddOutlined />,
+            //             label: "Quản trị viên",
+            //             className: location.pathname === "settings/administrators" ? "ant-menu-item-selected" : "",
+            //             onClick: () => {
+            //                 navigate('settings/administrators')
+            //             }
+            //         },
+            //         {
+            //             key: "roles",
+            //             icon: <UsergroupAddOutlined />,
+            //             label: "Vai trò",
+            //             className: location.pathname === "settings/roles" ? "ant-menu-item-selected" : "",
+            //             onClick: () => {
+            //                 navigate('settings/roles')
+            //             }
+            //         },
+            //     ]
+            // },
         ]
     }, [location.pathname])
 

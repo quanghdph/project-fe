@@ -24,6 +24,9 @@ import {
   getVariantProductStart,
   getVariantProductSuccess,
   getVariantProductFailed,
+  updateMainImageProductStart,
+  updateMainImageProductSuccess,
+  updateMainImageProductFailed,
 } from "./productSlice";
 import { IAxiosResponse } from "src/types/axiosResponse";
 import { FormValuesProduct } from "src/components/Catalog/Products/detail-update/ProductDetail";
@@ -53,71 +56,65 @@ export const createProduct = async ({
       status,
       images,
       productDetails,
-      mainImage
+      mainImage,
     } = product;
     dispatch(createProductStart());
     const accessToken = localStorage.getItem("accessToken");
 
     const formData = new FormData();
-    formData.append('productName', productName);
-    formData.append('description', description);
-    formData.append('status', status);
-    formData.append('material.id', material.id);
-    formData.append('category.id', category.id);
+    formData.append("productName", productName);
+    formData.append("description", description);
+    formData.append("status", status);
+    formData.append("material.id", material.id);
+    formData.append("category.id", category.id);
     // formData.append('waistband.id', waistband.id);
-    formData.append('brand.id', brand.id);
+    formData.append("brand.id", brand.id);
 
     // Append each image file to FormData
     if (images) {
       for (let i = 0; i < images.length; i++) {
-        formData.append('imgs['+i+']', images[i].originFileObj);
+        formData.append("imgs[" + i + "]", images[i].originFileObj);
       }
     }
 
-    formData.append('mainImage', mainImage[0].originFileObj)
+    formData.append("mainImage", mainImage[0].originFileObj);
 
-     for (let i = 0; i < productDetails.length; i++) {
+    for (let i = 0; i < productDetails.length; i++) {
       let detail = productDetails[i];
-        for (var key in detail) {
-          if (detail.hasOwnProperty(key)) {
-            if(key=="size"||key=="color"){
-              let fieldName = "productDetails[" + i + "]." + key;
-              formData.append(fieldName+"Id", detail[key].key);
-            }else{
-             let fieldName = "productDetails[" + i + "]." + key;
-             formData.append(fieldName, detail[key]);
-            }
-           
+      for (var key in detail) {
+        if (detail.hasOwnProperty(key)) {
+          if (key == "size" || key == "color") {
+            let fieldName = "productDetails[" + i + "]." + key;
+            formData.append(fieldName + "Id", detail[key].key);
+          } else {
+            let fieldName = "productDetails[" + i + "]." + key;
+            formData.append(fieldName, detail[key]);
           }
         }
+      }
     }
 
-    const res: any = await axiosClientJwt.post(
-      `/product/add`,
-        formData,
-      {
-          headers: {
-              "Authorization": `Bearer ${accessToken}`,
-              'Content-Type': 'multipart/form-data'
-          },
+    const res: any = await axiosClientJwt.post(`/product/add`, formData, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
-          dispatch(createProductSuccess(res.data));
-          message.success('Tạo sản phẩm thành công!');
-          navigate("/catalog/products")
+        dispatch(createProductSuccess(res.data));
+        message.success("Tạo sản phẩm thành công!");
+        navigate("/catalog/products");
       }, 1000);
-  }else {
-    dispatch(createProductFailed(null));
-}
-   
+    } else {
+      dispatch(createProductFailed(null));
+    }
   } catch (error: any) {
     dispatch(createProductFailed(null));
-           Inotification({
-            type: 'error',
-            message: 'Something went wrong!'
-        })
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
   }
 };
 
@@ -319,7 +316,6 @@ export const updateProduct = async ({
   setRefresh,
 }: any) => {
   try {
-
     const {
       productName,
       description,
@@ -361,23 +357,19 @@ export const updateProduct = async ({
     //          let fieldName = "productDetails[" + i + "]." + key;
     //          formData.append(fieldName, detail[key]);
     //         }
-           
+
     //       }
     //     }
     // }
-    
+
     const accessToken = localStorage.getItem("accessToken");
     dispatch(updateProductStart());
     const [res]: [IAxiosResponse<{}>] = await Promise.all([
-      await axiosClientJwt.put(
-        `/product/${id}`,
-        product,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      await axiosClientJwt.put(`/product/${id}`, product, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      ),
+      }),
     ]);
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
@@ -425,11 +417,14 @@ export const getProductImage = async ({
   try {
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getImageStart());
-    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product/${id}/image-main`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(
+      `/product/${id}/image-main`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
     if (res?.status === 200) {
       setTimeout(function () {
@@ -440,14 +435,13 @@ export const getProductImage = async ({
     }
   } catch (error: any) {
     dispatch(getImageFailed(null));
-    
+
     Inotification({
       type: "error",
       message: "Something went wrong!",
     });
   }
 };
-
 
 export const getProductDetail = async ({
   id,
@@ -458,11 +452,14 @@ export const getProductDetail = async ({
   try {
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getProductDetailStart());
-    const res: IAxiosResponse<{}> = await axiosClientJwt.get(`/product-detail/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(
+      `/product-detail/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
@@ -489,11 +486,14 @@ export const getVariantProductDetail = async ({
   try {
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getVariantProductStart());
-    const res: any = await axiosClientJwt.get(`/product-detail?idProduct=${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const res: any = await axiosClientJwt.get(
+      `/product-detail?idProduct=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
@@ -504,6 +504,52 @@ export const getVariantProductDetail = async ({
     }
   } catch (error: any) {
     dispatch(getVariantProductFailed(null));
+    Inotification({
+      type: "error",
+      message: "Something went wrong!",
+    });
+  }
+};
+
+export const updateMainImageProduct = async ({
+  id,
+  dispatch,
+  axiosClientJwt,
+  image,
+  setModalImage,
+  navigate
+}: any) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    dispatch(updateMainImageProductStart());
+    const formData = new FormData();
+    formData.append("image", image[0].originFileObj);
+    console.log(formData);
+    const res: IAxiosResponse<{}> = await axiosClientJwt.put(
+      `product/image-main/${id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    if (res?.status === 200 && res?.data) {
+      setTimeout(function () {
+        dispatch(updateMainImageProductSuccess(res.data));
+        Inotification({
+          type: "success",
+          message: "Cập nhật ảnh thành công!"
+        })
+        setModalImage(false)
+        navigate("/catalog/products")
+      }, 1000);
+    } else {
+      dispatch(updateMainImageProductFailed(null));
+    }
+  } catch (error: any) {
+    dispatch(updateMainImageProductFailed(null));
     Inotification({
       type: "error",
       message: "Something went wrong!",

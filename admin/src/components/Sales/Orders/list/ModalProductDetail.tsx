@@ -68,12 +68,6 @@ function ModalProductDetail({
 
   useEffect(() => {
     if (id) {
-      // getProductDetail({
-      //   id: +id,
-      //   dispatch,
-      //   axiosClientJwt,
-      //   navigate,
-      // });
       getVariantProductDetail({
         id: +id,
         dispatch,
@@ -165,7 +159,7 @@ function ModalProductDetail({
       });
     } else {
       console.log(productVariant);
-      if(productVariant?.product?.status !== 1) {
+      if (productVariant?.product?.status !== 1) {
         Inotification({
           type: "error",
           message: "Sản phẩm không hoạt động!!",
@@ -177,7 +171,7 @@ function ModalProductDetail({
           message: "Sản phẩm đã được thêm vào giỏ hàng",
         });
       }
-      
+
       setActiveModalProductDetail(false);
     }
   };
@@ -197,24 +191,34 @@ function ModalProductDetail({
           </>
         )}
       >
-        {!variant?.loading && variant?.result  ? (
+        {!variant?.loading && variant?.result ? (
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} md={8} lg={6} xl={4}>
               {/* Product Image */}
               <img
-                src="https://via.placeholder.com/200x200"
+                src={`${
+                  import.meta.env.VITE_BACKEND_URL
+                }/product/${id}/image-main`}
                 alt={product?.result?.product?.productName}
                 style={{ width: "100%", maxWidth: "200px" }}
               />
             </Col>
             <Col xs={24} sm={12} md={16} lg={18} xl={20}>
               {/* Product Details */}
-              <Title level={3}>{variant.result?.listProductDetail[0]?.product.productName}</Title>
-              <Text as="b">{variant.result?.listProductDetail[0]?.product?.brand?.brandName}</Text>
+              <Title level={3}>
+                {variant.result?.listProductDetail[0]?.product.productName}
+              </Title>
+              <Text as="b">
+                {
+                  variant.result?.listProductDetail[0]?.product?.brand
+                    ?.brandName
+                }
+              </Text>
               <Divider />
               <Box
                 dangerouslySetInnerHTML={{
-                  __html: variant.result?.listProductDetail[0]?.product?.description,
+                  __html:
+                    variant.result?.listProductDetail[0]?.product?.description,
                 }}
               />
 

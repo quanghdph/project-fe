@@ -15,10 +15,12 @@ import {
   Row,
   Select,
   Space,
+  Switch,
   Table,
   Tabs,
   TabsProps,
   Tag,
+  message
 } from "antd";
 import React, { Fragment, useState, useEffect } from "react";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
@@ -45,17 +47,14 @@ import {
 import vnpayLogo from "src/assets/Icon-VNPAY.webp";
 import moneyLogo from "src/assets/money.png";
 import TextArea from "antd/lib/input/TextArea";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   getDistrictAddress,
   getProvinceAddress,
   getWardAddress,
 } from "src/features/address/action";
 import { createSelloff } from "src/features/sale/saleoff/action";
-
-TimeAgo.addDefaultLocale(en);
-
-const timeAgo = new TimeAgo("en-US");
+import { createCheckout } from "src/features/sale/checkout/action";
 
 const Orders = () => {
   // ** State
@@ -73,6 +72,10 @@ const Orders = () => {
   const [districtVisible, setDistrictVisible] = useState(true);
   const [wardVisible, setWardVisible] = useState(true);
   const [totalAmount, setTotalAmount] = useState();
+  const [delivery, setDelivery] = useState(false);
+  const [customerSelect, setCustomerSelect] = useState()
+  const [tempPrice, setTempPrice] = useState()
+  const [surplusMoney, setSurplusMoney] = useState()
 
   const [cart, setCart] = useState([]);
 
@@ -82,6 +85,7 @@ const Orders = () => {
   // ** Variables
   const order = useAppSelector((state) => state.order);
   const address = useAppSelector((state) => state.address);
+  const selloff = useAppSelector((state) => state.selloff);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
@@ -166,7 +170,7 @@ const Orders = () => {
         label: item.DistrictName,
       }));
       setDistrictOption(listOption);
-      setDistrictVisible(false)
+      setDistrictVisible(false);
     }
   }, [watchProvince, address.district.result, address.district.loading]);
 
@@ -188,7 +192,7 @@ const Orders = () => {
         label: item.WardName,
       }));
       setWardOption(listOption);
-      setWardVisible(false)
+      setWardVisible(false);
     }
   }, [watchDistrict, address.ward.result, address.ward.loading]);
 
@@ -213,7 +217,7 @@ const Orders = () => {
 
   const handleBillOk = (values) => {
     trigger().then((isValid) => {
-      if (isValid) {
+      if (isValid && customerSelect) {
         // If form is valid, you can access the form data here
         const formData = getValues();
 
@@ -223,12 +227,18 @@ const Orders = () => {
             quantity: item.cartQuantity,
           };
         });
-        console.log(formData);
+
+        // createCheckout({
+        //   billID,
+        //   dispatch,
+        //   axiosClientJwt,
+        // })
+
         formData &&
           createSelloff({
             params: {
-              idKhachHang: formData.customer.id,
-              thanhToan: formData.paymentMethod,
+              idKhachHang: customerSelect.id,
+              thanhToan: Number(formData.paymentMethod),
               trangThaiTT: 1,
               note: formData.note,
               sanPhams: cartArr ? cartArr : [],
@@ -255,6 +265,33 @@ const Orders = () => {
     updateTotalAmount(cart);
   }, [cart, setCart]);
 
+  const onDelivery = () => {
+    setDelivery(!delivery);
+  };
+
+  const paymentMethod =  watch('paymentMethod')
+
+  // useEffect(() => {
+  //   if(paymentMethod)
+  // }, [])
+
+  useEffect(() => {
+    if(!selloff?.create?.loading && selloff?.create?.result && paymentMethod == 1) {
+        createCheckout({
+          billID: selloff.create.result,
+          dispatch,
+          axiosClientJwt,
+        })
+
+    }
+  }, [selloff.create.loading, selloff.create.result])
+
+  useEffect(() => {
+    if(tempPrice && totalAmount) {
+      const result = tempPrice > totalAmount ? tempPrice - totalAmount : null
+      setSurplusMoney(result)
+    }
+  }, [tempPrice, totalAmount])
 
   return (
     <Fragment>
@@ -295,13 +332,12 @@ const Orders = () => {
         <Col span={12}>
           <Card>
             <Title level={5}></Title>
-            <CreateOrder cart={cart} setCart={setCart} />
+            <CreateOrder cart={cart} setCart={setCart} setCustomerSelect={setCustomerSelect} />
           </Card>
         </Col>
       </Row>
       <Col span="24" style={{ marginTop: 10 }}>
         <Card>
-          <Title level={5}>Thông tin thanh toán</Title>
           <Form
             layout="vertical"
             autoComplete="off"
@@ -309,176 +345,203 @@ const Orders = () => {
           >
             <Row gutter={[20, 16]}>
               <Col span={12}>
-                <Flex gap={5}>
-                  <Form.Item
-                    name="fullname"
-                    label="Họ và tên"
-                    labelCol={{ span: 24 }}
-                    validateStatus={errors.fullname ? "error" : ""}
-                    help={errors.fullname ? errors.fullname.message : ""}
-                    style={{ width: "50%" }}
-                  >
-                    <Input
-                      {...register("fullname", {
-                        required: "Vui lòng nhập họ và tên",
-                      })}
-                      onChange={(e) => setValue("fullname", e.target.value)}
-                      placeholder="Nguyễn Văn A"
-                    />
-                  </Form.Item>
+                {/* {delivery && (
+                  <>
+                    <Title level={5}>Thông tin thanh toán</Title>
+                    <Flex gap={5}>
+                      <Form.Item
+                        name="fullname"
+                        label="Họ và tên"
+                        labelCol={{ span: 24 }}
+                        validateStatus={errors.fullname ? "error" : ""}
+                        help={errors.fullname ? errors.fullname.message : ""}
+                        style={{ width: "50%" }}
+                      >
+                        <Input
+                          {...register("fullname", {
+                            required: "Vui lòng nhập họ và tên",
+                          })}
+                          onChange={(e) => setValue("fullname", e.target.value)}
+                          placeholder="Nguyễn Văn A"
+                        />
+                      </Form.Item>
 
-                  <Form.Item
-                    name="phoneNumber"
-                    label="Số điện thoại"
-                    labelCol={{ span: 24 }}
-                    validateStatus={errors.phoneNumber ? "error" : ""}
-                    help={errors.phoneNumber ? errors.phoneNumber.message : ""}
-                    style={{ width: "50%" }}
-                  >
-                    <Input
-                      {...register("phoneNumber", {
-                        required: "Vui lòng nhập số điện thoại",
-                      })}
-                      onChange={(e) => setValue("phoneNumber", e.target.value)}
-                      placeholder="0932384746"
-                    />
-                  </Form.Item>
-                </Flex>
-                <Flex gap={3}>
-                  <Form.Item
-                    name="province"
-                    label={
-                      <span>
-                        Tỉnh/thành phố
-                        {errors.province && (
-                          <span style={{ color: "red" }}>*</span>
-                        )}
-                      </span>
-                    }
-                    labelCol={{ span: 24 }}
-                    validateStatus={errors.province ? "error" : ""}
-                    help={errors.province ? errors.province.message : ""}
-                    style={{ width: "31.7%" }}
-                  >
-                    <Select
-                      placeholder="Chọn tỉnh thành phố"
-                      {...register("province", {
-                        required: "Vui lòng chọn tỉnh thành phố",
-                      })}
-                      onChange={(value: any) => setValue("province", value)}
-                      options={provinceOption}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="district"
-                    label={
-                      <span>
-                        Quận/Huyện
-                        {errors.district && (
-                          <span style={{ color: "red" }}>*</span>
-                        )}
-                      </span>
-                    }
-                    labelCol={{ span: 24 }}
-                    validateStatus={errors.district ? "error" : ""}
-                    help={errors.district ? errors.district.message : ""}
-                    style={{ width: "31.7%" }}
-                  >
-                    <Select
-                      placeholder="Chọn quận huyện"
-                      {...register("district", {
-                        required: "Vui lòng chọn quận huyện",
-                      })}
-                      disabled={districtVisible}
-                      onChange={(value: any) => setValue("district", value)}
-                      options={districtOption}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="ward"
-                    label={
-                      <span>
-                        Xã/Phường/Thị Trấn
-                        {errors.ward && <span style={{ color: "red" }}>*</span>}
-                      </span>
-                    }
-                    labelCol={{ span: 24 }}
-                    validateStatus={errors.ward ? "error" : ""}
-                   
-                    help={errors.ward ? errors.ward.message : ""}
-                    style={{ width: "31.7%" }}
-                  >
-                    <Select
-                      placeholder="Chọn xã phường thị trân"
-                      {...register("ward", {
-                        required: "Vui lòng chọn xã phường thị trân",
-                      })}
-                      onChange={(value: any) => setValue("ward", value)}
-                      disabled={wardVisible}
-                      options={wardOption}
-                    />
-                  </Form.Item>
-                </Flex>
-                <Form.Item
-                  name="address"
-                  label="Địa chỉ cụ thể"
-                  labelCol={{ span: 24 }}
-                  validateStatus={errors.address ? "error" : ""}
-                  help={errors.address ? errors.address.message : ""}
-                  style={{ width: "50%" }}
-                >
-                  <Input
-                    {...register("address", {
-                      required: "Vui lòng nhập địa chỉ cụ thể",
-                    })}
-                    onChange={(e) => setValue("address", e.target.value)}
-                    placeholder="Số nhà 20,.."
-                  />
-                </Form.Item>
+                      <Form.Item
+                        name="phoneNumber"
+                        label="Số điện thoại"
+                        labelCol={{ span: 24 }}
+                        validateStatus={errors.phoneNumber ? "error" : ""}
+                        help={
+                          errors.phoneNumber ? errors.phoneNumber.message : ""
+                        }
+                        style={{ width: "50%" }}
+                      >
+                        <Input
+                          {...register("phoneNumber", {
+                            required: "Vui lòng nhập số điện thoại",
+                          })}
+                          onChange={(e) =>
+                            setValue("phoneNumber", e.target.value)
+                          }
+                          placeholder="0932384746"
+                        />
+                      </Form.Item>
+                    </Flex>
+                    <Flex gap={3}>
+                      <Form.Item
+                        name="province"
+                        label={
+                          <span>
+                            Tỉnh/thành phố
+                            {errors.province && (
+                              <span style={{ color: "red" }}>*</span>
+                            )}
+                          </span>
+                        }
+                        labelCol={{ span: 24 }}
+                        validateStatus={errors.province ? "error" : ""}
+                        help={errors.province ? errors.province.message : ""}
+                        style={{ width: "31.7%" }}
+                      >
+                        <Select
+                          placeholder="Chọn tỉnh thành phố"
+                          {...register("province", {
+                            required: "Vui lòng chọn tỉnh thành phố",
+                          })}
+                          onChange={(value: any) => setValue("province", value)}
+                          options={provinceOption}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="district"
+                        label={
+                          <span>
+                            Quận/Huyện
+                            {errors.district && (
+                              <span style={{ color: "red" }}>*</span>
+                            )}
+                          </span>
+                        }
+                        labelCol={{ span: 24 }}
+                        validateStatus={errors.district ? "error" : ""}
+                        help={errors.district ? errors.district.message : ""}
+                        style={{ width: "31.7%" }}
+                      >
+                        <Select
+                          placeholder="Chọn quận huyện"
+                          {...register("district", {
+                            required: "Vui lòng chọn quận huyện",
+                          })}
+                          disabled={districtVisible}
+                          onChange={(value: any) => setValue("district", value)}
+                          options={districtOption}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="ward"
+                        label={
+                          <span>
+                            Xã/Phường/Thị Trấn
+                            {errors.ward && (
+                              <span style={{ color: "red" }}>*</span>
+                            )}
+                          </span>
+                        }
+                        labelCol={{ span: 24 }}
+                        validateStatus={errors.ward ? "error" : ""}
+                        help={errors.ward ? errors.ward.message : ""}
+                        style={{ width: "31.7%" }}
+                      >
+                        <Select
+                          placeholder="Chọn xã phường thị trân"
+                          {...register("ward", {
+                            required: "Vui lòng chọn xã phường thị trân",
+                          })}
+                          onChange={(value: any) => setValue("ward", value)}
+                          disabled={wardVisible}
+                          options={wardOption}
+                        />
+                      </Form.Item>
+                    </Flex>
+                    <Form.Item
+                      name="address"
+                      label="Địa chỉ cụ thể"
+                      labelCol={{ span: 24 }}
+                      validateStatus={errors.address ? "error" : ""}
+                      help={errors.address ? errors.address.message : ""}
+                      style={{ width: "50%" }}
+                    >
+                      <Input
+                        {...register("address", {
+                          required: "Vui lòng nhập địa chỉ cụ thể",
+                        })}
+                        onChange={(e) => setValue("address", e.target.value)}
+                        placeholder="Số nhà 20,.."
+                      />
+                    </Form.Item>
+                  </>
+                )} */}
               </Col>
               <Col span={12}>
+                {/* <Flex gap={2}>
+                  <Switch checked={delivery} onChange={onDelivery} />
+                  <Text>Giao hàng</Text>
+                </Flex> */}
                 <Flex justifyContent={"space-between"}>
                   <Text>Tổng tiền:</Text>
                   <Text>{formatPriceVND(Number(totalAmount))}</Text>
                 </Flex>
-                <Box mb={4}>
+                {
+                  paymentMethod == 0 && (
+                    <>
+                      <Box mb={4}>
                   <Text>Tiền khách đưa:</Text>
-                  <InputNumber prefix="VND" style={{ width: "100%" }} />
+                  <InputNumber onChange={(e) => setTempPrice(e)} prefix="VND" style={{ width: "100%" }} />
                 </Box>
                 <Flex justifyContent={"space-between"}>
                   <Text>Tiền dư:</Text>
-                  <Text>Tự đi mà tính</Text>
-                </Flex>
+                  <Text>{surplusMoney ? formatPriceVND(Number(surplusMoney)) : surplusMoney > 0 ?  `Số tiền phải lớn hơn tổng tiền` : null}</Text>
+                </Flex></>
+                  )
+                }
+              
                 <Flex direction={"column"} justifyContent={"space-between"}>
                   <Text>Chọn phương thức thanh toán</Text>
                   <Form.Item name="paymentMethod">
-                    <Radio.Group
-                      size="large"
-                      buttonStyle="solid"
-                      onChange={(value) =>
-                        setValue("paymentMethod", value.target.value)
-                      }
-                      defaultValue={0}
-                    >
-                      <Radio.Button value="0" checked>
-                        <Image
-                          src={moneyLogo}
-                          width={20}
-                          height={20}
-                          preview={false}
-                        />
-                        Tiền mặt
-                      </Radio.Button>
-                      <Radio.Button value="1">
-                        <Image
-                          src={vnpayLogo}
-                          width={20}
-                          height={20}
-                          preview={false}
-                        />
-                        Chuyển khoản
-                      </Radio.Button>
-                    </Radio.Group>
+                    <Controller
+                      name="paymentMethod"
+                      control={control}
+                      defaultValue="0" // Set default value if needed
+                      render={({ field }) => (
+                        <Radio.Group
+                          size="large"
+                          buttonStyle="solid"
+                          defaultValue="0"
+                          onChange={(e) => {
+                            setValue("paymentMethod", e.target.value);
+                          }}
+                        >
+                          <Radio.Button value="0" checked>
+                            <Image
+                              src={moneyLogo}
+                              width={20}
+                              height={20}
+                              preview={false}
+                            />
+                            Tiền mặt
+                          </Radio.Button>
+                          <Radio.Button value="1">
+                            <Image
+                              src={vnpayLogo}
+                              width={20}
+                              height={20}
+                              preview={false}
+                            />
+                            Chuyển khoản
+                          </Radio.Button>
+                        </Radio.Group>
+                      )}
+                    />
                   </Form.Item>
                 </Flex>
                 <Box mb={2}>
@@ -489,8 +552,8 @@ const Orders = () => {
                     rules={[{ required: true, message: "Điền ghi chú" }]}
                   >
                     <TextArea
-                      // {...register("note")}
-                      // onChange={onNoteChange}
+                      {...register("note")}
+                      onChange={(e) => setValue("note", e.target.value)}
                       rows={4}
                       placeholder="Nhập ghi chú"
                     />

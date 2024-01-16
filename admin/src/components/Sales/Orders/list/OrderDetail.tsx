@@ -152,7 +152,7 @@ const columns = (
 ];
 
 function OrderDetail(props: any) {
-  const { orderCode, cart, setCart } = props;
+  const { orderCode, cart, setCart, setCustomerSelect } = props;
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [productDelete, setProductDelete] = useState<{
@@ -238,6 +238,7 @@ function OrderDetail(props: any) {
       const currentCustomerSelect = customer.list.result?.listCustomer.filter(
         (e) => value == e.id,
       );
+      setCustomerSelect(currentCustomerSelect[0]);
       setValue("customer", currentCustomerSelect[0]);
       setCurrentCustomer(currentCustomerSelect[0]);
     }
