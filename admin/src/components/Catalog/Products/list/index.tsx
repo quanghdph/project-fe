@@ -60,10 +60,10 @@ const columns = (
     width: "5%",
   },
   {
-    title: "#",
-    dataIndex: "id",
+    title: "Ảnh",
+    dataIndex: "image",
     ellipsis: true,
-    key: "id",
+    key: "image",
     width: "10%",
     render: (product, record) => {
       return (

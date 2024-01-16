@@ -1011,6 +1011,7 @@ const ProductCreateUpdate: React.FC = () => {
         <Modal
           title="Upload Images"
           open={modalImage}
+          onCancel={handleMainImageCancel}
           footer={[
             <Button key="back" onClick={handleMainImageCancel}>
               Cancel

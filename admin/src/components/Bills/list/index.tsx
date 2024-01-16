@@ -83,6 +83,13 @@ const columns = (
     width: "15%",
   },
   {
+    title: "Loại đơn hàng",
+    dataIndex: "paymentType",
+    ellipsis: true,
+    key: "paymentType",
+    width: "15%",
+  },
+  {
     title: "Phí vận chuyển",
     dataIndex: "transportFee",
     ellipsis: true,
@@ -274,6 +281,7 @@ const Bill = () => {
           phoneNumber: bill.phoneNumber,
           transportFee: formatPriceVND(bill.transportFee),
           note: bill.note,
+          paymentType: bill.paymentType == 1 ? <Tag color="success">Tại quầy</Tag> :  <Tag color="processing">Bán hàng Online</Tag>,
           createDate: bill.createDate,
           // status: bill.status,
         };
@@ -314,8 +322,6 @@ const Bill = () => {
   const onChange = (key: string) => {
     // console.log(key);
   };
-
-  console.log(bill);
 
   return (
     <Fragment>

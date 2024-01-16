@@ -362,7 +362,7 @@ export const createCheckout = async ({
   
     dispatch(getCreateCheckoutStart());
     const accessToken = localStorage.getItem("accessToken");
-    const res: IAxiosResponse<{}> = await axiosClientJwt.post(
+    const res: IAxiosResponse<{}> = await axiosClientJwt.get(
       `/api-vnp/vnpay/${billID}`,
       {
         headers: {
@@ -373,8 +373,7 @@ export const createCheckout = async ({
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(getCreateCheckoutSuccess(res.data));
-        // message.success("Tạo hóa đơn thành công!");
-        // navigate("/checkouts");
+        window.open(`${res?.data}`)
       }, 1000);
     }
     // else if (res?.response?.code === 400 && !res?.response?.success) {

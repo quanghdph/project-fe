@@ -74,6 +74,8 @@ const Orders = () => {
   const [totalAmount, setTotalAmount] = useState();
   const [delivery, setDelivery] = useState(false);
   const [customerSelect, setCustomerSelect] = useState()
+  const [tempPrice, setTempPrice] = useState()
+  const [surplusMoney, setSurplusMoney] = useState()
 
   const [cart, setCart] = useState([]);
 
@@ -274,8 +276,7 @@ const Orders = () => {
   // }, [])
 
   useEffect(() => {
-    if(!selloff?.create?.loading && selloff?.create?.result) {
-      console.log("tt", selloff);
+    if(!selloff?.create?.loading && selloff?.create?.result && paymentMethod == 1) {
         createCheckout({
           billID: selloff.create.result,
           dispatch,
@@ -284,6 +285,13 @@ const Orders = () => {
 
     }
   }, [selloff.create.loading, selloff.create.result])
+
+  useEffect(() => {
+    if(tempPrice && totalAmount) {
+      const result = tempPrice > totalAmount ? tempPrice - totalAmount : null
+      setSurplusMoney(result)
+    }
+  }, [tempPrice, totalAmount])
 
   return (
     <Fragment>
@@ -488,11 +496,11 @@ const Orders = () => {
                     <>
                       <Box mb={4}>
                   <Text>Tiền khách đưa:</Text>
-                  <InputNumber prefix="VND" style={{ width: "100%" }} />
+                  <InputNumber onChange={(e) => setTempPrice(e)} prefix="VND" style={{ width: "100%" }} />
                 </Box>
                 <Flex justifyContent={"space-between"}>
                   <Text>Tiền dư:</Text>
-                  <Text>0đ</Text>
+                  <Text>{surplusMoney ? formatPriceVND(Number(surplusMoney)) : surplusMoney > 0 ?  `Số tiền phải lớn hơn tổng tiền` : null}</Text>
                 </Flex></>
                   )
                 }
