@@ -641,7 +641,7 @@ const ProductCreateUpdate: React.FC = () => {
       setValue(
         "material",
         {
-          label:  product?.variant?.result?.listProductDetail[0]?.product?.material.materialName,
+          label:  product?.variant?.result?.listProductDetail[0]?.product?.material?.materialName,
           value:   product?.variant?.result?.listProductDetail[0]?.product?.material?.id,
          }
        

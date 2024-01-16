@@ -129,7 +129,7 @@ const CustomerCreateUpdate = () => {
   
   // validate số điện thoại
  const validatePhoneNumber = (value) => {
-    const regex = /^0[0-9]{9}$/;
+    const regex = /^0[1-9][0-9]{8}$/;
 
     if (!regex.test(value)) {
       return "Số điện thoại không hợp lệ";
@@ -355,7 +355,7 @@ const validateGender = (value) => {
                                             control={control}
                                             rules={{
                                                 required: "Vui lòng điền vào trường này!",
-                                      validate: validatePhoneNumber,
+                                                validate: validatePhoneNumber,
                                             }}
                                             render={({field}) => {
                                                 return (
@@ -375,11 +375,16 @@ const validateGender = (value) => {
                                             }}
                                         />
                                     </Form.Item>
+
+
                                     <Form.Item label="Ngày sinh * :">
                                         <DatePicker
                                             value={dateOfBirth ? moment(dateOfBirth?.substring(0, 10), dateFormat) : '' as any}
                                             onChange={onChangeDatePicker}/>
                                     </Form.Item>
+
+
+
 
                                     <Form.Item label="Giới tính * :" name="gender"
                                  rules={[
