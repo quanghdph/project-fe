@@ -280,6 +280,34 @@ const BillCreateUpdate = () => {
     setValue("employee", currentEmployee);
   };
 
+
+    // validate số điện thoại
+ const validatePhoneNumber = (value) => {
+  const regex = /^0[1-9][0-9]{8}$/;
+
+  if (!regex.test(value)) {
+    return "Số điện thoại không hợp lệ";
+  }
+}
+
+
+    // validate 
+    const validateNoWhiteSpace = (value) => {
+      const regexLeadingWhitespace = /^\s/;
+      const regexTrailingWhitespace = /\s$/;
+      const maxLength =50;
+      if (regexLeadingWhitespace.test(value)) {
+        return "Không được chứa khoảng trắng ở đầu!";
+      } else if (regexTrailingWhitespace.test(value)) {
+        return "Không được chứa khoảng trắng ở cuối!";
+      }else if(value.length > maxLength) {
+         return `Độ dài không được vượt quá ${maxLength} kí tự`;
+      }
+      return true;
+    };
+  
+
+
   return (
     <Fragment>
       <Row gutter={[0, 16]}>
@@ -353,6 +381,7 @@ const BillCreateUpdate = () => {
                     control={control}
                     // rules={{ required: true }}
                     render={({ field }) => {
+
                       return (
                         <Select
                           showSearch
@@ -377,7 +406,7 @@ const BillCreateUpdate = () => {
                     render={({ field }) => {
                       return (
                         <div>
-                          <Input {...field} placeholder="50 Mỹ đình, Hà Nội" />
+                          <Input {...field} placeholder="50 Mỹ đình, Hà Nội" disabled={true}/>
                           {/* {errors?.address ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.address?.type === "required"
@@ -395,18 +424,20 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="phoneNumber"
                     control={control}
-                    // rules={{ required: true }}
+                    rules={{ 
+                      required: "Vui Lòng Nhập Số điện thoại",
+                      validate: validatePhoneNumber
+                    }}
                     render={({ field }) => {
                       return (
                         <div>
-                          <Input {...field} placeholder="09454684" />
-                          {/* {errors?.phoneNumber ? (
+                          <Input {...field} placeholder="0945468499" /> 
+                      
+                         {errors?.phoneNumber ? (
                             <Box as="div" mt={1} textColor="red.600">
-                              {errors.phoneNumber?.type === "required"
-                                ? "Vui lòng điền số điện thoại"
-                                : errors.phoneNumber.message}
+                              {errors.phoneNumber.message}
                             </Box>
-                          ) : null} */}
+                          ) : null}
                         </div>
                       );
                     }}
@@ -417,15 +448,21 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="transportFee"
                     control={control}
-                    // rules={{ required: true }}
+                    rules={{ 
+                      required: "Vui lòng nhập giá tiền!"
+                    }}
                     render={({ field }) => {
                       return (
                         <div>
-                          <Input
-                            prefix={"VND"}
-                            {...field}
-                            placeholder="20000"
-                          />
+                     <Input
+  prefix={<span style={{ marginRight: '8px' }}>VND</span>} disabled={true}
+  {...field}
+  placeholder="20000"
+/>
+
+                  
+   {errors?.transportFee ? <Box as="div" mt={1} textColor="red.600">{errors.transportFee?.message}</Box> : null}
+
                           {/* {errors?.transportFee ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.transportFee?.type === "required"
@@ -447,7 +484,10 @@ const BillCreateUpdate = () => {
                   <Controller
                     name="note"
                     control={control}
-                    // rules={{ required: true }}
+                    rules={{ 
+                    
+                      validate: validateNoWhiteSpace
+                    }}
                     render={({ field }) => {
                       console.log(field);
                       return (
@@ -459,6 +499,8 @@ const BillCreateUpdate = () => {
                             rows={4}
                             placeholder="Ghi chú"
                           />
+                              {errors?.note ? <Box as="div" mt={1} textColor="red.600">{errors.note?.message}</Box> : null}
+                    
                           {/* {errors?.transportFee ? (
                             <Box as="div" mt={1} textColor="red.600">
                               {errors.transportFee?.type === "required"

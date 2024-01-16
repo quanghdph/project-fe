@@ -863,6 +863,9 @@ const ProductCreateUpdate: React.FC = () => {
                                   : errors.category.message}
                               </Box>
                             ) : null}
+
+
+                            
                           </>
                         );
                       }}

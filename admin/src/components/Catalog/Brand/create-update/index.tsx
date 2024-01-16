@@ -138,6 +138,23 @@ const BrandCreateUpdate = () => {
     }
   };
 
+      // validate 
+      const validateNoWhiteSpace = (value) => {
+        const regexLeadingWhitespace = /^\s/;
+        const regexTrailingWhitespace = /\s$/;
+        const maxLength = 50;
+        if (regexLeadingWhitespace.test(value)) {
+          return "Không được chứa khoảng trắng ở đầu!";
+        } else if (regexTrailingWhitespace.test(value)) {
+          return "Không được chứa khoảng trắng ở cuối!";
+        }else if(value.length > maxLength) {
+           return `Độ dài không được vượt quá ${maxLength} kí tự`;
+        }
+        return true;
+      };
+
+
+
   const handleChangeStatus = (value: any) => {
     setStatusValue(value)
     let statusfind = statusOptions.find(option => {
@@ -163,6 +180,8 @@ const BrandCreateUpdate = () => {
         </Col>
         <Col span={24}>
           <Card>
+
+
             <Form
               onFinish={handleSubmit(onSubmit)}
               layout="vertical"
@@ -183,7 +202,7 @@ const BrandCreateUpdate = () => {
                       Cập nhật
                     </Button>
                   ) : (
-                    <Button htmlType="submit" type="primary">
+                    <Button htmlType="submit" type="primary" disabled={!!Object.keys(errors).length}>
                       Tạo
                     </Button>
                   )}
@@ -195,7 +214,10 @@ const BrandCreateUpdate = () => {
                   <Controller
                     name="brand_name"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ 
+                      required: true,
+                      validate: validateNoWhiteSpace
+                    }}
                     render={({ field }) => {
                       return (
                         <div ref={brandNameErrorRef}>
