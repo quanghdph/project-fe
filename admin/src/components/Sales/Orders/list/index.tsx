@@ -20,6 +20,7 @@ import {
   Tabs,
   TabsProps,
   Tag,
+  message
 } from "antd";
 import React, { Fragment, useState, useEffect } from "react";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
@@ -46,17 +47,14 @@ import {
 import vnpayLogo from "src/assets/Icon-VNPAY.webp";
 import moneyLogo from "src/assets/money.png";
 import TextArea from "antd/lib/input/TextArea";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   getDistrictAddress,
   getProvinceAddress,
   getWardAddress,
 } from "src/features/address/action";
 import { createSelloff } from "src/features/sale/saleoff/action";
-
-TimeAgo.addDefaultLocale(en);
-
-const timeAgo = new TimeAgo("en-US");
+import { createCheckout } from "src/features/sale/checkout/action";
 
 const Orders = () => {
   // ** State
@@ -75,6 +73,7 @@ const Orders = () => {
   const [wardVisible, setWardVisible] = useState(true);
   const [totalAmount, setTotalAmount] = useState();
   const [delivery, setDelivery] = useState(false);
+  const [customerSelect, setCustomerSelect] = useState()
 
   const [cart, setCart] = useState([]);
 
@@ -84,6 +83,7 @@ const Orders = () => {
   // ** Variables
   const order = useAppSelector((state) => state.order);
   const address = useAppSelector((state) => state.address);
+  const selloff = useAppSelector((state) => state.selloff);
   const dispatch = useAppDispatch();
   const axiosClientJwt = createAxiosJwt();
 
@@ -215,7 +215,7 @@ const Orders = () => {
 
   const handleBillOk = (values) => {
     trigger().then((isValid) => {
-      if (isValid) {
+      if (isValid && customerSelect) {
         // If form is valid, you can access the form data here
         const formData = getValues();
 
@@ -225,12 +225,18 @@ const Orders = () => {
             quantity: item.cartQuantity,
           };
         });
-        console.log(formData);
+
+        // createCheckout({
+        //   billID,
+        //   dispatch,
+        //   axiosClientJwt,
+        // })
+
         formData &&
           createSelloff({
             params: {
-              idKhachHang: formData.customer.id,
-              thanhToan: formData.paymentMethod,
+              idKhachHang: customerSelect.id,
+              thanhToan: Number(formData.paymentMethod),
               trangThaiTT: 1,
               note: formData.note,
               sanPhams: cartArr ? cartArr : [],
@@ -260,6 +266,24 @@ const Orders = () => {
   const onDelivery = () => {
     setDelivery(!delivery);
   };
+
+  const paymentMethod =  watch('paymentMethod')
+
+  // useEffect(() => {
+  //   if(paymentMethod)
+  // }, [])
+
+  useEffect(() => {
+    if(!selloff?.create?.loading && selloff?.create?.result) {
+      console.log("tt", selloff);
+        createCheckout({
+          billID: selloff.create.result,
+          dispatch,
+          axiosClientJwt,
+        })
+
+    }
+  }, [selloff.create.loading, selloff.create.result])
 
   return (
     <Fragment>
@@ -300,13 +324,12 @@ const Orders = () => {
         <Col span={12}>
           <Card>
             <Title level={5}></Title>
-            <CreateOrder cart={cart} setCart={setCart} />
+            <CreateOrder cart={cart} setCart={setCart} setCustomerSelect={setCustomerSelect} />
           </Card>
         </Col>
       </Row>
       <Col span="24" style={{ marginTop: 10 }}>
         <Card>
-         
           <Form
             layout="vertical"
             autoComplete="off"
@@ -314,9 +337,9 @@ const Orders = () => {
           >
             <Row gutter={[20, 16]}>
               <Col span={12}>
-                {delivery && (
+                {/* {delivery && (
                   <>
-                   <Title level={5}>Thông tin thanh toán</Title>
+                    <Title level={5}>Thông tin thanh toán</Title>
                     <Flex gap={5}>
                       <Form.Item
                         name="fullname"
@@ -449,55 +472,68 @@ const Orders = () => {
                       />
                     </Form.Item>
                   </>
-                )}
+                )} */}
               </Col>
               <Col span={12}>
-                <Flex gap={2}>
-                  <Switch value={delivery} onChange={onDelivery} />
+                {/* <Flex gap={2}>
+                  <Switch checked={delivery} onChange={onDelivery} />
                   <Text>Giao hàng</Text>
-                </Flex>
+                </Flex> */}
                 <Flex justifyContent={"space-between"}>
                   <Text>Tổng tiền:</Text>
                   <Text>{formatPriceVND(Number(totalAmount))}</Text>
                 </Flex>
-                <Box mb={4}>
+                {
+                  paymentMethod == 0 && (
+                    <>
+                      <Box mb={4}>
                   <Text>Tiền khách đưa:</Text>
                   <InputNumber prefix="VND" style={{ width: "100%" }} />
                 </Box>
                 <Flex justifyContent={"space-between"}>
                   <Text>Tiền dư:</Text>
-                  <Text>Tự đi mà tính</Text>
-                </Flex>
+                  <Text>0đ</Text>
+                </Flex></>
+                  )
+                }
+              
                 <Flex direction={"column"} justifyContent={"space-between"}>
                   <Text>Chọn phương thức thanh toán</Text>
                   <Form.Item name="paymentMethod">
-                    <Radio.Group
-                      size="large"
-                      buttonStyle="solid"
-                      onChange={(value) =>
-                        setValue("paymentMethod", value.target.value)
-                      }
-                      defaultValue={0}
-                    >
-                      <Radio.Button value="0" checked>
-                        <Image
-                          src={moneyLogo}
-                          width={20}
-                          height={20}
-                          preview={false}
-                        />
-                        Tiền mặt
-                      </Radio.Button>
-                      <Radio.Button value="1">
-                        <Image
-                          src={vnpayLogo}
-                          width={20}
-                          height={20}
-                          preview={false}
-                        />
-                        Chuyển khoản
-                      </Radio.Button>
-                    </Radio.Group>
+                    <Controller
+                      name="paymentMethod"
+                      control={control}
+                      defaultValue="0" // Set default value if needed
+                      render={({ field }) => (
+                        <Radio.Group
+                          size="large"
+                          buttonStyle="solid"
+                          defaultValue="0"
+                          onChange={(e) => {
+                            setValue("paymentMethod", e.target.value);
+                          }}
+                        >
+                          <Radio.Button value="0" checked>
+                            <Image
+                              src={moneyLogo}
+                              width={20}
+                              height={20}
+                              preview={false}
+                            />
+                            Tiền mặt
+                          </Radio.Button>
+                          <Radio.Button value="1">
+                            <Image
+                              src={vnpayLogo}
+                              width={20}
+                              height={20}
+                              preview={false}
+                            />
+                            Chuyển khoản
+                          </Radio.Button>
+                        </Radio.Group>
+                      )}
+                    />
                   </Form.Item>
                 </Flex>
                 <Box mb={2}>
@@ -508,8 +544,8 @@ const Orders = () => {
                     rules={[{ required: true, message: "Điền ghi chú" }]}
                   >
                     <TextArea
-                      // {...register("note")}
-                      // onChange={onNoteChange}
+                      {...register("note")}
+                      onChange={(e) => setValue("note", e.target.value)}
                       rows={4}
                       placeholder="Nhập ghi chú"
                     />

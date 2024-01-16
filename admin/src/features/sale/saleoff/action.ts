@@ -39,6 +39,7 @@ export const createSelloff = async ({
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         dispatch(createSelloffSuccess(res.data));
+        console.log(res.data);
         message.success("Thanh toán thành công!");
         // navigate("/catalog/selloffs");
       }, 1000);

@@ -25,12 +25,12 @@ export const getListBill = async ({
   navigate,
 }: any) => {
   try {
-    const { page, limit, filter } = params;
+    const { page, limit, filter, status } = params;
     const accessToken = localStorage.getItem("accessToken");
     dispatch(getListBillStart());
     const url =
       page || limit || filter
-        ? `/bill?page=${page}&limit=${limit}&filter=${filter}`
+        ? `/bill?page=${page}&limit=${limit}&search=${filter}&status=${status}`
         : "/bill";
     const res: any = await axiosClientJwt.get(url, {
       headers: {

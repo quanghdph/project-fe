@@ -231,6 +231,7 @@ const Bill = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
+  const [status, setStatus] = useState<number>(-1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [billDelete, setBillDelete] = useState<{
     id: number;
@@ -253,6 +254,7 @@ const Bill = () => {
         page,
         limit,
         filter,
+        status
       },
       navigate,
       axiosClientJwt,
