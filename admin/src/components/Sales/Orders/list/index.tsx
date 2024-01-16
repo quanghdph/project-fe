@@ -78,6 +78,11 @@ const Orders = () => {
   const [surplusMoney, setSurplusMoney] = useState()
 
   const [cart, setCart] = useState([]);
+  const [cart1, setCart1] = useState([]);
+  const [cart2, setCart2] = useState([]);
+  const [cart3, setCart3] = useState([]);
+  const [cart4, setCart4] = useState([]);
+  const [cart5, setCart5] = useState([]);
 
   // ** Third party
   const navigate = useNavigate();
