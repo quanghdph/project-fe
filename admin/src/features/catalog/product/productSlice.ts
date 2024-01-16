@@ -73,6 +73,11 @@ interface ProductState {
         loading: boolean;
         error: boolean;
     }
+    mainImage: {
+        result: Product | null;
+        loading: boolean;
+        error: boolean;
+    }
 }
 
 const initialState: ProductState = {
@@ -112,6 +117,11 @@ const initialState: ProductState = {
         error: false
     },
     variant: {
+        result: null,
+        loading: false,
+        error: false
+    },
+    mainImage: {
         result: null,
         loading: false,
         error: false
@@ -234,6 +244,20 @@ export const productSlice = createSlice({
             state.variant.result = action.payload;
             state.variant.error = true;
         },
+         // ** Update main image
+        updateMainImageProductStart: (state) => {
+            state.mainImage.loading = true;
+        },
+        updateMainImageProductSuccess: (state, action) => {
+            state.mainImage.loading = false;
+            state.mainImage.result = action.payload;
+            state.mainImage.error = false
+        },
+        updateMainImageProductFailed: (state, action) => {
+            state.mainImage.loading = false;
+            state.mainImage.result = action.payload;
+            state.mainImage.error = true;
+        },
     }
 });
 
@@ -261,7 +285,10 @@ export const {
     getProductDetailFailed,
     getVariantProductStart,
     getVariantProductSuccess,
-    getVariantProductFailed
+    getVariantProductFailed,
+    updateMainImageProductStart,
+    updateMainImageProductSuccess,
+    updateMainImageProductFailed
 } = productSlice.actions;
 
 export default productSlice.reducer;

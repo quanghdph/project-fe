@@ -112,7 +112,7 @@ const Basket = () => {
               </h5>
             </div>
           )}
-          {basket.map((product, i) => {
+          {basket && basket?.map((product, i) => {
             // const productCustom = {
             //   ...product,
             //   productDetail: {
@@ -159,7 +159,7 @@ const Basket = () => {
              <h2 className="basket-total-amount">
                 {displayMoney(
                   calculateTotal(
-                    basket.map(
+                    basket && basket?.map(
                       (product) =>
                         product.productDetail.price *
                         product.productDetail.cartQuantity

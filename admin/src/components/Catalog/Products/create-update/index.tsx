@@ -19,6 +19,8 @@ import {
   Input,
   Grid,
   UploadFile,
+  Image,
+  Modal,
 } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -31,6 +33,7 @@ import {
   getProduct,
   getProductDetail,
   getVariantProductDetail,
+  updateMainImageProduct,
   updateProduct,
 } from "src/features/catalog/product/actions";
 import { Box, Flex, Text } from "@chakra-ui/react";
@@ -52,16 +55,20 @@ import ProductDetail from "../detail-update";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useDebounce } from "use-debounce";
-import { getListColor, getListSearchColor } from "src/features/catalog/color/action";
+import {
+  getListColor,
+  getListSearchColor,
+} from "src/features/catalog/color/action";
 import { getListSize } from "src/features/catalog/size/action";
 import ProductVariant from "./ProductVariant";
-import { UploadOutlined } from "@ant-design/icons";
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
 const ProductCreateUpdate: React.FC = () => {
   const [enabled, setEnabled] = useState<boolean>(true);
   const [featuredAsset, setFeaturedAsset] = useState<Asset>();
   const [isModalAssetOpen, setIsModalAssetOpen] = useState<boolean>(false);
+  const [modalImage, setModalImage] = useState<boolean>(false);
 
   const [files, setFiles] = useState();
   //search
@@ -135,17 +142,13 @@ const ProductCreateUpdate: React.FC = () => {
       // "Content-Type": "application/json",
     },
   });
-  const {
-    product,
-    category,
-    brand,
-    material,
-    color,
-    size,
-  } = useSelector((state) => state);
+  const { product, category, brand, material, color, size } = useSelector(
+    (state) => state,
+  );
   //upload
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [fileMainList, setFileMainList] = useState<UploadFile[]>([]);
+  const [fileMainImageList, setFileMainImageList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -276,13 +279,13 @@ const ProductCreateUpdate: React.FC = () => {
           description: data.description,
           status: enabled ? 1 : 0,
           brand: {
-            id: data.brand,
+            id: data.brand.value,
           },
           material: {
-            id: data.material,
+            id: data.material.value,
           },
           category: {
-            id: data.category,
+            id: data.category.value,
           },
           // images: fileList,
           // productDetails: tableData,
@@ -350,15 +353,16 @@ const ProductCreateUpdate: React.FC = () => {
 
   useEffect(() => {
     if (!category.list.loading && category.list.result) {
-      const listOption = (category.list.result.listCategories ?? category.list.result)
-        .map((item) => ({
-          value: item.id,
-          label: item.categoryName,
-        }));
-  
-        !categoryValue && setCategorySelect(listOption);
-        
-        listOption && setCategorySelect(listOption);
+      const listOption = (
+        category.list.result.listCategories ?? category.list.result
+      ).map((item) => ({
+        value: item.id,
+        label: item.categoryName,
+      }));
+
+      !categoryValue && setCategorySelect(listOption);
+
+      listOption && setCategorySelect(listOption);
     }
   }, [category.list.result, category.list.loading, categoryValue]);
 
@@ -544,6 +548,41 @@ const ProductCreateUpdate: React.FC = () => {
     );
   };
 
+  //Main image
+  const customMainImageRequest = ({ file, onSuccess, onError }) => {
+    setTimeout(() => {
+      onSuccess();
+    }, 1000);
+  };
+
+  const onUploadMainImageChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+  }) => {
+    setFileMainImageList(Array.from(newFileList));
+  };
+
+  const onUploadMainImagePreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as RcFile);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
+
+  const handleMainImageRemove = (file) => {
+    // Remove the file from the fileList
+    setFileMainImageList((prevList) =>
+      Array.from(prevList).filter((item) => item.uid !== file.uid),
+    );
+  };
+
   useEffect(() => {
     const sizes = product?.variant?.result && [
       ...new Set(
@@ -586,15 +625,26 @@ const ProductCreateUpdate: React.FC = () => {
       );
       setValue(
         "category",
-        product?.variant?.result?.listProductDetail[0]?.product?.category.id,
+       {
+        label:  product?.variant?.result?.listProductDetail[0]?.product?.category.categoryName,
+        value:  product?.variant?.result?.listProductDetail[0]?.product?.category.id,
+       }
       );
       setValue(
         "brand",
-        product?.variant?.result?.listProductDetail[0]?.product?.brand.id,
+        {
+          label:  product?.variant?.result?.listProductDetail[0]?.product?.brand.brandName,
+          value:   product?.variant?.result?.listProductDetail[0]?.product?.brand.id,
+         }
+       
       );
       setValue(
         "material",
-        product?.variant?.result?.listProductDetail[0]?.product?.material?.id,
+        {
+          label:  product?.variant?.result?.listProductDetail[0]?.product?.material.materialName,
+          value:   product?.variant?.result?.listProductDetail[0]?.product?.material?.id,
+         }
+       
       );
       // setSizeSelect({})
     }
@@ -609,33 +659,57 @@ const ProductCreateUpdate: React.FC = () => {
     }
 
     if (id && tableData.length == 0) {
-      uniqueSizes.map((size) => {
-        uniqueColors.map((color) => {
-          setTableData([
-            ...tableData,
-            {
-              color: {
-                label: color.colorName,
-                value: color.id,
-                disable: null,
-                title: null,
-              },
-              key: `${size.sizeName}-${color.colorName}`,
-              price: 0,
-              quantity: 0,
-              size: {
-                label: size.sizeName,
-                value: size.id,
-                disable: null,
-                title: null,
-              },
-              status: 1,
-            },
-          ]);
+      uniqueSizes &&
+        uniqueSizes?.map((size) => {
+          uniqueColors &&
+            uniqueColors?.map((color) => {
+              setTableData([
+                ...tableData,
+                {
+                  color: {
+                    label: color.colorName,
+                    value: color.id,
+                    disable: null,
+                    title: null,
+                  },
+                  key: `${size.sizeName}-${color.colorName}`,
+                  price: 0,
+                  quantity: 0,
+                  size: {
+                    label: size.sizeName,
+                    value: size.id,
+                    disable: null,
+                    title: null,
+                  },
+                  status: 1,
+                },
+              ]);
+            });
         });
-      });
     }
   }, [id, product.variant.loading, product.variant.result]);
+
+  const handleUpdateMainImage = () => {
+    setModalImage(true);
+  };
+
+  const handleMainImageUpload = () => {
+    if (id) {
+      updateMainImageProduct({
+        id,
+        dispatch,
+        axiosClientJwt,
+        image: fileMainImageList,
+        setModalImage,
+        navigate
+      });
+    }
+  };
+
+  const handleMainImageCancel = () => {
+    setFileMainImageList([]); // Clear the file list when the modal is canceled
+    setModalImage(false)
+  };
 
   return (
     <Fragment>
@@ -670,13 +744,30 @@ const ProductCreateUpdate: React.FC = () => {
                     </Box>
                   </Flex>
                 )}
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={!id ? product.createProduct.loading : product.update.loading}
-                >
-                  {!id ? "Tạo" : "Cập nhật"}
-                </Button>
+                <Flex gap={3}>
+                  {id && (
+                    <Button
+                      type="ghost"
+                      // htmlType="submit"
+                      onClick={handleUpdateMainImage}
+                      loading={false}
+                    >
+                      Cập nhật ảnh chính
+                    </Button>
+                  )}
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={product.variant.loading && true}
+                    loading={
+                      !id
+                        ? product.createProduct.loading
+                        : product.update.loading
+                    }
+                  >
+                    {!id ? "Tạo" : "Cập nhật"}
+                  </Button>
+                </Flex>
               </Flex>
               <Box mb={3}>
                 <Box as="label" htmlFor="productName" fontWeight="semibold">
@@ -761,7 +852,7 @@ const ProductCreateUpdate: React.FC = () => {
                               }}
                               value={value}
                               placeholder={"Chọn danh mục"}
-                              filterOption={filterCategoryOption} 
+                              filterOption={filterCategoryOption}
                               style={{ width: "100%" }}
                               options={categorySelect}
                             />
@@ -842,38 +933,48 @@ const ProductCreateUpdate: React.FC = () => {
               </Flex>
             </Form>
 
-          {
-            !id && (
+            {!id && (
               <ProductVariant
-              tableData={tableData}
-              setTableData={setTableData}
-              sizes={sizeSelect}
-              colors={colorSelect}
-            />
-            )
-          }
-
-          {
-            !id && (
-              <Box mt={5}>
-              <Text>Chọn ảnh chính</Text>
-              <Upload
-                action="http://localhost:8080/product/add"
-                customRequest={customMainRequest}
-                fileList={fileMainList}
-                onChange={onUploadMainChange}
-                onRemove={handleMainRemove}
-                listType="picture-card"
-                onPreview={onUploadMainPreview}
-                showUploadList={{
-                  showPreviewIcon: true,
-                  showRemoveIcon: true,
+                tableData={tableData}
+                setTableData={setTableData}
+                sizes={sizeSelect}
+                colors={colorSelect}
+              />
+            )}
+            {id && (
+              <Image
+                style={{ width: "100%", maxWidth: "150px", maxHeight: "75%" }}
+                onError={(e) => {
+                  e.target.src =
+                    "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg";
                 }}
-                multiple={true}
-              >
-                {fileMainList.length >= 1 ? null : uploadButton}
-              </Upload>
-              {/* {!id && (
+                preview={false}
+                src={`${
+                  import.meta.env.VITE_BACKEND_URL
+                }/product/${id}/image-main`}
+              />
+            )}
+
+            {!id && (
+              <Box mt={5}>
+                <Text>Chọn ảnh chính</Text>
+                <Upload
+                  action="http://localhost:8080/product/add"
+                  customRequest={customMainRequest}
+                  fileList={fileMainList}
+                  onChange={onUploadMainChange}
+                  onRemove={handleMainRemove}
+                  listType="picture-card"
+                  onPreview={onUploadMainPreview}
+                  showUploadList={{
+                    showPreviewIcon: true,
+                    showRemoveIcon: true,
+                  }}
+                  multiple={true}
+                >
+                  {fileMainList.length >= 1 ? null : uploadButton}
+                </Upload>
+                {/* {!id && (
                 <>
                   <Text>Chọn biến thể</Text>
                   <Upload
@@ -894,9 +995,8 @@ const ProductCreateUpdate: React.FC = () => {
                   </Upload>
                 </>
               )} */}
-            </Box>
-            )
-          }
+              </Box>
+            )}
           </Card>
         </Col>
       </Row>
@@ -907,6 +1007,37 @@ const ProductCreateUpdate: React.FC = () => {
         setFiles={setFiles}
         featuredAsset={featuredAsset as Asset}
       />
+      {id && (
+        <Modal
+          title="Upload Images"
+          open={modalImage}
+          footer={[
+            <Button key="back" onClick={handleMainImageCancel}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" loading={product.mainImage.loading} onClick={handleMainImageUpload}>
+              {product.mainImage.loading ? 'Uploading..' : 'OK'}
+            </Button>,
+          ]}
+        >
+          <Upload
+            action={`http://localhost:8080/product/image-main/${id}`}
+            customRequest={customMainImageRequest}
+            fileList={fileMainImageList}
+            onChange={onUploadMainImageChange}
+            onRemove={handleMainImageRemove}
+            listType="picture-card"
+            onPreview={onUploadMainImagePreview}
+            showUploadList={{
+              showPreviewIcon: true,
+              showRemoveIcon: true,
+            }}
+            multiple={true}
+          >
+            {fileMainImageList.length >= 1 ? null : uploadButton}
+          </Upload>
+        </Modal>
+      )}
     </Fragment>
   );
 };

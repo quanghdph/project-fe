@@ -16,12 +16,16 @@ const ProductFeatured = ({ product }) => {
     <SkeletonTheme color="#e1e1e1" highlightColor="#f2f2f2">
       <div className="product-display" onClick={onClickItem} role="presentation">
         <div className="product-display-img">
-          {product.mainImage ? (
+          {/* {product.mainImage ? (
             <ImageLoader
               className="product-card-img"
               src={product.mainImage}
             />
-          ) : <Skeleton width="100%" height="100%" />}
+          ) : <Skeleton width="100%" height="100%" />} */}
+           <ImageLoader
+              className="product-card-img"
+              src={`http://localhost:8080/product/${product.id}/image-main`}
+            />
         </div>
         <div className="product-display-details">
           <h2>{product.productName || <Skeleton width={80} />}</h2>

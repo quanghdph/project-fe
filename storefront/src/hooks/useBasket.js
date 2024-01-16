@@ -7,7 +7,7 @@ const useBasket = () => {
   const { basket } = useSelector((state) => ({ basket: state.basket }));
   const dispatch = useDispatch();
 
-  const isItemOnBasket = (id) => !!basket.find((item) => item.productDetail.id === id);
+  const isItemOnBasket = (id) => basket && !!basket.find((item) => item.productDetail.id === id);
 
   const addToBasket = async (product) => {
     const access_token = localStorage.getItem("access_token")

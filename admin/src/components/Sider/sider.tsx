@@ -86,6 +86,15 @@ const SiderBar = () => {
                                     navigate('catalog/material')
                                 }
                             },
+                            {
+                                key: "variant",
+                                icon: <ScissorOutlined />,
+                                label: "Biến thể",
+                                className: location.pathname === "catalog/material" ? "ant-menu-item-selected" : "",
+                                onClick: () => {
+                                    navigate('catalog/material')
+                                }
+                            },
                             // {
                             //     key: "waistband",
                             //     icon: <AlibabaOutlined />,

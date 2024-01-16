@@ -57,9 +57,10 @@ const columns = (
             />
           )} */}
            <Image
-              // width={100}
-              // height={100}
               style={{ width: "100%", maxWidth: "150px", maxHeight: "75%" }}
+              onError={(e) => {
+                e.target.src = 'https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg';
+              }}
               src={`${import.meta.env.VITE_BACKEND_URL}/product/${
                 record.id
               }/image-main`}

@@ -57,9 +57,7 @@
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "query-string": "^8.1.0",
-    "react": "^17.0.2",
     "react-compound-slider": "^3.3.1",
-    "react-dom": "^17.0.2",
     "react-loading-skeleton": "^2.2.0",
     "react-modal": "^3.13.1",
     "react-phone-input-2": "^2.14.0",
@@ -74,5 +72,12 @@
     "vite-plugin-antd-layout": "^0.4.1",
     "webfontloader": "^1.6.28",
     "yup": "^0.32.9"
+  },
+  "peerDependencies": {
+    "@ant-design/icons": "^4.6.0",
+    "antd": "^4.23.3",
+    "lodash": "^4.17.20",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
