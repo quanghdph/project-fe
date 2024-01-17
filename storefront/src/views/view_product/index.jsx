@@ -148,12 +148,10 @@ const ViewProduct = () => {
               </div>
             )} */}
             {/* <div className="product-modal-image-wrapper">
-              {selectedColor && <input type="color" disabled ref={colorOverlay} id="color-overlay" />}
-              <ImageLoader
-                alt={product.name}
-                className="product-modal-image"
-                src={selectedImage}
-              />
+            <ImageLoader
+                      className="product-modal-image-collection-img"
+                      src={`http://localhost:8080/product/${id}/image`}
+            />
             </div> */}
             <div className="product-modal-details">
               <br />
