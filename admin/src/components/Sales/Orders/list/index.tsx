@@ -20,7 +20,7 @@ import {
   Tabs,
   TabsProps,
   Tag,
-  message
+  message,
 } from "antd";
 import React, { Fragment, useState, useEffect } from "react";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
@@ -73,16 +73,19 @@ const Orders = () => {
   const [wardVisible, setWardVisible] = useState(true);
   const [totalAmount, setTotalAmount] = useState();
   const [delivery, setDelivery] = useState(false);
-  const [customerSelect, setCustomerSelect] = useState()
-  const [tempPrice, setTempPrice] = useState()
-  const [surplusMoney, setSurplusMoney] = useState()
+  const [customerSelect, setCustomerSelect] = useState();
+  const [tempPrice, setTempPrice] = useState();
+  const [surplusMoney, setSurplusMoney] = useState();
 
-  const [cart, setCart] = useState([]);
-  const [cart1, setCart1] = useState([]);
-  const [cart2, setCart2] = useState([]);
-  const [cart3, setCart3] = useState([]);
-  const [cart4, setCart4] = useState([]);
-  const [cart5, setCart5] = useState([]);
+  const [cart, setCart] = useState([
+    { id: 1, items: [] },
+    { id: 2, items: [] },
+    { id: 3, items: [] },
+    { id: 4, items: [] },
+    { id: 5, items: [] },
+  ]);
+  const [orderList, setOrderList] = useState([]);
+  const [currentTab, setCurrentTab] = useState(1);
 
   // ** Third party
   const navigate = useNavigate();
@@ -226,18 +229,16 @@ const Orders = () => {
         // If form is valid, you can access the form data here
         const formData = getValues();
 
-        const cartArr = cart.map((item) => {
+        const findCart: any = cart.find(item => item.id == currentTab)
+
+        const cartArr = findCart && findCart.items.map((item) => {
           return {
             id: item.id,
             quantity: item.cartQuantity,
           };
-        });
+        }).flat();
 
-        // createCheckout({
-        //   billID,
-        //   dispatch,
-        //   axiosClientJwt,
-        // })
+        console.log(cartArr);
 
         formData &&
           createSelloff({
@@ -267,36 +268,38 @@ const Orders = () => {
   };
 
   useEffect(() => {
-    updateTotalAmount(cart);
+    if(cart) {
+      cart.map(item => item.id == currentTab && updateTotalAmount(item.items))
+    }
+    
   }, [cart, setCart]);
 
   const onDelivery = () => {
     setDelivery(!delivery);
   };
 
-  const paymentMethod =  watch('paymentMethod')
-
-  // useEffect(() => {
-  //   if(paymentMethod)
-  // }, [])
+  const paymentMethod = watch("paymentMethod");
 
   useEffect(() => {
-    if(!selloff?.create?.loading && selloff?.create?.result && paymentMethod == 1) {
-        createCheckout({
-          billID: selloff.create.result,
-          dispatch,
-          axiosClientJwt,
-        })
-
+    if (
+      !selloff?.create?.loading &&
+      selloff?.create?.result &&
+      paymentMethod == 1
+    ) {
+      createCheckout({
+        billID: selloff.create.result,
+        dispatch,
+        axiosClientJwt,
+      });
     }
-  }, [selloff.create.loading, selloff.create.result])
+  }, [selloff.create.loading, selloff.create.result]);
 
   useEffect(() => {
-    if(tempPrice && totalAmount) {
-      const result = tempPrice > totalAmount ? tempPrice - totalAmount : null
-      setSurplusMoney(result)
+    if (tempPrice && totalAmount) {
+      const result = tempPrice - totalAmount;
+      setSurplusMoney(result);
     }
-  }, [tempPrice, totalAmount])
+  }, [tempPrice, totalAmount]);
 
       // validate 
       const validateNoWhiteSpace = (value) => {
@@ -346,13 +349,22 @@ const Orders = () => {
               setPage={setPage}
               setLimit={setLimit}
               page={limit}
+              orderList={orderList}
+              currentTab={currentTab}
             />
           </Card>
         </Col>
         <Col span={12}>
           <Card>
             <Title level={5}></Title>
-            <CreateOrder cart={cart} setCart={setCart} setCustomerSelect={setCustomerSelect} />
+            <CreateOrder
+              cart={cart}
+              setCart={setCart}
+              setCustomerSelect={setCustomerSelect}
+              setOrderList={setOrderList}
+              setCurrentTab={setCurrentTab}
+              currentTab={currentTab}
+            />
           </Card>
         </Col>
       </Row>
@@ -511,20 +523,29 @@ const Orders = () => {
                   <Text>Tổng tiền:</Text>
                   <Text>{formatPriceVND(Number(totalAmount))}</Text>
                 </Flex>
-                {
-                  paymentMethod == 0 && (
-                    <>
-                      <Box mb={4}>
-                  <Text>Tiền khách đưa:</Text>
-                  <InputNumber onChange={(e) => setTempPrice(e)} prefix="VND" style={{ width: "100%" }} />
-                </Box>
-                <Flex justifyContent={"space-between"}>
-                  <Text>Tiền dư:</Text>
-                  <Text>{surplusMoney ? formatPriceVND(Number(surplusMoney)) : surplusMoney > 0 ?  `Số tiền phải lớn hơn tổng tiền` : null}</Text>
-                </Flex></>
-                  )
-                }
-              
+                {paymentMethod == 0 && (
+                  <>
+                    <Box mb={4}>
+                      <Text>Tiền khách đưa:</Text>
+                      <InputNumber
+                        onChange={(e) => setTempPrice(e)}
+                        prefix="VND"
+                        style={{ width: "100%" }}
+                      />
+                    </Box>
+                    <Flex justifyContent={"space-between"}>
+                      <Text>Tiền dư:</Text>
+                      <Text>
+                        {surplusMoney
+                          ? formatPriceVND(Number(surplusMoney))
+                          : surplusMoney > 0
+                          ? `Số tiền phải lớn hơn tổng tiền`
+                          : null}
+                      </Text>
+                    </Flex>
+                  </>
+                )}
+
                 <Flex direction={"column"} justifyContent={"space-between"}>
                   <Text>Chọn phương thức thanh toán</Text>
                   <Form.Item name="paymentMethod">
@@ -571,6 +592,7 @@ const Orders = () => {
                 >
                   <Controller
                     name="note"
+<<<<<<< HEAD
                     control={control}
                     rules={{ 
                       validate: validateNoWhiteSpace
@@ -591,6 +613,26 @@ const Orders = () => {
                     }}
                   />
                 </Form.Item>
+=======
+                    label="Ghi chú"
+                    labelCol={{ span: 24 }}
+                    rules={[{ 
+                      // required: true,
+                      // validator: (_, value) => validateNoWhiteSpace(value)
+                  }]}
+                  >
+                    <TextArea
+                      {...register("note", { maxLength: 50 })}
+                      onChange={(e) => setValue("note", e.target.value)}
+                      rows={4}
+                      placeholder="Nhập ghi chú"
+
+                    />
+                    {errors?.note ? <Box as="div" mt={1} textColor="red.600">{errors.note?.message}</Box> : null}
+                  </Form.Item>
+                </Box>
+
+>>>>>>> 18940e7874db7b042d2a188bc081cdfe6d43f8c4
 
                 <Button
                   // htmlType="submit"

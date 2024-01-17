@@ -90,7 +90,7 @@ const columns = (
   },
 ];
 
-function ProductList({ navigate, cart, setCart, setPage, setLimit, page }) {
+function ProductList({ navigate, cart, setCart, setPage, setLimit, page, orderList, currentTab }) {
   const [filter, setFilter] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [activeModalProductDetail, setActiveModalProductDetail] = useState(false);
@@ -191,6 +191,8 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit, page }) {
           id={idProductDetail}
           cart={cart}
           setCart={setCart}
+          orderList={orderList}
+          currentTab={currentTab}
         />
      
     </Fragment>
