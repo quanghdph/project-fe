@@ -592,7 +592,6 @@ const Orders = () => {
                 >
                   <Controller
                     name="note"
-<<<<<<< HEAD
                     control={control}
                     rules={{ 
                       validate: validateNoWhiteSpace
@@ -613,26 +612,6 @@ const Orders = () => {
                     }}
                   />
                 </Form.Item>
-=======
-                    label="Ghi chú"
-                    labelCol={{ span: 24 }}
-                    rules={[{ 
-                      // required: true,
-                      // validator: (_, value) => validateNoWhiteSpace(value)
-                  }]}
-                  >
-                    <TextArea
-                      {...register("note", { maxLength: 50 })}
-                      onChange={(e) => setValue("note", e.target.value)}
-                      rows={4}
-                      placeholder="Nhập ghi chú"
-
-                    />
-                    {errors?.note ? <Box as="div" mt={1} textColor="red.600">{errors.note?.message}</Box> : null}
-                  </Form.Item>
-                </Box>
-
->>>>>>> 18940e7874db7b042d2a188bc081cdfe6d43f8c4
 
                 <Button
                   // htmlType="submit"
