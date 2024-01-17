@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { removeFromBasket } from '@/redux/actions/basketActions';
 import { displayActionMessage } from '@/helpers/utils';
 import axios from 'axios';
+import Input from 'antd/lib/input/Input';
 
 const BasketItem = ({ product }) => {
   const dispatch = useDispatch();

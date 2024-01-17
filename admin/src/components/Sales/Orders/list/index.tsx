@@ -597,11 +597,10 @@ const Orders = () => {
                       validate: validateNoWhiteSpace
                     }}
                     render={({ field }) => {
-                      console.log(field);
                       return (
                         <div>
                           <TextArea
-                            {...register("note")}
+                            {...register("note",  { maxLength: 50 })}
                             onChange={(e) => setValue("note", e.target.value)}
                             rows={4}
                             placeholder="Nhập ghi chú"

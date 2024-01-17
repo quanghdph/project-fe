@@ -47,9 +47,9 @@ const CreditPayment = () => {
 
   return (
     <>
-      <h3 className="text-center">Payment</h3>
+      <h3 className="text-center">Thanh toán</h3>
       <br />
-      <span className="d-block padding-s">Payment Option</span>
+      <span className="d-block padding-s">Phương thức thanh toán</span>
       <div
         ref={containerRef}
         className={`checkout-fieldset-collapse ${values.type === 'credit' ? 'is-selected-payment' : ''}`}

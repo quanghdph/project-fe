@@ -72,19 +72,9 @@ const Navigation = () => {
         <Link onClick={onClickLink} to="/"><h2>Young Boy</h2></Link>
       </div>
       <ul className="navigation-menu-main">
-        <li><NavLink activeClassName="navigation-menu-active" exact to={ROUTE.HOME}>Home</NavLink></li>
-        <li><NavLink activeClassName="navigation-menu-active" to={ROUTE.SHOP}>Shop</NavLink></li>
-        <li><NavLink activeClassName="navigation-menu-active" to={ROUTE.FEATURED_PRODUCTS}>Featured</NavLink></li>
-        <li><NavLink activeClassName="navigation-menu-active" to={ROUTE.RECOMMENDED_PRODUCTS}>Recommended</NavLink></li>
+        <li><NavLink activeClassName="navigation-menu-active" exact to={ROUTE.HOME}>Trang chủ</NavLink></li>
+        <li><NavLink activeClassName="navigation-menu-active" to={ROUTE.SHOP}>Cửa hàng</NavLink></li>
       </ul>
-      {(pathname === ROUTE.SHOP || pathname === ROUTE.SEARCH) && (
-        <FiltersToggle>
-          <button className="button-muted button-small" type="button">
-            Filters &nbsp;
-            <FilterOutlined />
-          </button>
-        </FiltersToggle>
-      )}
       <SearchBar />
       <ul className="navigation-menu">
         <li className="navigation-menu-item">

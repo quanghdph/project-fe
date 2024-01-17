@@ -17,6 +17,9 @@ import ShippingForm from "./ShippingForm";
 import ShippingTotal from "./ShippingTotal";
 import { useForm } from "react-hook-form";
 
+import "antd/dist/antd.css";
+import "antd-button-color/dist/css/style.css";
+
 const FormSchema = Yup.object().shape({
   fullname: Yup.string()
     .required("Full name is required.")
@@ -80,6 +83,7 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
         district: form.districtOption,
         ward: form.wardOption,
         note: form.note,
+        phoneNumber: form.phoneNumber
       })
     );
     history.push('/checkout/step3');
@@ -122,7 +126,7 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
                />
                <br />
                {/*  ---- TOTAL --------- */}
-               <ShippingTotal subtotal={subtotal} />
+               {/* <ShippingTotal subtotal={subtotal} /> */}
                <br />
                {/*  ----- NEXT/PREV BUTTONS --------- */}
                <div className="checkout-shipping-action">
@@ -132,10 +136,10 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
                    type="button"
                  >
                    <ArrowLeftOutlined />
-                   &nbsp; Go Back
+                   &nbsp; Quay lại
                  </button>
                  <button className="button button-icon" type="submit">
-                   Next Step &nbsp;
+                   Bước tiếp theo &nbsp;
                    <ArrowRightOutlined />
                  </button>
                </div>

@@ -8,6 +8,7 @@ import * as view from '@/views';
 import AdminRoute from './AdminRoute';
 import ClientRoute from './ClientRoute';
 import PublicRoute from './PublicRoute';
+import PaymentSuccess from '@/views/checkout/paymentsuccess';
 
 // Revert back to history v4.10.0 because
 // v5.0 breaks navigation
@@ -25,9 +26,14 @@ const AppRouter = () => (
           path={ROUTES.SEARCH}
         />
         <Route
-          component={view.Home}
+        component={view.Home}
+        exact
+        path={ROUTES.HOME}
+      />
+      <Route
+          component={PaymentSuccess}
           exact
-          path={ROUTES.HOME}
+          path={"/payment/success"}
         />
         <Route
           component={view.Shop}

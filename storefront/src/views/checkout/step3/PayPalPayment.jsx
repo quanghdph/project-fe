@@ -15,7 +15,7 @@ const PayPalPayment = () => {
             name="type"
             onChange={(e) => {
               if (e.target.checked) {
-                setValues({ ...values, type: 'paypal' });
+                setValues({ ...values, type: 'paypal', value: 2 });
               }
             }}
             type="radio"
@@ -25,12 +25,9 @@ const PayPalPayment = () => {
             htmlFor="modePayPal"
           >
             <div className="d-flex-grow-1 margin-left-s">
-              <h4 className="margin-0">PayPal</h4>
-              <span className="text-subtle d-block margin-top-s">
-                Pay easily, fast and secure with PayPal.
-              </span>
+              <h4 className="margin-0">Thanh toán qua Vnpay</h4>
             </div>
-            <div className="payment-img payment-img-paypal" />
+            {/* <div className="payment-img payment-img-paypal" /> */}
           </label>
         </div>
       </div>
