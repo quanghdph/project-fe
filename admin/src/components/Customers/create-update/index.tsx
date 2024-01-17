@@ -110,14 +110,82 @@ const CustomerCreateUpdate = () => {
         }
     }, [id, customer.single.loading, customer.single.result])
 
+
+    // validate 
+  const validateNoWhiteSpace = (value) => {
+    const regexLeadingWhitespace = /^\s/;
+    const regexTrailingWhitespace = /\s$/;
+    const maxLength =20;
+    if (regexLeadingWhitespace.test(value)) {
+      return "Không được chứa khoảng trắng ở đầu!";
+    } else if (regexTrailingWhitespace.test(value)) {
+      return "Không được chứa khoảng trắng ở cuối!";
+    }else if(value.length > maxLength) {
+       return `Độ dài không được vượt quá ${maxLength} kí tự`;
+    }
+    return true;
+  };
+
+  
+  // validate số điện thoại
+ const validatePhoneNumber = (value) => {
+    const regex = /^0[1-9][0-9]{8}$/;
+
+    if (!regex.test(value)) {
+      return "Số điện thoại không hợp lệ";
+    }
+  }
+
+  // validate email 
+const validateEmail = (value) => {
+  // Biểu thức chính quy để kiểm tra địa chỉ email
+  const regex = /^[^\s@]+@gmail\.com[^\s@]*$/;
+
+  if (!regex.test(value)) {
+    return "Địa chỉ email không hợp lệ";
+  }
+
+  return true;
+};
+
+
+// validate giới tính
+const validateGender = (value) => {
+    // Kiểm tra nếu giá trị không phải là 0 hoặc 1
+    if (value !== 0 && value !== 1) {
+      return "Giới tính không hợp lệ";
+    }
+  
+    return true;
+  };
+
+  const handleChangeGenders = (value) => {
+    const validationResult = validateGender(value);
+  
+    if (validationResult !== true) {
+      // Xử lý lỗi, ví dụ: hiển thị thông báo lỗi
+      console.error(validationResult);
+    } else {
+      // Xử lý khi giá trị hợp lệ
+      setGender(value);
+    }
+  };
+  
+
+
     // ** Function handle
     const onChangeDatePicker: DatePickerProps['onChange'] = (date, _dateString) => {
         setDateOfBirth(date?.toISOString() as string)
     };
 
     const handleChangeGender = (value: boolean) => {
-        setGender(value)
-    };
+        // if (value === null || value === undefined) {
+        //        return "Vui lòng chọn giới tính!";
+        // } else {
+        //   setGender(value);
+        // }
+        setGender(value);
+      };
 
     const onSubmit = async (data: FormValuesCustomer) => {
         console.log(data);
@@ -201,11 +269,14 @@ const CustomerCreateUpdate = () => {
                                 </Col>
                                 <Divider/>
                                 <Col span={24}>
-                                    <Form.Item label="Họ">
+                                    <Form.Item label="Họ * :">
                                         <Controller
                                             name="firstName"
                                             control={control}
-                                            rules={{required: true}}
+                                            rules={{
+                                                required: true,
+                                                validate: validateNoWhiteSpace
+                                        }}
                                             render={({field}) => {
                                                 return (
                                                     <div ref={firstNameErrorRef}>
@@ -217,11 +288,16 @@ const CustomerCreateUpdate = () => {
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Tên">
+
+
+                                    <Form.Item label="Tên * :">
                                         <Controller
                                             name="lastName"
                                             control={control}
-                                            rules={{required: true}}
+                                            rules={{
+                                                required: true,
+                                                validate: validateNoWhiteSpace
+                                            }}
                                             render={({field}) => {
                                                 return (
                                                     <div ref={lastNameErrorRef}>
@@ -233,11 +309,14 @@ const CustomerCreateUpdate = () => {
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Email">
+                                    <Form.Item label="Email * :">
                                         <Controller
                                             name="email"
                                             control={control}
-                                            rules={{required: true}}
+                                            rules={{
+                                                required: true,
+                                                validate:validateEmail
+                                            }}
                                             render={({field}) => {
                                                 return (
                                                     <div ref={lastNameErrorRef}>
@@ -270,28 +349,50 @@ const CustomerCreateUpdate = () => {
                                             </Form.Item>
                                         )
                                     } */}
-                                    <Form.Item label="Số điện thoại">
+                                    <Form.Item label="Số điện thoại * :">
                                         <Controller
                                             name="phoneNumber"
                                             control={control}
-                                            rules={{maxLength: 11, minLength: 10}}
+                                            rules={{
+                                                required: "Vui lòng điền vào trường này!",
+                                                validate: validatePhoneNumber,
+                                            }}
                                             render={({field}) => {
                                                 return (
+                                                    
                                                     <div ref={phoneNumberErrorRef}>
                                                         <Input {...field} />
-                                                        {errors?.phoneNumber ?
-                                                            <Box as="div" mt={1} textColor="red.600">Vui lòng nhập định dạng 10 số</Box> : null}
+                                                        {errors?.phoneNumber ? (
+                               <Box as="div" mt={1} textColor="red.600">
+                                {errors.phoneNumber?.type === "required"
+                                  ? "Vui lòng điền số điện thoại!"
+                                  : errors.phoneNumber.message}
+                                   {errors.phoneNumber?.type === "validate"}
+                              </Box>
+                            ) : null}
                                                     </div>
                                                 )
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Ngày sinh">
+
+
+                                    <Form.Item label="Ngày sinh * :">
                                         <DatePicker
                                             value={dateOfBirth ? moment(dateOfBirth?.substring(0, 10), dateFormat) : '' as any}
                                             onChange={onChangeDatePicker}/>
                                     </Form.Item>
-                                    <Form.Item label="Giới tính">
+
+
+
+
+                                    <Form.Item label="Giới tính * :" name="gender"
+                                 rules={[
+                                    {
+                                       required: true,
+                                       message: 'Vui lòng chọn giới tính!',
+                                     },
+                                        ]}>
                                         <Select
                                             value={gender}
                                             onChange={handleChangeGender}
@@ -304,9 +405,13 @@ const CustomerCreateUpdate = () => {
                                                     value: 0,
                                                     label: 'Nữ giới',
                                                 },
+                                          
                                             ]}
+                                        
                                         />
                                     </Form.Item>
+
+
                                     <Form.Item label="Mật khẩu mã hóa">
                                         <Switch defaultChecked checked={encryptedPassword} onChange={onPasswordChange} />
                                     </Form.Item>

@@ -103,6 +103,22 @@ const SizeCreateUpdate = () => {
         }
     };
 
+        // validate 
+        const validateNoWhiteSpace = (value) => {
+            const regexLeadingWhitespace = /^\s/;
+            const regexTrailingWhitespace = /\s$/;
+            const maxLength = 50;
+            if (regexLeadingWhitespace.test(value)) {
+              return "Không được chứa khoảng trắng ở đầu!";
+            } else if (regexTrailingWhitespace.test(value)) {
+              return "Không được chứa khoảng trắng ở cuối!";
+            }else if(value.length > maxLength) {
+               return `Độ dài không được vượt quá ${maxLength} kí tự`;
+            }
+            return true;
+          };
+
+
     return (
         <Fragment>
             <Row gutter={[0, 16]}>
@@ -128,7 +144,7 @@ const SizeCreateUpdate = () => {
                                             size.create.loading ?
                                                 <Button type="primary" loading>Đang tạo...</Button> :
                                                 id ? <Button htmlType="submit" type="primary">Cập nhật</Button> :
-                                                    <Button htmlType="submit" type="primary">Tạo</Button>
+                                                <Button htmlType="submit" type="primary" disabled={!!Object.keys(errors).length}>Tạo</Button>
                                     }
                                 </Flex>
                             </Col>
@@ -138,7 +154,10 @@ const SizeCreateUpdate = () => {
                                     <Controller
                                         name="size_name"
                                         control={control}
-                                        rules={{ required: true }}
+                                        rules={{ 
+                                            required: true,
+                                            validate:validateNoWhiteSpace
+                                        }}
                                         render={({ field }) => {
                                             return (
                                                 <div ref={sizeNameErrorRef}>
@@ -153,7 +172,10 @@ const SizeCreateUpdate = () => {
                                     <Controller
                                         name="size_code"
                                         control={control}
-                                        rules={{ required: true }}
+                                        rules={{
+                                            required: true,
+                                            validate:validateNoWhiteSpace
+                                         }}
                                         render={({ field }) => {
                                             return (
                                                 <div ref={sizeCodeErrorRef}>
