@@ -23,6 +23,7 @@ const HomePage = () => {
 
     const handleLogout = () => {
         logOut(dispatch, navigate, axiosClientJwt)
+        
     }
 
     return (

@@ -279,7 +279,7 @@ const Bill = () => {
           customer_name: `${bill.customer.firstName} ${bill.customer.lastName}`,
           // employee_name: `${bill.employee.firstName} ${bill.employee.lastName}`,
           phoneNumber: bill.phoneNumber,
-          transportFee: formatPriceVND(bill.transportFee),
+          transportFee: formatPriceVND(Number(bill.transportFee)),
           note: bill.note,
           paymentType: bill.paymentType == 1 ? <Tag color="success">Tại quầy</Tag> :  <Tag color="processing">Bán hàng Online</Tag>,
           createDate: bill.createDate,

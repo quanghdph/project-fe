@@ -298,6 +298,21 @@ const Orders = () => {
     }
   }, [tempPrice, totalAmount])
 
+      // validate 
+      const validateNoWhiteSpace = (value) => {
+        const regexLeadingWhitespace = /^\s/;
+        const regexTrailingWhitespace = /\s$/;
+        const maxLength =50;
+        if (regexLeadingWhitespace.test(value)) {
+          return "Không được chứa khoảng trắng ở đầu!";
+        } else if (regexTrailingWhitespace.test(value)) {
+          return "Không được chứa khoảng trắng ở cuối!";
+        }else if(value.length > maxLength) {
+           return `Độ dài không được vượt quá ${maxLength} kí tự`;
+        }
+        return true;
+      };
+
   return (
     <Fragment>
       <Row gutter={[10, 16]}>
@@ -549,21 +564,29 @@ const Orders = () => {
                     />
                   </Form.Item>
                 </Flex>
+
+                
                 <Box mb={2}>
                   <Form.Item
                     name="note"
                     label="Ghi chú"
                     labelCol={{ span: 24 }}
-                    rules={[{ required: true, message: "Điền ghi chú" }]}
+                    rules={[{ 
+                      required: true,
+                      validator: (_, value) => validateNoWhiteSpace(value)
+                  }]}
                   >
                     <TextArea
                       {...register("note")}
                       onChange={(e) => setValue("note", e.target.value)}
                       rows={4}
                       placeholder="Nhập ghi chú"
+
                     />
+                    {errors?.note ? <Box as="div" mt={1} textColor="red.600">{errors.note?.message}</Box> : null}
                   </Form.Item>
                 </Box>
+
 
                 <Button
                   // htmlType="submit"
