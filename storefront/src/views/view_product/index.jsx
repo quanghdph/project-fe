@@ -56,7 +56,7 @@ const ViewProduct = () => {
   const { authStatus, isAuthenticating, store } = useSelector((state) => ({
     authStatus: state.app.authStatus,
     isAuthenticating: state.app.isAuthenticating,
-    store: state
+    store: state,
   }));
 
   useEffect(() => {
@@ -91,20 +91,18 @@ const ViewProduct = () => {
       );
     });
 
-    const handleAddToBasket = () => {
-      
-      if(!authStatus) {
-        displayActionMessage('Bạn cần đăng nhập để thêm vào giỏ hàng!', 'info');
-      } else {
-        addToBasket({
-          ...selectedProduct,
-          cartQuantity: 1
-          // selectedColor: selectedCartColor,
-          // selectedSize: selectedCartSize,
-        });
-      }
-     
-    };
+  const handleAddToBasket = () => {
+    if (!authStatus) {
+      displayActionMessage("Bạn cần đăng nhập để thêm vào giỏ hàng!", "info");
+    } else {
+      addToBasket({
+        ...selectedProduct,
+        cartQuantity: 1,
+        // selectedColor: selectedCartColor,
+        // selectedSize: selectedCartSize,
+      });
+    }
+  };
 
   return (
     <main className="content">
@@ -125,6 +123,10 @@ const ViewProduct = () => {
             </h3>
           </Link>
           <div className="product-modal">
+            <ImageLoader
+              className="product-modal-image-collection-img"
+              src={`http://localhost:8080/product/${id}/image-main`}
+            />
             {/* {product.imageCollection.length !== 0 && (
               <div className="product-modal-image-collection">
                 {product.imageCollection.map((image) => (
@@ -199,7 +201,9 @@ const ViewProduct = () => {
                 styles={{ menu: (provided) => ({ ...provided, zIndex: 10 }) }}
               />
 
-              {selectedProduct && <h1>{displayMoney(selectedProduct?.price)}</h1>}
+              {selectedProduct && (
+                <h1>{displayMoney(selectedProduct?.price)}</h1>
+              )}
 
               <div className="product-modal-action">
                 <button
