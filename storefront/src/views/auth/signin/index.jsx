@@ -54,7 +54,9 @@ const SignIn = ({ history }) => {
         <div className="loader">
           <h3 className="toast-success auth-success">
             {authStatus.message}
+            
             <LoadingOutlined />
+          
           </h3>
         </div>
       )}

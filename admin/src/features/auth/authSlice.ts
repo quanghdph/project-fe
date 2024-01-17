@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { message } from 'antd';
 import { User } from 'src/types/user';
 
 interface AuthState {
@@ -31,11 +32,13 @@ export const authSlice = createSlice({
   reducers: {
     loginStart: (state) => {
       state.login.loading = true;
+
     },
     loginSuccess: (state, action) => {
       state.login.loading = false;
       state.login.result = action.payload;
       state.login.error = false
+   
     },
     loginFailed: (state, action) => {
       state.login.loading = false;

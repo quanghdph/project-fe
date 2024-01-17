@@ -8,7 +8,7 @@ import { Field, Formik, useFormikContext } from "formik";
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 // import * as Yup from "yup";
-import "antd/dist/antd.css";
+// import "antd/dist/antd.css";
 import "antd-button-color/dist/css/style.css";
 
 const ShippingForm = ({
