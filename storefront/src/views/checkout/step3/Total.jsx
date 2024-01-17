@@ -38,7 +38,7 @@ const Total = ({ isInternational, subtotal }) => {
         >
           <ArrowLeftOutlined />
           &nbsp;
-          Go Back
+          Quay lại
         </button>
         <button
           className="button"
@@ -48,7 +48,7 @@ const Total = ({ isInternational, subtotal }) => {
         >
           <CheckOutlined />
           &nbsp;
-          Confirm
+          Hoàn thành
         </button>
       </div>
     </>

@@ -15,14 +15,15 @@ const Shop = () => {
     requestStatus: state.app.requestStatus,
     isLoading: state.app.loading
   }), shallowEqual);
-
+  console.log(store);
   return (
     <main className="content">
       <section className="product-list-wrapper">
         {/* <AppliedFilters filteredProductsCount={store.filteredProducts.length} /> */}
-        <ProductList {...store}>
-          <ProductGrid  />
-        </ProductList>
+        {/* <ProductList {...store}>
+        
+        </ProductList> */}
+        <ProductGrid  />
       </section>
     </main>
   );

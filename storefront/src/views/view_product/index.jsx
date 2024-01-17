@@ -95,12 +95,15 @@ const ViewProduct = () => {
     if (!authStatus) {
       displayActionMessage("Bạn cần đăng nhập để thêm vào giỏ hàng!", "info");
     } else {
-      addToBasket({
-        ...selectedProduct,
-        cartQuantity: 1,
-        // selectedColor: selectedCartColor,
-        // selectedSize: selectedCartSize,
-      });
+      console.log(selectedProduct);
+      if (selectedProduct.quantity == 0) {
+        displayActionMessage("Mặt hàng này hiện không còn!", "info");
+      } else {
+        addToBasket({
+          ...selectedProduct,
+          cartQuantity: 1,
+        });
+      }
     }
   };
 
@@ -160,7 +163,11 @@ const ViewProduct = () => {
               <h1 className="margin-top-0">
                 {product[0]?.product?.productName}
               </h1>
-              <span>{product[0]?.product?.description}</span>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: product[0]?.product?.description,
+                }}
+              />
               <br />
               <br />
               <div className="divider" />

@@ -136,6 +136,7 @@ function ProductList({ navigate, cart, setCart, setPage, setLimit, page, orderLi
               waistband: product.waistband,
               mainImage: product.mainImage,
             },
+            status: <Tag color={product.status== 1 ? 'green' : 'gold'}>{product.status == 1 ? 'Hoạt động' : 'Vô hiệu hóa'}</Tag>
           };
         });
   } else {

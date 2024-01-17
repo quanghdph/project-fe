@@ -11,6 +11,7 @@ import App from './App';
 import { useSelector } from 'react-redux';
 // import firebase from '@/services/firebase';
 
+
 WebFont.load({
   google: {
     families: ['Open Sans']

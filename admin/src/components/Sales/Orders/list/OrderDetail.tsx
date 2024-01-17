@@ -43,9 +43,6 @@ import {
 import { Inotification } from "src/common";
 import ModalCreateCustomer from "./ModalCreateCustomer";
 import { formatPriceVND } from "src/helper/currencyPrice";
-import ModalCreateBill from "./ModalCreateBill";
-import vnpayLogo from "src/assets/Icon-VNPAY.webp";
-import moneyLogo from "src/assets/money.png";
 
 interface DataType {
   key: string;
@@ -248,20 +245,12 @@ function OrderDetail(props: any) {
   };
 
   const handleQuantityChange = (value, record) => {
-    // const updatedCart = cart.map((item) =>
-    //   item.id === record.id ? { ...item, cartQuantity: value } : item,
-    // );
-    // setCart(updatedCart);
     const cartIndex = cart.findIndex((item) => item.id === currentTab);
     // If the cart item is found, update its items array by adding a new item
     if (cartIndex !== -1) {
       const updatedCart = [...cart];
       updatedCart[cartIndex] = {
         ...updatedCart[cartIndex],
-        // items: [
-        //   ...updatedCart[cartIndex].items,
-        //   { ...productVariant, cartQuantity: 1 },
-        // ],
         items: updatedCart[cartIndex].items.map((item) =>
           item.id === record.id ? { ...item, cartQuantity: value } : item,
         ),
@@ -274,6 +263,7 @@ function OrderDetail(props: any) {
       const currentCustomerSelect = customer.list.result?.listCustomer.filter(
         (e) => value == e.id,
       );
+      console.log(value);
       setCustomerSelect(currentCustomerSelect[0]);
       setValue("customer", currentCustomerSelect[0]);
       setCurrentCustomer(currentCustomerSelect[0]);
@@ -287,7 +277,7 @@ function OrderDetail(props: any) {
   useEffect(() => {
     const fetchData = async () => {
       const fetchFunction = value
-        ? getListSearchPhoneNumberCustomer
+        ? getListSearchCustomer
         : getListCustomer;
 
       try {

@@ -1,10 +1,24 @@
 import { useBasket } from '@/hooks';
 import PropType from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductItem from './ProductItem';
+import axios from 'axios';
+import { useFeaturedProducts } from '@/hooks';
 
-const ProductGrid = ({ products }) => {
+const ProductGrid = () => {
   const { addToBasket, isItemOnBasket } = useBasket();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(50);
+  const [filter, setFilter] = useState('');
+
+  const {
+    featuredProducts: products,
+    fetchFeaturedProducts,
+    isLoading: isLoadingFeatured,
+    error: errorFeatured
+  } = useFeaturedProducts({ page, limit, filter });
+
+
 
   return (
     <div className="product-grid">
@@ -14,21 +28,20 @@ const ProductGrid = ({ products }) => {
           key={`product-skeleton ${index}`}
           product={product}
         />
-      )) : products.map((product) => (
-        <ProductItem
-          key={product.id}
-          isItemOnBasket={isItemOnBasket}
-          addToBasket={addToBasket}
-          product={product}
-        />
-      ))}
+      )) : products.map((product) => {
+        return (
+          <ProductItem
+               key={product.id}
+               isItemOnBasket={isItemOnBasket}
+               addToBasket={addToBasket}
+               product={product}
+             />
+           )
+      })}
+         
     </div>
   );
 };
 
-ProductGrid.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  products: PropType.array.isRequired
-};
 
 export default ProductGrid;

@@ -13,10 +13,36 @@ import PayPalPayment from "./PayPalPayment";
 import Total from "./Total";
 import axios from 'axios'
 
+export const createCheckout = async ({
+  billID,
+}) => {
+  try {
+  console.log("object", billID);
+    const accessToken = localStorage.getItem("access_token");
+    const res = await axios.get(
+      `/api-vnp/vnpay/${billID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    if (res?.status === 200 && res?.data) {
+      window.open(`${res?.data}`)
+    }
+    else {
+    }
+  } catch (error) {
+    // Inotification({
+    //   type: "error",
+    //   message: "Lỗi thanh toán!",
+    // });
+  }
+};
+
 export const createSellon = async ({ params }) => {
   try {
-    console.log(params);
-    const { phoneNumber, address, city, district, ward, sanPhams, note } = params;
+    const { phoneNumber, address, city, district, ward, sanPhams, note, paymentType } = params;
     const accessToken = localStorage.getItem("access_token");
     const res = await axios.post(
       `/sellon`,
@@ -28,6 +54,7 @@ export const createSellon = async ({ params }) => {
         ward,
         note,
         sanPhams,
+        paymentType
       },
       {
         headers: {
@@ -38,16 +65,15 @@ export const createSellon = async ({ params }) => {
     if (res?.status === 200 && res?.data) {
       setTimeout(function () {
         console.log(res.data);
-        // message.success("Thanh toán thành công!");
+       
+        displayActionMessage("Thanh toán thành công!")
+        createCheckout({billID: res.data})
         // navigate("/catalog/selloffs");
       }, 1000);
     } else {
     }
   } catch (error) {
-    // Inotification({
-    //   type: "error",
-    //   message: error.response.data,
-    // });
+    displayActionMessage("Có lỗi xảy ra!")
   }
 };
 
@@ -89,16 +115,16 @@ const Payment = ({ shipping, payment, subtotal, basket }) => {
     });
     createSellon({
       params: {
-        phoneNumber: "0988373635",
+        phoneNumber: shipping.phoneNumber,
         address: shipping.address,
         city: shipping.province,
         district: shipping.district,
         ward: shipping.ward,
-        paymentType: 1,
         note: shipping.note,
         sanPhams: cartArr,
+        paymentType: 2,
       },
-    });
+    })
     console.log(shipping);
     console.log(basket);
   };
@@ -106,7 +132,7 @@ const Payment = ({ shipping, payment, subtotal, basket }) => {
   // if (!shipping || !shipping.isDone) {
   //   return <Redirect to={CHECKOUT_STEP_1} />;
   // }
-
+  console.log(payment);
   return (
     <div className="checkout">
       <StepTracker current={3} />
@@ -123,7 +149,7 @@ const Payment = ({ shipping, payment, subtotal, basket }) => {
       >
         {() => (
           <Form className="checkout-step-3">
-            <CreditPayment />
+            {/* <CreditPayment /> */}
             <PayPalPayment />
             <Total
               isInternational={shipping.isInternational}

@@ -69,7 +69,7 @@ function* productSaga({ type, payload }) {
           handleError('Không tìm thấy sản phẩm nào!');
         } else {
           // yield put(getProductsSuccess({
-          //   products: result.products,
+          //   items: result.products,
           //   // lastKey: result.lastKey ? result.lastKey : state.products.lastRefKey,
           //   total: result.total ? result.total : state.products.total
           // }));
