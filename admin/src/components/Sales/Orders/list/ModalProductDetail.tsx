@@ -44,6 +44,8 @@ function ModalProductDetail({
   id,
   cart,
   setCart,
+  orderList,
+  currentTab,
 }: any) {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -121,23 +123,44 @@ function ModalProductDetail({
       );
     });
 
-  const isProductInCart = (cart: CartItem[], productVariant: CartItem) =>
-    cart.some(
-      (item) =>
-        item.size.id === productVariant.size.id &&
-        item.color.id === productVariant.color.id,
-    );
+  // const isProductInCart = (
+  //   cart: CartItem[],
+  //   productVariant: CartItem,
+  //   currentTab,
+  // ) =>
+  //   cart.some(
+  //     (item) =>
+  //       item.size.id === productVariant.size.id &&
+  //       item.color.id === productVariant.color.id,
+  //   );
 
   const canAddToCart = (productVariant: CartItem) =>
     productVariant.quantity > 0;
 
-  const updateCartItemQuantity = (cart: CartItem[], productVariant: CartItem) =>
-    cart.map((item) =>
-      item.size.id === productVariant.size.id &&
-      item.color.id === productVariant.color.id
-        ? { ...item, cartQuantity: item.cartQuantity! + 1 }
-        : item,
-    );
+  // const updateCartItemQuantity = (cart: CartItem[], productVariant: CartItem, currentTab) =>
+  //   cart.map((item) => {
+  //     if()
+  //     item.size.id === productVariant.size.id &&
+  //     item.color.id === productVariant.color.id
+  //       ? { ...item, cartQuantity: item.cartQuantity! + 1 }
+  //       : item,
+  //   }
+
+  //   );
+
+  const isProductInCart = (currentTab, productVariant) => {
+    const cartItem = cart.find((item) => item.id === currentTab);
+
+    if (cartItem) {
+      return cartItem.items.some(
+        (item) =>
+          item.size.id === productVariant.size.id &&
+          item.color.id === productVariant.color.id,
+      );
+    }
+
+    return false;
+  };
 
   const addToCart = (productVariant: CartItem) => {
     if (!cart) return;
@@ -150,22 +173,64 @@ function ModalProductDetail({
       return;
     }
 
-    if (isProductInCart(cart, productVariant)) {
-      const updatedCart = updateCartItemQuantity(cart, productVariant);
-      setCart(updatedCart);
+    const updateCartItemQuantity = (currentTab, productVariant) => {
+      // Find the index of the cart item with the matching id
+      const cartIndex = cart.findIndex((item) => item.id === currentTab);
+
+      // If the cart item is found, update the quantity of the specific product
+      if (cartIndex !== -1) {
+        const updatedCart = [...cart];
+        const updatedItems = updatedCart[cartIndex].items.map((item) => {
+          if (  
+            item.size.id === productVariant.size.id &&
+            item.color.id === productVariant.color.id
+          ) {
+            return { ...item, cartQuantity: item.cartQuantity! + 1 };
+          }
+          return item;
+        });
+
+        updatedCart[cartIndex] = {
+          ...updatedCart[cartIndex],
+          items: updatedItems,
+        };
+
+        setCart(updatedCart);
+      }
+    };
+
+    if (isProductInCart(currentTab, productVariant)) {
+      // const updatedCart = updateCartItemQuantity(cart, productVariant, currentTab);
+      // setCart(updatedCart);
+      // Inotification({
+      //   type: "success",
+      //   message: "Sản phẩm đã được cập nhật trong giỏ hàng",
+      // });
+      updateCartItemQuantity(currentTab, productVariant);
       Inotification({
         type: "success",
         message: "Sản phẩm đã được cập nhật trong giỏ hàng",
       });
     } else {
-      console.log(productVariant);
       if (productVariant?.product?.status !== 1) {
         Inotification({
           type: "error",
           message: "Sản phẩm không hoạt động!!",
         });
       } else {
-        setCart([...cart, { ...productVariant, cartQuantity: 1 }]);
+        const cartIndex = cart.findIndex((item) => item.id === currentTab);
+        // If the cart item is found, update its items array by adding a new item
+        if (cartIndex !== -1) {
+          const updatedCart = [...cart];
+          updatedCart[cartIndex] = {
+            ...updatedCart[cartIndex],
+            items: [
+              ...updatedCart[cartIndex].items,
+              { ...productVariant, cartQuantity: 1 },
+            ],
+          };
+          setCart(updatedCart);
+        }
         Inotification({
           type: "success",
           message: "Sản phẩm đã được thêm vào giỏ hàng",

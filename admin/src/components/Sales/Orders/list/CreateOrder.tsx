@@ -1,10 +1,10 @@
-import { Button, Tabs, TabsProps } from 'antd'
-import React, { Fragment, useState } from 'react'
-import { Inotification } from 'src/common';
-import OrderDetail from './OrderDetail';
+import { Button, Tabs, TabsProps } from "antd";
+import React, { Fragment, useState } from "react";
+import { Inotification } from "src/common";
+import OrderDetail from "./OrderDetail";
 
 function generateRandomNumberString(length) {
-  let randomString = '';
+  let randomString = "";
 
   for (let i = 0; i < length; i++) {
     const randomDigit = Math.floor(Math.random() * 10);
@@ -14,13 +14,18 @@ function generateRandomNumberString(length) {
   return randomString;
 }
 
-function CreateOrder({cart, setCart, setCustomerSelect}) {
-  const [listOrder, setListOrder] = useState(["HD15030032"])
-  
+function CreateOrder({ cart, setCart, setCustomerSelect, setOrderList, setCurrentTab, currentTab }) {
+  const [listOrder, setListOrder] = useState([
+    {
+      orderCode: `HD${generateRandomNumberString(6)}`,
+      cartId: 1,
+    },
+  ]);
+
   const onChange = (key: string) => {
-    console.log(key);
+    setCurrentTab(Number(key)+1)
   };
-  
+
   // const items: TabsProps['items'] = [
   //   {
   //     key: '1',
@@ -32,35 +37,58 @@ function CreateOrder({cart, setCart, setCustomerSelect}) {
   //     label: 'Danh sách hóa đơn',
   //     children: 123,
   //   },
-  // ];  
+  // ];
 
-  const items: TabsProps['items'] = listOrder.map((item, index) => {
+  const items: TabsProps["items"] = listOrder.map((item, index) => {
     return {
       key: index.toString(),
-      label: item,
-      children: <OrderDetail orderCode={item} cart={cart} setCart={setCart} setCustomerSelect={setCustomerSelect} />
-    }
-  })
+      label: item.orderCode,
+      children: (
+        <OrderDetail
+          orderCode={item.orderCode}
+          cart={cart}
+          setCart={setCart}
+          setCustomerSelect={setCustomerSelect}
+          currentTab={currentTab}
+        />
+      ),
+    };
+  });
 
   const handleCreateOrder = () => {
-    const orderCode = `HD${generateRandomNumberString(6)}`
+    const orderCode = `HD${generateRandomNumberString(6)}`;
     if (listOrder.length < 5) {
-      setCart([])
-      setListOrder([...listOrder, orderCode]);
+      const newCartId = listOrder.length + 1;
+      setListOrder([
+        ...listOrder,
+        {
+          orderCode: orderCode,
+          cartId: newCartId,
+        },
+      ]);
+      setOrderList([
+        ...listOrder,
+        {
+          orderCode: orderCode,
+          cartId: newCartId,
+        },
+      ]);
     } else {
       Inotification({
         type: "error",
         message: "Chỉ được tạo 5 đơn hàng!",
       });
     }
-  }
+  };
 
   return (
     <Fragment>
-          <Button type="primary" onClick={handleCreateOrder}>Tạo mới đơn hàng</Button>
-          <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+      <Button type="primary" onClick={handleCreateOrder}>
+        Tạo mới đơn hàng
+      </Button>
+      <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
     </Fragment>
-  )
+  );
 }
 
-export default CreateOrder
+export default CreateOrder;

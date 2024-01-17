@@ -31,6 +31,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useDebounce } from "use-debounce";
 import Title from "antd/lib/skeleton/Title";
 import { formatPriceVND } from "src/helper/currencyPrice";
+import moment from "moment";
 interface DataType {
   key: number;
   id: number;
@@ -76,13 +77,6 @@ const columns = (
     width: "10%",
   },
   {
-    title: "Tổng tiền",
-    dataIndex: "total",
-    ellipsis: true,
-    key: "total",
-    width: "15%",
-  },
-  {
     title: "Loại đơn hàng",
     dataIndex: "paymentType",
     ellipsis: true,
@@ -95,6 +89,20 @@ const columns = (
     ellipsis: true,
     key: "transportFee",
     width: "9%",
+  },
+  {
+    title: "Ngày thanh toán",
+    dataIndex: "paymentDate",
+    ellipsis: true,
+    key: "paymentDate",
+    width: "13%",
+  },
+  {
+    title: "Ngày giao hàng",
+    dataIndex: "deliveryDate",
+    ellipsis: true,
+    key: "deliveryDate",
+    width: "13%",
   },
   {
     title: "Ghi chú",
@@ -279,11 +287,12 @@ const Bill = () => {
           customer_name: `${bill.customer.firstName} ${bill.customer.lastName}`,
           // employee_name: `${bill.employee.firstName} ${bill.employee.lastName}`,
           phoneNumber: bill.phoneNumber,
-          transportFee: formatPriceVND(bill.transportFee),
+          transportFee: formatPriceVND(Number(bill.transportFee)),
           note: bill.note,
           paymentType: bill.paymentType == 1 ? <Tag color="success">Tại quầy</Tag> :  <Tag color="processing">Bán hàng Online</Tag>,
-          createDate: bill.createDate,
-          // status: bill.status,
+          createDate: moment(bill.createDate).format('YYYY/MM/DD'),
+          paymentDate: moment(bill.paymentDate).format('YYYY/MM/DD'),
+          deliveryDate: moment(bill.deliveryDate).format('YYYY/MM/DD')
         };
       });
     }

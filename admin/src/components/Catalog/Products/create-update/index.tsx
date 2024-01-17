@@ -977,7 +977,7 @@ const ProductCreateUpdate: React.FC = () => {
                 >
                   {fileMainList.length >= 1 ? null : uploadButton}
                 </Upload>
-                {/* {!id && (
+                {!id && (
                 <>
                   <Text>Chọn biến thể</Text>
                   <Upload
@@ -997,7 +997,7 @@ const ProductCreateUpdate: React.FC = () => {
                     {fileList.length >= 5 ? null : uploadButton}
                   </Upload>
                 </>
-              )} */}
+              )}
               </Box>
             )}
           </Card>

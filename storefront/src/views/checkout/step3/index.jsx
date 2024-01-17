@@ -81,7 +81,6 @@ const Payment = ({ shipping, payment, subtotal, basket }) => {
 
   const onConfirm = () => {
     // displayActionMessage('Feature not ready yet :)', 'info');
-    console.log(123132);
     const cartArr = basket.map((item) => {
       return {
         id: item.productDetail.id,
