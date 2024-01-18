@@ -17,7 +17,7 @@ import ShippingForm from "./ShippingForm";
 import ShippingTotal from "./ShippingTotal";
 import { useForm } from "react-hook-form";
 
-import "antd/dist/antd.css";
+// import "antd/dist/antd.css";
 import "antd-button-color/dist/css/style.css";
 
 const FormSchema = Yup.object().shape({

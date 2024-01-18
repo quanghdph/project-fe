@@ -17,7 +17,7 @@ const ProductItem = ({ product, isItemOnBasket, addToBasket }) => {
       history.push(`/product/${product.id}`);
     }
   };
-
+  console.log("first", product)
   const itemOnBasket = isItemOnBasket ? isItemOnBasket(product.id) : false;
 
   const handleAddToBasket = () => {

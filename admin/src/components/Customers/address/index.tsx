@@ -255,14 +255,14 @@ const AddressPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (address.province.result && !address.province.loading) {
-      const listOption = address.province.result.map((item) => ({
+    if (address?.province?.result && !address?.province?.loading) {
+      const listOption = address?.province?.result.map((item) => ({
         value: item.ProvinceID,
         label: item.ProvinceName,
       }));
       setProvinceOption(listOption);
     }
-  }, [address.province.result, address.province.loading]);
+  }, [address?.province?.result, address?.province?.loading]);
 
   useEffect(() => {
     if (address.district.result && !address.district.loading) {

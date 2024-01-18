@@ -1,6 +1,6 @@
 import React from 'react';
 import { Result, Button } from 'antd';
-import "antd/dist/antd.css";
+// import "antd/dist/antd.css";
 import "antd-button-color/dist/css/style.css";
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 

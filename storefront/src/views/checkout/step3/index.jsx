@@ -73,7 +73,8 @@ export const createSellon = async ({ params }) => {
     } else {
     }
   } catch (error) {
-    displayActionMessage("Có lỗi xảy ra!")
+    console.log(error);
+    displayActionMessage(error.response.data)
   }
 };
 
