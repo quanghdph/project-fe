@@ -9,6 +9,7 @@ import '@/styles/style.scss';
 import WebFont from 'webfontloader';
 import App from './App';
 import { useSelector } from 'react-redux';
+import { setAuthStatus } from '@/redux/actions/miscActions';
 // import firebase from '@/services/firebase';
 
 
@@ -37,6 +38,19 @@ render(<Preloader />, root);
 // if(isAuthenticating) {
 
 // }
+
+const token = localStorage.getItem("access_token");
+if(token) {
+  setAuthStatus({
+    success: true,
+    type: "auth",
+    isError: false,
+    message: "Successfully signed in. Redirecting...",
+  })
+} else {
+  store.dispatch(onAuthStateFail('Failed to authenticate'));
+}
+
 
 render(<App store={store} persistor={persistor} />, root);
 

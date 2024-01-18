@@ -15,7 +15,8 @@ const useBasket = () => {
     const response = await axios.post(
       `/cart-detail?productDetailId=${product.id}`, null ,{
         headers: {
-          'Authorization': `Bearer ${access_token}`
+          'Authorization': `Bearer ${access_token}`,
+          'Content-Type': 'application/json'
         }
       }
     );
