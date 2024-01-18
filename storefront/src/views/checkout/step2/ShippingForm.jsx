@@ -22,6 +22,7 @@ const ShippingForm = ({
   reset,
   errors,
   isValid,
+  shipping
 }) => {
   // const { values } = useFormikContext();
   // const validationSchema = Yup.object().shape({
@@ -39,7 +40,7 @@ const ShippingForm = ({
   const [wardOption, setWardOption] = useState();
   const [districtVisible, setDistrictVisible] = useState(true);
   const [wardVisible, setWardVisible] = useState(true);
-
+  console.log("1233213", shipping);
   // const {
   //   register,
   //   handleSubmit,

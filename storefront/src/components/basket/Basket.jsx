@@ -12,15 +12,16 @@ import { clearBasket } from "@/redux/actions/basketActions";
 
 const Basket = () => {
   const { isOpenModal, onOpenModal, onCloseModal } = useModal();
-  const { basket, user } = useSelector((state) => ({
+  const { basket, user, store } = useSelector((state) => ({
     basket: state.basket,
     user: state.auth,
+    store: state,
   }));
   const history = useHistory();
   const { pathname } = useLocation();
   const dispatch = useDispatch();
   const didMount = useDidMount();
-
+console.log(store);
   useEffect(() => {
     if (didMount && basket.length !== 0) {
       // firebase.saveBasketItems(basket, firebase.auth.currentUser.uid)
@@ -83,7 +84,7 @@ const Basket = () => {
           <div className="basket-header">
             <h3 className="basket-header-title">
               Giỏ hàng &nbsp;
-              <span>({` ${basket.length} sản phẩm`})</span>
+              <span>({` ${basket ? basket.length : 0} sản phẩm`})</span>
             </h3>
             <BasketToggle>
               {({ onClickToggle }) => (
@@ -102,7 +103,7 @@ const Basket = () => {
               onClick={onClearBasket}
               type="button"
             >
-              <span>Clear Basket</span>
+              <span>Xóa giỏ hàng</span>
             </button>
           </div>
           {basket.length <= 0 && (

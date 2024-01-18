@@ -66,7 +66,7 @@ export const createSellon = async ({ params }) => {
       setTimeout(function () {
         console.log(res.data);
        
-        displayActionMessage("Thanh toán thành công!")
+        displayActionMessage("Thanh toán thành công!", "success")
         createCheckout({billID: res.data})
         // navigate("/catalog/selloffs");
       }, 1000);
@@ -125,14 +125,12 @@ const Payment = ({ shipping, payment, subtotal, basket }) => {
         paymentType: 2,
       },
     })
-    console.log(shipping);
-    console.log(basket);
   };
 
   // if (!shipping || !shipping.isDone) {
   //   return <Redirect to={CHECKOUT_STEP_1} />;
   // }
-  console.log(payment);
+
   return (
     <div className="checkout">
       <StepTracker current={3} />

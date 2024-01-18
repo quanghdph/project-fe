@@ -10,6 +10,7 @@ export default (state = [], action) => {
     case SET_BASKET_ITEMS:
       return action.payload;
     case ADD_TO_BASKET:
+      console.log("object state", state);
       return state.some((product) => product.id === action.payload.id)
         ? state
         : [action.payload, ...state];

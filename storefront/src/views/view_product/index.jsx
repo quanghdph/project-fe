@@ -9,6 +9,7 @@ import { displayMoney, displayActionMessage } from "@/helpers/utils";
 import { useBasket, useDocumentTitle, useProduct, useScrollTop } from "@/hooks";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { Box, Text } from "@chakra-ui/react";
 
 const ViewProduct = () => {
   const { id } = useParams();
@@ -53,10 +54,12 @@ const ViewProduct = () => {
     setSelectedCartColor(newValue.value);
   };
 
-  const { authStatus, isAuthenticating, store } = useSelector((state) => ({
+  const { authStatus, isAuthenticating, store, auth } = useSelector((state) => ({
     authStatus: state.app.authStatus,
     isAuthenticating: state.app.isAuthenticating,
     store: state,
+    auth: state.auth
+
   }));
 
   useEffect(() => {
@@ -92,10 +95,9 @@ const ViewProduct = () => {
     });
 
   const handleAddToBasket = () => {
-    if (!authStatus) {
+    if (!auth ) {
       displayActionMessage("Bạn cần đăng nhập để thêm vào giỏ hàng!", "info");
     } else {
-      console.log(selectedProduct);
       if (selectedProduct.quantity == 0) {
         displayActionMessage("Mặt hàng này hiện không còn!", "info");
       } else {
@@ -206,8 +208,17 @@ const ViewProduct = () => {
                 styles={{ menu: (provided) => ({ ...provided, zIndex: 10 }) }}
               />
 
-              {selectedProduct && (
+              {/* {selectedProduct && (
                 <h1>{displayMoney(selectedProduct?.price)}</h1>
+              )} */}
+
+              {selectedProduct && (
+                <Box mt={5}>
+                  <Box>
+                    <Text>Giá: {displayMoney(selectedProduct.price)}</Text>
+                  </Box>
+                  <Box>Số lượng trong kho: {selectedProduct.quantity}</Box>
+                </Box>
               )}
 
               <div className="product-modal-action">

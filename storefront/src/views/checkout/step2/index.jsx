@@ -8,7 +8,7 @@ import { useDocumentTitle, useScrollTop } from "@/hooks";
 import PropType from "prop-types";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useHistory  } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { setShippingDetails } from "@/redux/actions/checkoutActions";
 import * as Yup from "yup";
 import { StepTracker } from "../components";
@@ -56,22 +56,23 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
     control,
     getValues,
     reset,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm({
     defaultValues: {
       provinceOption: "",
       districtOption: "",
-      wardOption: ""
-    }
+      wardOption: "",
+    },
   });
 
   const initFormikValues = {
-    fullname: "",
+    fullname: "shipping.fullname",
     address: "",
     province: "",
     district: "",
     ward: "",
     note: "",
+    phoneNumber: ""
   };
 
   const onSubmitForm = (form) => {
@@ -83,11 +84,10 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
         district: form.districtOption,
         ward: form.wardOption,
         note: form.note,
-        phoneNumber: form.phoneNumber
+        phoneNumber: form.phoneNumber,
       })
     );
-    history.push('/checkout/step3');
-    console.log('/checkout/step3');
+    history.push("/checkout/step3");
   };
   // const onSubmit = (data) => {
   //   console.log("Submitted data:", data);
@@ -107,46 +107,46 @@ const ShippingDetails = ({ profile, shipping, subtotal }) => {
             onSubmit={handleSubmit(onSubmitForm)}
           >
             {() => (
-               <Form
-               layout="vertical"
-               autoComplete="off"
-              //  onFinish={handleSubmit(onSubmit)}
-             >
-               <ShippingForm
-                 register={register}
-                 handleSubmit={handleSubmit}
-                 setValue={setValue}
-                 watch={watch}
-                 trigger={trigger}
-                 control={control}
-                 getValues={getValues}
-                 reset={reset}
-                 errors={errors}
-                 isValid={isValid}
-               />
-               <br />
-               {/*  ---- TOTAL --------- */}
-               {/* <ShippingTotal subtotal={subtotal} /> */}
-               <br />
-               {/*  ----- NEXT/PREV BUTTONS --------- */}
-               <div className="checkout-shipping-action">
-                 <button
-                   className="button button-muted"
-                   onClick={() => history.push(CHECKOUT_STEP_1)}
-                   type="button"
-                 >
-                   <ArrowLeftOutlined />
-                   &nbsp; Quay lại
-                 </button>
-                 <button className="button button-icon" type="submit">
-                   Bước tiếp theo &nbsp;
-                   <ArrowRightOutlined />
-                 </button>
-               </div>
-             </Form>
+              <Form
+                layout="vertical"
+                autoComplete="off"
+                //  onFinish={handleSubmit(onSubmit)}
+              >
+                <ShippingForm
+                  register={register}
+                  handleSubmit={handleSubmit}
+                  setValue={setValue}
+                  watch={watch}
+                  trigger={trigger}
+                  control={control}
+                  getValues={getValues}
+                  reset={reset}
+                  errors={errors}
+                  isValid={isValid}
+                  shipping={shipping}
+                />
+                <br />
+                {/*  ---- TOTAL --------- */}
+                {/* <ShippingTotal subtotal={subtotal} /> */}
+                <br />
+                {/*  ----- NEXT/PREV BUTTONS --------- */}
+                <div className="checkout-shipping-action">
+                  <button
+                    className="button button-muted"
+                    onClick={() => history.push(CHECKOUT_STEP_1)}
+                    type="button"
+                  >
+                    <ArrowLeftOutlined />
+                    &nbsp; Quay lại
+                  </button>
+                  <button className="button button-icon" type="submit">
+                    Bước tiếp theo &nbsp;
+                    <ArrowRightOutlined />
+                  </button>
+                </div>
+              </Form>
             )}
           </Formik>
-        
         </div>
       </div>
     </Boundary>

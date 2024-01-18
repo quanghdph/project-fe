@@ -221,7 +221,7 @@ function* authSaga({ type, payload }) {
               }
             }
           })
-          console.log("object", customCart);
+
           yield put(setBasketItems(customCart));
         }
       }
