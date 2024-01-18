@@ -68,7 +68,7 @@ const SignUp = ({ history }) => {
           )}
           <div className={`auth ${authStatus?.message && (!authStatus?.success && 'input-error')}`}>
             <div className="auth-main">
-              <h3>Sign up to YoungBoy</h3>
+              <h3>Đăng ki YoungBoy</h3>
               <Formik
                 initialValues={{
                   fullname: '',
@@ -128,14 +128,14 @@ const SignUp = ({ history }) => {
                 )}
               </Formik>
             </div>
-            <div className="auth-divider">
+            {/* <div className="auth-divider">
               <h6>OR</h6>
             </div>
-            <SocialLogin isLoading={isAuthenticating} />
+            <SocialLogin isLoading={isAuthenticating} /> */}
           </div>
           <div className="auth-message">
             <span className="auth-info">
-              <strong>Already have an account?</strong>
+              <strong>Bạn đã có tài khoản?</strong>
             </span>
             <button
               className="button button-small button-border button-border-gray"
@@ -143,7 +143,7 @@ const SignUp = ({ history }) => {
               onClick={onClickSignIn}
               type="button"
             >
-              Sign In
+              Đăng nhập
             </button>
           </div>
         </>

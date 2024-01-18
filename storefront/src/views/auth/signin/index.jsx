@@ -69,7 +69,7 @@ const SignIn = ({ history }) => {
           )}
           <div className={`auth ${authStatus?.message && (!authStatus?.success && 'input-error')}`}>
             <div className="auth-main">
-              <h3>Sign in to YoungBoy</h3>
+              <h3>Đăng nhập vào YoungBoy</h3>
               <br />
               <div className="auth-wrapper">
                 <Formik
@@ -105,19 +105,19 @@ const SignIn = ({ history }) => {
                       </div>
                       <br />
                       <div className="auth-field auth-action">
-                        <Link
+                        {/* <Link
                           onClick={onClickLink}
                           style={{ textDecoration: 'underline' }}
                           to={FORGOT_PASSWORD}
                         >
                           <span>Forgot password?</span>
-                        </Link>
+                        </Link> */}
                         <button
                           className="button auth-button"
                           disabled={isAuthenticating}
                           type="submit"
                         >
-                          {isAuthenticating ? 'Signing In' : 'Sign In'}
+                          {isAuthenticating ? 'Đang đăng nhập..' : 'Đăng nhập'}
                           &nbsp;
                           {isAuthenticating ? <LoadingOutlined /> : <ArrowRightOutlined />}
                         </button>
@@ -127,14 +127,14 @@ const SignIn = ({ history }) => {
                 </Formik>
               </div>
             </div>
-            <div className="auth-divider">
+            {/* <div className="auth-divider">
               <h6>OR</h6>
             </div>
-            <SocialLogin isLoading={isAuthenticating} />
+            <SocialLogin isLoading={isAuthenticating} /> */}
           </div>
           <div className="auth-message">
             <span className="auth-info">
-              <strong>Don&apos;t have an account?</strong>
+              <strong>Bạn không có tài khoản?</strong>
             </span>
             <button
               className="button button-small button-border button-border-gray button-icon"
@@ -142,7 +142,7 @@ const SignIn = ({ history }) => {
               onClick={onSignUp}
               type="button"
             >
-              Sign Up
+              Đăng ki
             </button>
           </div>
         </>

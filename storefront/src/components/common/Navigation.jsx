@@ -106,7 +106,7 @@ const Navigation = () => {
                 onClick={onClickLink}
                 to={ROUTE.SIGNUP}
               >
-                Sign Up
+               Đăng ki
               </Link>
             )}
             {pathname !== ROUTE.SIGNIN && (
