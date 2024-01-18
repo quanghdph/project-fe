@@ -15,7 +15,7 @@ const BasketItem = ({ product }) => {
   const dispatch = useDispatch();
   const onRemoveFromBasket = async () => {
     const access_token = localStorage.getItem("access_token")
-
+    console.log(product);
     try {
      const response = await axios.delete(
        `/cart-detail/${product.id}`,{

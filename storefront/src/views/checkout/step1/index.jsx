@@ -17,7 +17,7 @@ const OrderSummary = ({ basket, subtotal }) => {
   const history = useHistory();
   const onClickPrevious = () => history.push('/');
   const onClickNext = () => history.push(CHECKOUT_STEP_2);
-
+ 
   return (
     <div className="checkout">
       <StepTracker current={1} />

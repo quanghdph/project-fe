@@ -56,6 +56,8 @@ console.log(store);
     }
   };
 
+  console.log(basket);
+
   return user && user.role === "ADMIN" ? null : (
     <Boundary>
       <Modal isOpen={isOpenModal} onRequestClose={onCloseModal}>
